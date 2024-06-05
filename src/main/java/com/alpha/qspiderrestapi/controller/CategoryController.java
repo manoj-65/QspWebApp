@@ -137,7 +137,7 @@ public class CategoryController {
 
 	}
 
-	@GetMapping("/formresponse")
+	@GetMapping("/getCategory")
 	public ResponseEntity<ApiResponse<List<CategoryFormResponse>>> fetchAllCategory(@PathVariable String version) {
 		if (version.equals("v1"))
 			return categoryService.fetchAllCategoryAndSubCategory();
