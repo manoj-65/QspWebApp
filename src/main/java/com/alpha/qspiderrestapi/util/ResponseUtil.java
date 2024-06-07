@@ -55,5 +55,14 @@ public class ResponseUtil {
 
 		return ResponseEntity.status(structure.getStatus()).body(structure);
 	}
+	
+	public static <T> ResponseEntity<ApiResponse<T>> getNoContent(T t) {
+		ApiResponse<T> structure = initResponse();
+		structure.setStatusCode(HttpStatus.NO_CONTENT.value());
+		structure.setStatus(HttpStatus.NO_CONTENT);
+		structure.setData(t);
+
+		return ResponseEntity.status(structure.getStatus()).body(structure);
+	}
 
 }

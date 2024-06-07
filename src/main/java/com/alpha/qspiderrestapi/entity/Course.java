@@ -7,8 +7,8 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -43,22 +43,22 @@ public class Course {
 	private String courseName;
 	@Column(columnDefinition = "text")
 	private String courseDescription;
-	
+
 	@ElementCollection(targetClass = Organization.class)
-    @CollectionTable(name = "branch_type_course", joinColumns = @JoinColumn(name = "course_id"))
-    @Column(name = "branch_type")
-    @Enumerated(EnumType.STRING)
+	@CollectionTable(name = "branch_type_course", joinColumns = @JoinColumn(name = "course_id"))
+	@Column(name = "branch_type")
+	@Enumerated(EnumType.STRING)
 	private List<Organization> branchType;
-	
+
 	private String courseIcon;
 
 	@ElementCollection(targetClass = Mode.class)
-    @CollectionTable(name = "mode_course", joinColumns = @JoinColumn(name = "course_id"))
-    @Column(name = "mode")
-    @Enumerated(EnumType.STRING)
+	@CollectionTable(name = "mode_course", joinColumns = @JoinColumn(name = "course_id"))
+	@Column(name = "mode")
+	@Enumerated(EnumType.STRING)
 	private List<Mode> mode;
 	private String courseSummary;
-	
+
 	private String courseAbout;
 
 	private String courseHighlight;
@@ -67,21 +67,21 @@ public class Course {
 	@JoinTable(name = "course_subject", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
 	private List<Subject> subjects = new ArrayList<Subject>();
 
-	@ManyToMany(mappedBy = "courses", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToMany(mappedBy = "courses", cascade = { CascadeType.PERSIST, CascadeType.MERGE})
 	@JsonIgnore
 	private List<Category> categories = new ArrayList<>();
 
-	@ManyToMany(mappedBy = "courses",cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToMany(mappedBy = "courses", cascade = { CascadeType.PERSIST, CascadeType.MERGE})
 	@JsonIgnore
 	private List<SubCategory> subCategories = new ArrayList<SubCategory>();
 
-	@OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
 	private List<Batch> courseBatches = new ArrayList<Batch>();
 
-	@OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
 	private List<Review> courseReviews = new ArrayList<Review>();
 
-	@OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
 	private List<Faq> faqs = new ArrayList<Faq>();
 
 	private String courseImage;

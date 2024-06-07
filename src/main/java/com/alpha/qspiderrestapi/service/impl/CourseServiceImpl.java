@@ -66,48 +66,50 @@ public class CourseServiceImpl implements CourseService {
 	@Override
 	@Transactional
 	public ResponseEntity<ApiResponse<Course>> saveCourse(long categoryId, Long subCategoryId, Course course) {
-        log.info("Entering saveCourse with categoryId: {}, subCategoryId: {}, course: {}", categoryId, subCategoryId, course);
+		log.info("Entering saveCourse with categoryId: {}, subCategoryId: {}, course: {}", categoryId, subCategoryId,
+				course);
 
-        try {
-            if (categoryDao.isCategoryPresent(categoryId)) {
-                log.info("Category with id: {} is present", categoryId);
+		try {
+			if (categoryDao.isCategoryPresent(categoryId)) {
+				log.info("Category with id: {} is present", categoryId);
 
-                if (subCategoryId != null) {
-                    if (subCategoryDao.isSubCategoryPresent(subCategoryId)) {
-                        log.info("SubCategory with id: {} is present", subCategoryId);
-                        
-                        course = setCourseIntoFaq(course);
-                        course = saveCourse(course);
-                        
-                        subCategoryDao.assignCourseToSubCategory(subCategoryId, course.getCourseId());
-                        log.info("Assigned course with id: {} to subCategory with id: {}", course.getCourseId(), subCategoryId);
-                        
-                        return ResponseUtil.getCreated(course);
-                    } else {
-                        log.error("No SubCategory found with given Id: {}", subCategoryId);
-                        throw new IdNotFoundException("No SubCategory found with given Id: " + subCategoryId);
-                    }
-                } else {
-                    course = setCourseIntoFaq(course);
-                    course = saveCourse(course);
+				if (subCategoryId != null) {
+					if (subCategoryDao.isSubCategoryPresent(subCategoryId)) {
+						log.info("SubCategory with id: {} is present", subCategoryId);
 
-                    categoryDao.assignCourseToCategory(categoryId, course.getCourseId());
-                    log.info("Assigned course with id: {} to category with id: {}", course.getCourseId(), categoryId);
-                    
-                    return ResponseUtil.getCreated(course);
-                }
-            } else {
-                log.error("No Category found with given Id: {}", categoryId);
-                throw new IdNotFoundException("No Category found with given Id: " + categoryId);
-            }
-        } catch (IdNotFoundException e) {
-            log.error("Error in saveCourse: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Unexpected error occurred in saveCourse", e);
-            throw new RuntimeException("Unexpected error occurred", e);
-        }
-    }
+						course = setCourseIntoFaq(course);
+						course = saveCourse(course);
+
+						subCategoryDao.assignCourseToSubCategory(subCategoryId, course.getCourseId());
+						log.info("Assigned course with id: {} to subCategory with id: {}", course.getCourseId(),
+								subCategoryId);
+
+						return ResponseUtil.getCreated(course);
+					} else {
+						log.error("No SubCategory found with given Id: {}", subCategoryId);
+						throw new IdNotFoundException("No SubCategory found with given Id: " + subCategoryId);
+					}
+				} else {
+					course = setCourseIntoFaq(course);
+					course = saveCourse(course);
+
+					categoryDao.assignCourseToCategory(categoryId, course.getCourseId());
+					log.info("Assigned course with id: {} to category with id: {}", course.getCourseId(), categoryId);
+
+					return ResponseUtil.getCreated(course);
+				}
+			} else {
+				log.error("No Category found with given Id: {}", categoryId);
+				throw new IdNotFoundException("No Category found with given Id: " + categoryId);
+			}
+		} catch (IdNotFoundException e) {
+			log.error("Error in saveCourse: {}", e.getMessage());
+			throw e;
+		} catch (Exception e) {
+			log.error("Unexpected error occurred in saveCourse", e);
+			throw new RuntimeException("Unexpected error occurred", e);
+		}
+	}
 
 	private Course setCourseIntoFaq(Course course) {
 		List<Faq> faqs = course.getFaqs().stream().peek(faq -> faq.setCourse(course)).toList();
@@ -256,6 +258,28 @@ public class CourseServiceImpl implements CourseService {
 
 		log.error("Course with ID {} not found", courseId);
 		throw new IdNotFoundException("Course With the Given Id Not Found");
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> removeCourseById(long courseId) {
+
+		Optional<Course> course = courseDao.fetchCourseById(courseId);
+
+		if (course.isPresent()) {
+
+			if (!(course.get().getCategories().isEmpty())) {
+				courseDao.removeCourseAndCategoryById(courseId);
+			}
+			if (!(course.get().getSubCategories().isEmpty())) {
+				courseDao.removeCourseAndSubCategoryById(courseId);
+			}
+			courseDao.deleteCourse(course.get());
+
+		} else
+			throw new IdNotFoundException("Given Course Id: " + courseId + " not found");
+
+		return ResponseUtil.getNoContent("Course Deleted");
+
 	}
 
 }

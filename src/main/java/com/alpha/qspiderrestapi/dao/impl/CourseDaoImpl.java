@@ -1,6 +1,6 @@
 package com.alpha.qspiderrestapi.dao.impl;
 
-import java.util.List; 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +53,24 @@ public class CourseDaoImpl implements CourseDao {
 		return true;
 	}
 
+	@Override
+	public void deleteCourse(Course course) {
+		courseRepository.delete(course);
+	}
+	
+	@Override
+	public boolean isCourseExist(long courseId) {
+		return courseRepository.existsById(courseId);
+	}
 
+	@Override
+	public void removeCourseAndSubCategoryById(long courseId) {
+		 courseRepository.removeCourseAndSubCategoryById(courseId);
+	}
+	
+	@Override
+	public void removeCourseAndCategoryById(long courseId) {
+		 courseRepository.removeCourseAndCategoryById(courseId);
+	}
 
 }

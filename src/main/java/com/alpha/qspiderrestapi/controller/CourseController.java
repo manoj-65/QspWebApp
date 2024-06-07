@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,8 +60,7 @@ public class CourseController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@PostMapping
-	public ResponseEntity<ApiResponse<Course>> saveCourse(@PathVariable String version,
-			@RequestParam long categoryId,
+	public ResponseEntity<ApiResponse<Course>> saveCourse(@PathVariable String version, @RequestParam long categoryId,
 			@RequestParam(required = false) Long subCategoryId, @RequestBody Course course) {
 
 		if (version.equals("v1"))
@@ -147,6 +147,15 @@ public class CourseController {
 			@RequestParam("file") MultipartFile file, @RequestParam long courseId) {
 		if (version.equals("v1"))
 			return courseService.uploadIcon(file, courseId);
+		throw new UnauthorizedVersionException();
+	}
+
+	@DeleteMapping
+	public ResponseEntity<ApiResponse<String>> removeCourseById(@PathVariable String version,
+			@RequestParam long courseId) {
+		if (version.equals("v1"))
+			return courseService.removeCourseById(courseId);
+
 		throw new UnauthorizedVersionException();
 	}
 

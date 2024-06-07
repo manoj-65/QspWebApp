@@ -41,9 +41,7 @@ public class SubCategory {
 	private String subCategoryIcon;
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "subCategory_course",
-			   joinColumns = @JoinColumn(name = "subCategoryId"),
-			   inverseJoinColumns = @JoinColumn(name = "courseId"))
+	@JoinTable(name = "subCategory_course", joinColumns = @JoinColumn(name = "subCategoryId"), inverseJoinColumns = @JoinColumn(name = "courseId"))
 	private List<Course> courses = new ArrayList<Course>();
 
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

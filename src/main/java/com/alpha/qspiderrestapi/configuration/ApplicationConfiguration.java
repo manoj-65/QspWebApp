@@ -20,6 +20,10 @@ public class ApplicationConfiguration {
 		Server production = new Server();
 		production.setUrl("http://37.61.213.213:8080");
 		production.setDescription("Production environment");
+		
+		Server dev = new Server();
+		dev.setUrl("http://106.51.76.167:8080");
+		dev.setDescription("Developement environment");
 
 		Contact contact = new Contact();
 		//what should the email be
@@ -37,7 +41,7 @@ public class ApplicationConfiguration {
 				//should we set this terms of service url
 				.termsOfService("termsOfServiceUrl").license(mitLicense);
 
-		return new OpenAPI().info(info).servers(List.of(production));
+		return new OpenAPI().info(info).servers(List.of(production,dev));
 	}
 
 	

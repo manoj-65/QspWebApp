@@ -20,4 +20,13 @@ public interface CourseDao {
 	void assignSubjectToCourse(long courseId, long subjectId);
 
 	boolean isSubjectIdPresent(long courseId, long subjectId);
+
+	void deleteCourse(Course fetchedCourse);
+
+	boolean isCourseExist(long courseId);
+
+	void removeCourseAndSubCategoryById(long courseId);
+
+	void removeCourseAndCategoryById(long courseId);
+
 }

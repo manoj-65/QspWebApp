@@ -34,13 +34,14 @@ public class CustomAuthenticationManager {
 
 	private static final String[] PUBLIC_URLS = { "/swagger-apis/**", "/swagger-ui/**", "/v3/api-docs/**",
 			"/swagger-ui.html", "/swagger-ui/index.html", "/api/{version}/users/saveUser", "/api/{version}/users/login",
-			"/api/{version}/users/getProfile", "/api/{version}/categories/getall",
+			"/api/{version}/users/getProfile", "/api/v1/categories/formresponse", "/api/{version}/categories/getall",
 			"/api/{version}/categories/getbyid" };
 
 	private static final String[] ADMIN_URLS = { "/api/{version}/users/saveUser", "/api/{version}/categories",
 			"/api/{version}/subcategories" };
 
-	private static final String[] COURSEADDER_URLS = { "/api/{version}/courses", "/api/v1/categories/getCategory" };
+	private static final String[] COURSEADDER_URLS = { "/api/{version}/courses",
+			"/api/{version}/categories/getCategory" };
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

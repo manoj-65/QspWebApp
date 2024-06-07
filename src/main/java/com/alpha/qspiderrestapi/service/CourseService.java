@@ -20,4 +20,6 @@ public interface CourseService {
 
 	ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile file, long categoryId);
 
+	ResponseEntity<ApiResponse<String>> removeCourseById(long courseId);
+
 }

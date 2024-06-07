@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 @Service
@@ -60,8 +61,8 @@ public class AWSS3ServiceImpl implements AWSS3Service {
 	public String uploadFileToS3Bucket(final String bucketName, final File file, String floder) {
 		final String uniqueFileName = floder + "/" + LocalDateTime.now() + "_" + file.getName();
 		LOGGER.info("Uploading file with name= " + uniqueFileName);
-		final PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uniqueFileName, file);
-//				.withCannedAcl(CannedAccessControlList.PublicRead);
+		final PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uniqueFileName, file)
+				.withCannedAcl(CannedAccessControlList.PublicRead);
 		amazonS3.putObject(putObjectRequest);
 		return amazonS3.getUrl(bucketName, uniqueFileName).toString();
 	}
