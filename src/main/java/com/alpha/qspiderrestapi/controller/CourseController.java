@@ -127,9 +127,9 @@ public class CourseController {
 		throw new UnauthorizedVersionException();
 	}
 
-	@Operation(description = "Saves subjects to course based on Id", summary = "Saves a subject to course")
+	@Operation(description = "Assigins subjects to course based on Id", summary = "Updates or Saves a subject to course")
 	@ApiResponses(value = {
-			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "OK", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@PatchMapping
@@ -142,6 +142,12 @@ public class CourseController {
 
 	}
 
+	@Operation(description = "Course Icon url is added to a Course", summary = "Updates Course Icon")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
 	@PatchMapping(value = "/uploadIcon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadIcon(@PathVariable String version,
 			@RequestParam("file") MultipartFile file, @RequestParam long courseId) {

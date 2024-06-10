@@ -22,6 +22,11 @@ import com.alpha.qspiderrestapi.entity.User;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.UserService;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/{version}/users")
@@ -29,6 +34,12 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Hidden
+	@Operation(description = "A User is saved into the database", summary = "Saves a user")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@PostMapping("/saveUser")
 	public ResponseEntity<ApiResponse<UserDto>> saveUser(@PathVariable String version, @RequestBody User user) {
 		if (version.equalsIgnoreCase("V1"))
@@ -36,6 +47,11 @@ public class UserController {
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 
+	@Operation(description = "User is logged in with the right credentials", summary = "Logs in a user")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "OK", responseCode = "200"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse<UserResponse>> login(@PathVariable String version,
 			@RequestBody UserRequest userRequest) {
@@ -44,6 +60,11 @@ public class UserController {
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 	
+	@Operation(description = "Fetches the profile of a user based on a security token", summary = "Fetches a user profile")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "OK", responseCode = "200"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401") })
 	@GetMapping("/getProfile")
 	public ResponseEntity<ApiResponse<UserProfile>> getUserProfile(@PathVariable String version,
 			@RequestHeader("Authorization") String token) {
@@ -52,6 +73,11 @@ public class UserController {
 		throw new UnauthorizedVersionException("Given Version is Build is Not Runing");
 	}
 	
+	@Operation(description = "Fetches all the users with the role of Course Adder", summary = "Fetches CourseAdders")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Ok", responseCode = "200"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@GetMapping("/courseadders/getall")
 	public ResponseEntity<ApiResponse<List<UserDto>>> getAllCourseadders(@PathVariable String version) {
 		if (version.equalsIgnoreCase("V1"))

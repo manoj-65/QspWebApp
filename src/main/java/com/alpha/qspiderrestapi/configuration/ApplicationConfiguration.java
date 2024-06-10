@@ -41,6 +41,7 @@ public class ApplicationConfiguration {
 				//should we set this terms of service url
 				.termsOfService("termsOfServiceUrl").license(mitLicense);
 
+
 		return new OpenAPI().info(info).servers(List.of(production,dev));
 	}
 

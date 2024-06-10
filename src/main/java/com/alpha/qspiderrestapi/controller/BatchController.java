@@ -15,6 +15,10 @@ import com.alpha.qspiderrestapi.entity.Batch;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.BatchService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/{version}/batches")
@@ -23,6 +27,12 @@ public class BatchController {
 	@Autowired
 	private BatchService batchService;
 
+	
+	@Operation(description = "A Batch associated with a course and a branch is saved into the database", summary = "Saves a Batch")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@PostMapping
 	public ResponseEntity<ApiResponse<Batch>> saveBatch(@PathVariable String version, @RequestParam long branchId,
 			@RequestParam long courseId, @RequestBody Batch batch) {

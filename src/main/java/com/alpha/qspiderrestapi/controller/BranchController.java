@@ -23,6 +23,10 @@ import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.repository.CityRepo;
 import com.alpha.qspiderrestapi.service.BranchService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/{version}/branches")
@@ -34,6 +38,10 @@ public class BranchController {
 	@Autowired
 	private CityRepo repo;
 
+	@Operation(description = "A Branch is saved into the database", summary = "Saves a Branch")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401") })
 	@PostMapping
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(@RequestBody Branch branch, @PathVariable String version) {
 
@@ -44,6 +52,12 @@ public class BranchController {
 
 	}
 
+	@Operation(description = "Branch Images urls are added to a branch", summary = "Updates the branch images")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
 	@PatchMapping(value = "/uploadImages", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadImagesToGallery(@PathVariable String version,
 			@RequestParam("files") List<MultipartFile> files, @RequestParam long branchId) {
@@ -52,6 +66,12 @@ public class BranchController {
 		throw new UnauthorizedVersionException();
 	}
 
+	@Operation(description = "A Branch icon url is added to a branch", summary = "Updates the branch icon")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
 	@PatchMapping(value = "/uploadIcon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadIcon(@PathVariable String version,
 			@RequestParam("file") MultipartFile file, @RequestParam long branchId) {

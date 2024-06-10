@@ -1,12 +1,16 @@
 package com.alpha.qspiderrestapi.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
@@ -51,6 +55,36 @@ public class SubjectController {
 		
 		if(version.equalsIgnoreCase("V1"))
 			return subjectService.saveSubject(subject);
+		
+		throw new UnauthorizedVersionException("Unauthorized Version");
+		
+	}
+	
+	@GetMapping("/course")
+	public ResponseEntity<ApiResponse<List<Subject>>> fetchAllSubjectsOfCourse(@PathVariable String version,@RequestParam long courseId){
+		
+		if(version.equalsIgnoreCase("V1"))
+			return subjectService.fetchAllSubjectsOfCourse(courseId);
+		
+		throw new UnauthorizedVersionException("Unauthorized Version");
+		
+	}
+	
+	@GetMapping
+	public ResponseEntity<ApiResponse<Subject>> fetchSubjectById(@PathVariable String version,@RequestParam long subjectId){
+		
+		if(version.equalsIgnoreCase("V1"))
+			return subjectService.fetchSubjectById(subjectId);
+		
+		throw new UnauthorizedVersionException("Unauthorized Version");
+		
+	}
+	
+	@GetMapping("/getall")
+	public ResponseEntity<ApiResponse<List<Subject>>> fetchAllSubjects(@PathVariable String version){
+		
+		if(version.equalsIgnoreCase("V1"))
+			return subjectService.fetchAllSubjects();
 		
 		throw new UnauthorizedVersionException("Unauthorized Version");
 		

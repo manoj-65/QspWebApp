@@ -53,7 +53,7 @@ public class CategoryController {
 	 *         an unsupported API version is specified.
 	 * @throws Exception If an unexpected error occurs during the saving process.
 	 */
-	@Operation(description = "A Category associated with a category is saved into the database", summary = "Saves a Category")
+	@Operation(description = "A Category is saved into the database", summary = "Saves a Category")
 	@ApiResponses(value = {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
@@ -120,6 +120,12 @@ public class CategoryController {
 		throw new UnauthorizedVersionException();
 	}
 
+	@Operation(description = "Category icon url is added to a Category", summary = "Updates the Category icon")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
 	@PatchMapping(value = "/uploadIcon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadIcon(@PathVariable String version,
 			@RequestParam("file") MultipartFile file, @RequestParam long categoryId) {
@@ -128,6 +134,12 @@ public class CategoryController {
 		throw new UnauthorizedVersionException();
 	}
 
+	@Operation(description = "Assigns courses to a Category", summary = "Updates associated courses")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "OK", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
 	@PatchMapping(value = "/assigncourses")
 	public ResponseEntity<ApiResponse<Category>> assignCoursesToCategory(@PathVariable String version,
 			@RequestParam long categoryId, @RequestBody List<Long> courseIds) {

@@ -33,14 +33,14 @@ public class CustomAuthenticationManager {
 	private JWTAuthenticationFiler authenticationFiler;
 
 	private static final String[] PUBLIC_URLS = { "/swagger-apis/**", "/swagger-ui/**", "/v3/api-docs/**",
-			"/swagger-ui.html", "/swagger-ui/index.html", "/api/{version}/users/saveUser", "/api/{version}/users/login",
+			"/swagger-ui.html", "/swagger-ui/index.html", "/api/{version}/users/login",
 			"/api/{version}/users/getProfile", "/api/v1/categories/formresponse", "/api/{version}/categories/getall",
-			"/api/{version}/categories/getbyid" };
+			"/api/{version}/categories/getbyid" ,"/api/{version}/subjects/course"};
 
 	private static final String[] ADMIN_URLS = { "/api/{version}/users/saveUser", "/api/{version}/categories",
-			"/api/{version}/subcategories" };
+			"/api/{version}/subcategories","/api/{version}/categories/uploadIcon","/api/{version}/subcategories/uploadIcon" };
 
-	private static final String[] COURSEADDER_URLS = { "/api/{version}/courses",
+	private static final String[] COURSEADDER_URLS = { "/api/{version}/courses","/api/{version}/subjects/getall","/api/{version}/subjects",
 			"/api/{version}/categories/getCategory" };
 
 	@Bean

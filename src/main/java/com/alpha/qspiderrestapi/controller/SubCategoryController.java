@@ -88,6 +88,13 @@ public class SubCategoryController {
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 
+	
+	@Operation(description = "Assigns courses to a Sub-Category", summary = "Updates associated courses")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "OK", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
 	@PatchMapping(value = "/assigncourses")
 	public ResponseEntity<ApiResponse<SubCategory>> assignCoursesToSubCategory(@PathVariable String version,
 			@RequestParam int subCategoryId, @RequestBody List<Long> courseIds) {
@@ -98,6 +105,12 @@ public class SubCategoryController {
 
 	}
 	
+	@Operation(description = "Sub-Category icon url is added to a Sub-Category", summary = "Updates the Sub-Category icon")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
 	@PatchMapping(value = "/uploadIcon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadIcon(@PathVariable String version,
 			@RequestParam("file") MultipartFile file, @RequestParam long subCategoryId) {
