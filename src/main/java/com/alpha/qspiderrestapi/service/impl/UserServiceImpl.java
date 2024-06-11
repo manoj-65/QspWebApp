@@ -50,35 +50,36 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	 public ResponseEntity<ApiResponse<UserResponse>> login(UserRequest userRequest) {
-        log.info("Entering login with userRequest: {}", userRequest);
+	public ResponseEntity<ApiResponse<UserResponse>> login(UserRequest userRequest) {
+		log.info("Entering login with userRequest: {}", userRequest);
 
-            if (userRequest.getEmail() != null && !userRequest.getEmail().isBlank()) {
-                log.info("Trying to login with email: {}", userRequest.getEmail());
-                Optional<User> optionalUser = userDao.findUserByUserEmailAndUserPassword(
-                        userRequest.getEmail(), userRequest.getPassword());
+		if (userRequest.getEmail() != null && !userRequest.getEmail().isBlank() && userRequest.getContact() == null) {
+			log.info("Trying to login with email: {}", userRequest.getEmail());
+			Optional<User> optionalUser = userDao.findUserByUserEmailAndUserPassword(userRequest.getEmail(),
+					userRequest.getPassword());
 
-                if (optionalUser.isPresent()) {
-                    log.info("User found with email: {}", userRequest.getEmail());
-                    return validate(optionalUser.get());
-                } else {
-                    log.error("User with the given email and password not found: {}", userRequest.getEmail());
-                    throw new UserNotFoundException("User with the Given Email and Password Not Found");
-                }
-            } else if (userRequest.getContact() != null && !userRequest.getContact().isBlank()) {
-                log.info("Trying to login with contact: {}", userRequest.getContact());
-                Optional<User> optionalUser = userDao.findUserByUserPhoneNumberAndUserPassword(
-                        Long.parseLong(userRequest.getContact()), userRequest.getPassword());
+			if (optionalUser.isPresent()) {
+				log.info("User found with email: {}", userRequest.getEmail());
+				return validate(optionalUser.get());
+			} else {
+				log.error("User with the given email and password not found: {}", userRequest.getEmail());
+				throw new UserNotFoundException("User with the Given Email and Password Not Found");
+			}
+		} else if (userRequest.getContact() != null && !userRequest.getContact().isBlank()
+				&& userRequest.getContact().length() == 10 && userRequest.getEmail() == null) {
+			log.info("Trying to login with contact: {}", userRequest.getContact());
+			Optional<User> optionalUser = userDao.findUserByUserPhoneNumberAndUserPassword(
+					Long.parseLong(userRequest.getContact()), userRequest.getPassword());
 
-                if (optionalUser.isPresent()) {
-                    log.info("User found with contact: {}", userRequest.getContact());
-                    return validate(optionalUser.get());
-                } else {
-                    log.error("User with the given contact and password not found: {}", userRequest.getContact());
-                    throw new UserNotFoundException("User with the Given Contact and Password Not Found");
-                }
-            }
-		return null;
+			if (optionalUser.isPresent()) {
+				log.info("User found with contact: {}", userRequest.getContact());
+				return validate(optionalUser.get());
+			} else {
+				log.error("User with the given contact and password not found: {}", userRequest.getContact());
+				throw new UserNotFoundException("User with the Given Contact and Password Not Found");
+			}
+		}
+		throw new UserNotFoundException("Invalid Login Credentials");
 	}
 
 	private ResponseEntity<ApiResponse<UserResponse>> validate(User user) {
@@ -100,55 +101,51 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseEntity<ApiResponse<UserProfile>> getUserProfile(String token) {
 		log.info("Entering getUserProfile with token: {}", token);
-		
-		 if (token != null && !token.isBlank()) {
-             token = token.substring(7);
-             log.info("Extracted token: {}", token);
 
-             String userId = (String) jwtTokenProvider.extractAllClaims(token).get("userId");
-             log.info("Extracted userId from token: {}", userId);
+		if (token != null && !token.isBlank()) {
+			token = token.substring(7);
+			log.info("Extracted token: {}", token);
 
-             if (userId != null && !userId.isBlank()) {
-                 Optional<User> optionalUser = userDao.findById(Long.parseLong(userId));
+			String userId = (String) jwtTokenProvider.extractAllClaims(token).get("userId");
+			log.info("Extracted userId from token: {}", userId);
 
-                 if (optionalUser.isPresent()) {
-                     User user = optionalUser.get();
-                     log.info("User found with userId: {}", userId);
+			if (userId != null && !userId.isBlank()) {
+				Optional<User> optionalUser = userDao.findById(Long.parseLong(userId));
 
-                     if (user.getRole().equals(Role.COURSEADDER) || user.getRole().equals(Role.ADMIN)) {
-                         UserProfile userProfile = new UserProfile();
-                         userProfile.setUserId(user.getUserId());
-                         userProfile.setUserName(user.getUserName());
-                         log.info("Returning user profile for userId: {}", userId);
-                         return ResponseUtil.getOk(userProfile);
-                     } else {
-                         log.error("User role is not authorized for userId: {}", userId);
-                         throw new UserNotFoundException("User Not Authorized");
-                     }
-                 } else {
-                     log.error("User not found with userId: {}", userId);
-                     throw new UserNotFoundException("User Not Found");
-                 }
-             } else {
-                 log.error("Invalid token, userId is null or blank");
-                 throw new UserNotFoundException("Invalid Token");
-             }
-         } else {
-             log.error("Token is null or blank");
-             throw new UserNotFoundException("Token Not Exists");
-         }
+				if (optionalUser.isPresent()) {
+					User user = optionalUser.get();
+					log.info("User found with userId: {}", userId);
+
+					if (user.getRole().equals(Role.COURSEADDER) || user.getRole().equals(Role.ADMIN)) {
+						UserProfile userProfile = new UserProfile();
+						userProfile.setUserId(user.getUserId());
+						userProfile.setUserName(user.getUserName());
+						log.info("Returning user profile for userId: {}", userId);
+						return ResponseUtil.getOk(userProfile);
+					} else {
+						log.error("User role is not authorized for userId: {}", userId);
+						throw new UserNotFoundException("User Not Authorized");
+					}
+				} else {
+					log.error("User not found with userId: {}", userId);
+					throw new UserNotFoundException("User Not Found");
+				}
+			} else {
+				log.error("Invalid token, userId is null or blank");
+				throw new UserNotFoundException("Invalid Token");
+			}
+		} else {
+			log.error("Token is null or blank");
+			throw new UserNotFoundException("Token Not Exists");
+		}
 	}
 
 	@Override
 	public ResponseEntity<ApiResponse<List<UserDto>>> getAllCourseAdders() {
 		List<User> allCourseAdders = userDao.getAllCourseAdders();
 		List<UserDto> userDtos = new ArrayList();
-		allCourseAdders.forEach(user->userDtos.add(UserDtoMapper.mapUserToUserDto(user)));
-		return ResponseUtil.getOk(userDtos);	
+		allCourseAdders.forEach(user -> userDtos.add(UserDtoMapper.mapUserToUserDto(user)));
+		return ResponseUtil.getOk(userDtos);
 	}
-	
-	
 
 }
-
-
