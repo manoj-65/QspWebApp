@@ -23,11 +23,13 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,8 +40,8 @@ public class Branch {
 	private long branchId;
 	@Column(unique = true)
 	private String branchTitle;
-	
-//	private String displayName;
+
+	private String displayName;
 
 	@Enumerated(EnumType.STRING)
 	private Organization branchType;

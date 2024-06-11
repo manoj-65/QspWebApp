@@ -57,7 +57,7 @@ public class BranchController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
-			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400") })
 	@PatchMapping(value = "/uploadImages", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadImagesToGallery(@PathVariable String version,
 			@RequestParam("files") List<MultipartFile> files, @RequestParam long branchId) {
@@ -71,16 +71,16 @@ public class BranchController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
-			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400") })
 	@PatchMapping(value = "/uploadIcon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadIcon(@PathVariable String version,
 			@RequestParam("file") MultipartFile file, @RequestParam long branchId) {
 		if (version.equals("v1"))
 			return branchService.uploadIcon(file, branchId);
-		throw new UnauthorizedVersionException();	
+		throw new UnauthorizedVersionException();
 	}
 
-	@GetMapping
+	@GetMapping("/getAll")
 	public List<CityCourseBranchView> fetchByBranch(@PathVariable String version) {
 		if (version.equals("v1"))
 			return repo.findAll();
