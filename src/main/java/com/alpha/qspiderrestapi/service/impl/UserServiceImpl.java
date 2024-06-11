@@ -53,7 +53,8 @@ public class UserServiceImpl implements UserService {
 	public ResponseEntity<ApiResponse<UserResponse>> login(UserRequest userRequest) {
 		log.info("Entering login with userRequest: {}", userRequest);
 
-		if (userRequest.getEmail() != null && !userRequest.getEmail().isBlank() && userRequest.getContact() == null) {
+		if (userRequest.getEmail() != null && !userRequest.getEmail().isBlank()
+				&& (userRequest.getContact() == null || userRequest.getContact().isBlank())) {
 			log.info("Trying to login with email: {}", userRequest.getEmail());
 			Optional<User> optionalUser = userDao.findUserByUserEmailAndUserPassword(userRequest.getEmail(),
 					userRequest.getPassword());
@@ -66,10 +67,17 @@ public class UserServiceImpl implements UserService {
 				throw new UserNotFoundException("User with the Given Email and Password Not Found");
 			}
 		} else if (userRequest.getContact() != null && !userRequest.getContact().isBlank()
-				&& userRequest.getContact().length() == 10 && userRequest.getEmail() == null) {
+				&& userRequest.getContact().length() == 10
+				&& (userRequest.getEmail() == null || userRequest.getEmail().isBlank())) {
 			log.info("Trying to login with contact: {}", userRequest.getContact());
-			Optional<User> optionalUser = userDao.findUserByUserPhoneNumberAndUserPassword(
-					Long.parseLong(userRequest.getContact()), userRequest.getPassword());
+			long phoneNumber = 0;
+			try {
+				phoneNumber = Long.parseLong(userRequest.getContact());
+			} catch (Exception e) {
+				throw new UserNotFoundException("Enter A Valid PhoneNumber");
+			}
+			Optional<User> optionalUser = userDao.findUserByUserPhoneNumberAndUserPassword(phoneNumber,
+					userRequest.getPassword());
 
 			if (optionalUser.isPresent()) {
 				log.info("User found with contact: {}", userRequest.getContact());
