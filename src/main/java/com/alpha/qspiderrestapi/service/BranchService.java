@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 
 public interface BranchService {
@@ -15,4 +16,6 @@ public interface BranchService {
 	ResponseEntity<ApiResponse<String>> uploadImagesToGallery(List<MultipartFile> files, long branchId);
 
 	ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile file, long branchId);
+	
+	ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll();
 }

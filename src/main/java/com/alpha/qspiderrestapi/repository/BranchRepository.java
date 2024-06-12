@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.alpha.qspiderrestapi.dto.CityCourseBranchView;
 import com.alpha.qspiderrestapi.entity.Branch;
+import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
 
 public interface BranchRepository extends JpaRepository<Branch, Long> {
 

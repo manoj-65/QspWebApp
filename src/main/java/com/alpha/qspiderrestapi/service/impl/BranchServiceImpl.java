@@ -1,6 +1,9 @@
 package com.alpha.qspiderrestapi.service.impl;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -10,8 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dao.BranchDao;
+import com.alpha.qspiderrestapi.dao.CityCourseBranchViewDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.BranchDto;
+import com.alpha.qspiderrestapi.dto.CityDto;
+import com.alpha.qspiderrestapi.dto.CountryDto;
+import com.alpha.qspiderrestapi.dto.CourseDto;
 import com.alpha.qspiderrestapi.entity.Branch;
+import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
 import com.alpha.qspiderrestapi.service.BranchService;
@@ -28,6 +37,9 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private AWSS3Service awss3Service;
+	
+	@Autowired
+	private CityCourseBranchViewDao viewDao;
 
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch) {
@@ -82,5 +94,59 @@ public class BranchServiceImpl implements BranchService {
 		log.error("Branch not found with ID: {}", branchId);
 		throw new IdNotFoundException("Branch With the Given Id Not Found");
 	}
+	
+	
+	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll() {
+		List<CityCourseBranchView> view = viewDao.fetchAll();
+	        // Group by country
+	        Map<String, Map<String, Map<Long, List<CityCourseBranchView>>>> groupedData = view.stream()
+	                .collect(Collectors.groupingBy(CityCourseBranchView::getCountry,
+	                        Collectors.groupingBy(CityCourseBranchView::getCity,
+	                        Collectors.groupingBy(CityCourseBranchView::getCourseId))));
+
+	        List<CountryDto> countries = new ArrayList<>();
+
+	        groupedData.forEach((countryName, citiesMap) -> {
+	        	CountryDto country = new CountryDto();
+	            country.setCountryName(countryName);
+	            List<CityDto> cities = new ArrayList<>();
+
+	            citiesMap.forEach((cityName, coursesMap) -> {
+	            	CityDto city = new CityDto();
+	                city.setCityName(cityName);
+	                List<CourseDto> courses = new ArrayList<>();
+
+	                coursesMap.forEach((courseId, branchesList) -> {
+	                	CourseDto course = new CourseDto();
+	                    course.setCourseId(courseId);
+	                    course.setCourseName(branchesList.get(0).getCourseName());
+	                    List<BranchDto> branches = branchesList.stream().map(branchView -> {
+	                        BranchDto branch = new BranchDto();
+	                        branch.setBranchId(branchView.getBranchId());
+	                        branch.setBranchName(branchView.getDisplayName());
+	                        branch.setBranchImage(branchView.getBranchImage());
+	                        branch.setLocation(branchView.getLocation());
+	                        branch.setPhoneNumber(branchView.getContacts());
+	                        branch.setUpcomingBatches(branchView.getUpcomingBatches());
+	                        branch.setOngoingBatches(branchView.getUpcomingBatches());
+	                        return branch;
+	                    }).sorted(Comparator.comparing(BranchDto::getBranchId)).collect(Collectors.toList());
+	                    course.setBranches(branches);
+	                    courses.add(course);
+	                });
+//	                courses.stream().sorted((a,b)->(int)a.getCourseId()-(int)b.getCourseId());
+	                courses.sort(Comparator.comparing(CourseDto::getCourseId));
+	                city.setCourses(courses);
+	                cities.add(city);
+	            });
+	            cities.sort(Comparator.comparing(CityDto::getCityName));
+	            country.setCities(cities);
+	            countries.add(country);
+	        });
+	        countries.sort(Comparator.comparing(CountryDto::getCountryName));
+		return ResponseUtil.getOk(countries);
+	}
+	
+	
 
 }

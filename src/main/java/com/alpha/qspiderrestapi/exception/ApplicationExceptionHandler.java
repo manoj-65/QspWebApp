@@ -36,12 +36,19 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<ApiResponse<String>> ConstraintViolationException(DataIntegrityViolationException exception) {
-		return ResponseUtil.getBadRequest("Constraint is being violated");
+		return ResponseUtil.getBadRequest("Constraint is being violated "+exception.getMessage());
 	}
 
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<ApiResponse<String>> handleUserNotFoundException(UserNotFoundException exception) {
 		return ResponseUtil.getBadRequest(exception.getMessage());
 	}
+	
+	@ExceptionHandler(InvaildCredentialsException.class)
+	public ResponseEntity<ApiResponse<String>> handleInvaildCredentialsExceptions(InvaildCredentialsException exception) {
+		return ResponseUtil.getForbidden(exception.getMessage());
+	}
+	
+	
 
 }

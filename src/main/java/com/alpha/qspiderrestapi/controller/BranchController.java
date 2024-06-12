@@ -17,10 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
-import com.alpha.qspiderrestapi.dto.CityCourseBranchView;
+import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
-import com.alpha.qspiderrestapi.repository.CityRepo;
 import com.alpha.qspiderrestapi.service.BranchService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,10 +33,7 @@ public class BranchController {
 
 	@Autowired
 	private BranchService branchService;
-
-	@Autowired
-	private CityRepo repo;
-
+	
 	@Operation(description = "A Branch is saved into the database", summary = "Saves a Branch")
 	@ApiResponses(value = {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
@@ -81,9 +77,9 @@ public class BranchController {
 	}
 
 	@GetMapping("/getAll")
-	public List<CityCourseBranchView> fetchByBranch(@PathVariable String version) {
+	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll(@PathVariable String version) {
 		if (version.equals("v1"))
-			return repo.findAll();
+			return branchService.fetchAll();
 
 		throw new UnauthorizedVersionException();
 	}

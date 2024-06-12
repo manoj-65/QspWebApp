@@ -42,7 +42,7 @@ public class JWTAuthenticationFiler extends OncePerRequestFilter {
 			try {
 				username = tokenProvider.extractUsername(jwtToken);
 			} catch (Exception e) {
-				throw new InvaildCredentialsException("Invalied Credentials");
+				throw new InvaildCredentialsException("Invalid Credentials");
 			}
 			UserDetails userDetails = applicationUserDetailsService.loadUserByUsername(username);
 

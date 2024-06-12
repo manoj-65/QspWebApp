@@ -64,5 +64,14 @@ public class ResponseUtil {
 
 		return ResponseEntity.status(structure.getStatus()).body(structure);
 	}
+	
+	public static <T> ResponseEntity<ApiResponse<T>> getForbidden(T t) {
+		ApiResponse<T> structure = initResponse();
+		structure.setStatusCode(HttpStatus.FORBIDDEN.value());
+		structure.setStatus(HttpStatus.FORBIDDEN);
+		structure.setData(t);
+
+		return ResponseEntity.status(structure.getStatus()).body(structure);
+	}
 
 }
