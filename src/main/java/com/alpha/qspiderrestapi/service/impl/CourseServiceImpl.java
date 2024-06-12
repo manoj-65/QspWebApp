@@ -14,11 +14,13 @@ import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dao.SubjectDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.Subject;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
+import com.alpha.qspiderrestapi.modelmapper.CourseMapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
 import com.alpha.qspiderrestapi.service.CourseService;
 import com.alpha.qspiderrestapi.util.ChapterUtil;
@@ -161,13 +163,15 @@ public class CourseServiceImpl implements CourseService {
 	 *                   during data access.
 	 */
 	@Override
-	public ResponseEntity<ApiResponse<Course>> fetchCourseById(long courseId) {
+	public ResponseEntity<ApiResponse<CourseIdResponse>> fetchCourseById(long courseId) {
 		log.info("Entered the fetchCourseById method");
 		Optional<Course> optional = courseDao.fetchCourseById(courseId);
+//		System.out.println(optional);
 		if (optional.isPresent()) {
 			Course course = optional.get();
+			CourseIdResponse courseResponse = CourseMapper.mapToCourseDto(course);
 			log.info("Course with the id: {} fetched ", courseId);
-			return ResponseUtil.getOk(course);
+			return ResponseUtil.getOk(courseResponse);
 		} else {
 			log.error("Course with id: {} not found", courseId);
 			throw new IdNotFoundException("No Course Found with the Given ID");

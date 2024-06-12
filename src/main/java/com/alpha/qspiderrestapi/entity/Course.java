@@ -58,12 +58,12 @@ public class Course {
 	@CollectionTable(name = "mode_course", joinColumns = @JoinColumn(name = "course_id"))
 	@Column(name = "mode")
 	@Enumerated(EnumType.STRING)
-	private List<Mode> mode;
-	private String courseSummary;
-
-	private String courseAbout;
-
-	private String courseHighlight;
+		private List<Mode> mode;
+		private String courseSummary;
+	
+		private String courseAbout;
+	
+		private String courseHighlight;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "course_subject", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))

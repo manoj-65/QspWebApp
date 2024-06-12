@@ -70,6 +70,7 @@ public class CustomAuthenticationManager {
 		authenticationProvider.setUserDetailsService(userDetailsService);
 		authenticationProvider.setPasswordEncoder(passwordEncoder());
 		return authenticationProvider;
+		
 	}
 
 	@Bean
