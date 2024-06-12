@@ -114,6 +114,7 @@ public class BranchServiceImpl implements BranchService {
 	            citiesMap.forEach((cityName, coursesMap) -> {
 	            	CityDto city = new CityDto();
 	                city.setCityName(cityName);
+	                city.setCityIcon(coursesMap.values().iterator().next().get(0).getCityIconUrl());
 	                List<CourseDto> courses = new ArrayList<>();
 
 	                coursesMap.forEach((courseId, branchesList) -> {
