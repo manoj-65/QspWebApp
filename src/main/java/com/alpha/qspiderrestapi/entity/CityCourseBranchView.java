@@ -19,6 +19,7 @@ public class CityCourseBranchView {
 	private long branchId;
 	private String country;
 	private String city;
+	private String cityIconUrl;
 	private long courseId;
 	private String courseName;
 	private String displayName;
