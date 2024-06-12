@@ -14,6 +14,8 @@ import com.alpha.qspiderrestapi.entity.FeedBack;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.FeedbackSevice;
 
+import jakarta.validation.Valid;
+
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/{version}/feedback")
@@ -24,7 +26,7 @@ public class FeedbackController {
 
 	@PostMapping
 	public ResponseEntity<ApiResponse<FeedBack>> saveFeedBack(@PathVariable String version,
-			@RequestBody FeedBack feedBack) {
+			@Valid @RequestBody FeedBack feedBack) {
 		if (version.equalsIgnoreCase("v1"))
 			return feedbackSevice.saveFeedback(feedBack);
 		throw new UnauthorizedVersionException("Unauthorized Version");
