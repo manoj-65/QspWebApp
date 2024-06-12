@@ -28,8 +28,8 @@ public class CityServiceImpl implements CityService{
 	@Override
 	public ResponseEntity<ApiResponse<City>> saveCity(MultipartFile cityIcon, MultipartFile cityImage,
 			String cityName) {
-		String iconFolder = "CITY/ICON";
-		String imageFolder = "CITY/IMAGE";
+		String iconFolder = "CITY/ICON/";
+		String imageFolder = "CITY/IMAGE/";
 		City city = new City();;
 		if(addressDao.isCityPresent(cityName)) {
 			iconFolder += cityName;
