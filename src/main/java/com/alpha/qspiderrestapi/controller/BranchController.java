@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.entity.Branch;
-import com.alpha.qspiderrestapi.entity.City;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.BranchService;
 
