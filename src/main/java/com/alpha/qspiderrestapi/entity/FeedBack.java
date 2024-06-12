@@ -1,13 +1,16 @@
 package com.alpha.qspiderrestapi.entity;
 
+import com.alpha.qspiderrestapi.entity.validators.ValidEmail;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,12 +21,14 @@ public class FeedBack {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long feedBackId;
+	@NotBlank(message = "Ensure that the User name is not null. Kindly enter a valid name.")
 	private String userName;
-	@Min(value = 5000000000l, message = "Ensure that the PhoneNumber startes with 5 on words and having 10 Digit. Kindly enter a valid PhoneNumber.")
-	@Max(value = 9999999999l, message = "Ensure that the  PhoneNumber is only 10 Digit. Kindly enter a valid PhoneNumber.")
-	private Long mobileNumber;
-	@Email(message = "Ensure that the  Email is not null. Kindly enter a valid Email.")
+	@NotNull(message = "Ensure that the contact details not null. Kindly enter a valid contact details.")
+	@OneToOne(cascade = CascadeType.ALL)
+	private Contact contact;
+	@ValidEmail(message = "Ensure that the  Email is not null. Kindly enter a valid Email.")
 	private String email;
 	@Column(columnDefinition = "TEXT")
+	@NotBlank(message = "Ensure that the Message is not null. Kindly enter a valid Feed Back.")
 	private String message;
 }
