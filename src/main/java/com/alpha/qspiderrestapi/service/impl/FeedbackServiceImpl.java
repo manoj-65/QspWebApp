@@ -36,7 +36,7 @@ public class FeedbackServiceImpl implements FeedbackSevice {
 
 	}
 
-	public static boolean isValidPhoneNumber(String phoneNumber) {
+	public boolean isValidPhoneNumber(String phoneNumber) {
 		log.info("Validating the Given Phone Number is Valid or not");
 		PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
 		try {
