@@ -42,4 +42,9 @@ public class AddressDaoImpl implements AddressDao {
 		return addressRepository.findByAddressId(addressId);
 	}
 
+	@Override
+	public boolean isCityPresent(String cityName) {
+		return (addressRepository.countAddressByCity(cityName)>=1l);
+	}
+
 }

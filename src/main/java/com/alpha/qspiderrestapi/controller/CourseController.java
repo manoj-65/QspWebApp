@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.CourseService;
@@ -119,7 +120,7 @@ public class CourseController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@GetMapping
-	public ResponseEntity<ApiResponse<Course>> fetchCourseById(@RequestParam long courseId,
+	public ResponseEntity<ApiResponse<CourseIdResponse>> fetchCourseById(@RequestParam long courseId,
 			@PathVariable String version) {
 		if (version.equals("v1"))
 			return courseService.fetchCourseById(courseId);
@@ -164,5 +165,6 @@ public class CourseController {
 
 		throw new UnauthorizedVersionException();
 	}
+
 
 }

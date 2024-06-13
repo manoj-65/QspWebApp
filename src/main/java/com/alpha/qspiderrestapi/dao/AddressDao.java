@@ -16,4 +16,6 @@ public interface AddressDao {
 	void deleteAddress(long addressId);
 	
 	long isAddressPresent(long addressId);
+
+	boolean isCityPresent(String cityName);
 }
