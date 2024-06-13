@@ -95,4 +95,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
 	}
 
+	@ExceptionHandler(InvalidPhoneNumberException.class)
+	public ResponseEntity<ApiResponse<String>> handleInvalidPhoneNumberException(
+			InvalidPhoneNumberException exception) {
+		return ResponseUtil.getBadRequest(exception.getMessage());
+	}
+
 }
