@@ -53,7 +53,8 @@ public class CourseMapper {
 		return CourseIdResponse.builder().courseId(course.getCourseId()).courseName(course.getCourseName())
 				.mode(course.getMode()).courseSummary(course.getCourseSummary()).courseAbout(course.getCourseAbout())
 				.courseHighlight(course.getCourseHighlight()).faqs(course.getFaqs())
-				.courseImage(course.getCourseImage()).branchType(course.getBranchType()).build();
+				.courseImage(course.getCourseImage()).branchType(course.getBranchType())
+				.courseImage(course.getCourseImage()).build();
 
 	}
 
