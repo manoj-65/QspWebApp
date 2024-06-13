@@ -6,6 +6,7 @@ import java.util.List;
 import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.Subject;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class CourseIdResponse {
 	private String courseAbout;
 	private String courseHighlight;
 	private List<Faq> faqs = new ArrayList<Faq>();
+	private List<Organization> branchType;
 	private String courseImage;
 	private List<BranchCourseDto> branches;
 	private List<BatchDto> onlineBatches;
