@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.List;
@@ -291,6 +285,36 @@ public class CourseServiceImpl implements CourseService {
 
 		return ResponseUtil.getNoContent("Course Deleted");
 
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> uploadImages(MultipartFile file, long courseId) {
+		log.info("Uploading icon for course ID: {}", courseId);
+
+		String folder = "COURSE/";
+		Optional<Course> optionalCourse = courseDao.fetchCourseById(courseId);
+
+		if (optionalCourse.isPresent()) {
+			Course course = optionalCourse.get();
+			folder += course.getCourseName();
+
+			log.info("Uploading image file to folder: {}", folder);
+			String imageUrl = awss3Service.uploadFile(file, folder);
+
+			if (!imageUrl.isEmpty()) {
+				log.info("File uploaded successfully. URL: {}", imageUrl);
+				course.setCourseImage(imageUrl);
+				courseDao.saveCourse(course);
+				log.info("Course image updated successfully for course ID: {}", courseId);
+				return ResponseUtil.getCreated(imageUrl);
+			}
+
+			log.error("Failed to upload icon due to admin restriction.");
+			throw new NullPointerException("Icon can't be uploaded due to admin restriction");
+		}
+
+		log.error("Course with ID {} not found", courseId);
+		throw new IdNotFoundException("Course With the Given Id Not Found");
 	}
 
 }
