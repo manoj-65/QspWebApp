@@ -37,7 +37,7 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private AWSS3Service awss3Service;
-	
+
 	@Autowired
 	private CityCourseBranchViewDao viewDao;
 
@@ -46,7 +46,7 @@ public class BranchServiceImpl implements BranchService {
 		log.info("Saving branch: {}", branch);
 		branch.setBranchFaqs(
 				branch.getBranchFaqs().stream().peek((faqs) -> faqs.setBranch(branch)).collect(Collectors.toList()));
-		 log.info("Branch saved successfully: {}", branch);
+		log.info("Branch saved successfully: {}", branch);
 		return ResponseUtil.getCreated(branchDao.saveBranch(branch));
 	}
 
@@ -94,60 +94,56 @@ public class BranchServiceImpl implements BranchService {
 		log.error("Branch not found with ID: {}", branchId);
 		throw new IdNotFoundException("Branch With the Given Id Not Found");
 	}
-	
-	
+
 	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll() {
 		List<CityCourseBranchView> view = viewDao.fetchAll();
-	        // Group by country
-	        Map<String, Map<String, Map<Long, List<CityCourseBranchView>>>> groupedData = view.stream()
-	                .collect(Collectors.groupingBy(CityCourseBranchView::getCountry,
-	                        Collectors.groupingBy(CityCourseBranchView::getCity,
-	                        Collectors.groupingBy(CityCourseBranchView::getCourseId))));
+		// Group by country
+		Map<String, Map<String, Map<Long, List<CityCourseBranchView>>>> groupedData = view.stream()
+				.collect(Collectors.groupingBy(CityCourseBranchView::getCountry, Collectors.groupingBy(
+						CityCourseBranchView::getCity, Collectors.groupingBy(CityCourseBranchView::getCourseId))));
 
-	        List<CountryDto> countries = new ArrayList<>();
+		List<CountryDto> countries = new ArrayList<>();
 
-	        groupedData.forEach((countryName, citiesMap) -> {
-	        	CountryDto country = new CountryDto();
-	            country.setCountryName(countryName);
-	            List<CityDto> cities = new ArrayList<>();
+		groupedData.forEach((countryName, citiesMap) -> {
+			CountryDto country = new CountryDto();
+			country.setCountryName(countryName);
+			List<CityDto> cities = new ArrayList<>();
 
-	            citiesMap.forEach((cityName, coursesMap) -> {
-	            	CityDto city = new CityDto();
-	                city.setCityName(cityName);
-	                city.setCityIcon(coursesMap.values().iterator().next().get(0).getCityIconUrl());
-	                List<CourseDto> courses = new ArrayList<>();
+			citiesMap.forEach((cityName, coursesMap) -> {
+				CityDto city = new CityDto();
+				city.setCityName(cityName);
+				city.setCityIcon(coursesMap.values().iterator().next().get(0).getCityIconUrl());
+				List<CourseDto> courses = new ArrayList<>();
 
-	                coursesMap.forEach((courseId, branchesList) -> {
-	                	CourseDto course = new CourseDto();
-	                    course.setCourseId(courseId);
-	                    course.setCourseName(branchesList.get(0).getCourseName());
-	                    List<BranchDto> branches = branchesList.stream().map(branchView -> {
-	                        BranchDto branch = new BranchDto();
-	                        branch.setBranchId(branchView.getBranchId());
-	                        branch.setBranchName(branchView.getDisplayName());
-	                        branch.setBranchImage(branchView.getBranchImage());
-	                        branch.setLocation(branchView.getLocation());
-	                        branch.setPhoneNumber(branchView.getContacts());
-	                        branch.setUpcomingBatches(branchView.getUpcomingBatches());
-	                        branch.setOngoingBatches(branchView.getUpcomingBatches());
-	                        return branch;
-	                    }).sorted(Comparator.comparing(BranchDto::getBranchId)).collect(Collectors.toList());
-	                    course.setBranches(branches);
-	                    courses.add(course);
-	                });
+				coursesMap.forEach((courseId, branchesList) -> {
+					CourseDto course = new CourseDto();
+					course.setCourseId(courseId);
+					course.setCourseName(branchesList.get(0).getCourseName());
+					List<BranchDto> branches = branchesList.stream().map(branchView -> {
+						BranchDto branch = new BranchDto();
+						branch.setBranchId(branchView.getBranchId());
+						branch.setBranchName(branchView.getDisplayName());
+						branch.setBranchImage(branchView.getBranchImage());
+						branch.setLocation(branchView.getLocation());
+						branch.setPhoneNumber(branchView.getContacts());
+						branch.setUpcomingBatches(branchView.getUpcomingBatches());
+						branch.setOngoingBatches(branchView.getUpcomingBatches());
+						return branch;
+					}).sorted(Comparator.comparing(BranchDto::getBranchId)).collect(Collectors.toList());
+					course.setBranches(branches);
+					courses.add(course);
+				});
 //	                courses.stream().sorted((a,b)->(int)a.getCourseId()-(int)b.getCourseId());
-	                courses.sort(Comparator.comparing(CourseDto::getCourseId));
-	                city.setCourses(courses);
-	                cities.add(city);
-	            });
-	            cities.sort(Comparator.comparing(CityDto::getCityName));
-	            country.setCities(cities);
-	            countries.add(country);
-	        });
-	        countries.sort(Comparator.comparing(CountryDto::getCountryName));
+				courses.sort(Comparator.comparing(CourseDto::getCourseId));
+				city.setCourses(courses);
+				cities.add(city);
+			});
+			cities.sort(Comparator.comparing(CityDto::getCityName));
+			country.setCities(cities);
+			countries.add(country);
+		});
+		countries.sort(Comparator.comparing(CountryDto::getCountryName));
 		return ResponseUtil.getOk(countries);
 	}
-	
-	
 
 }

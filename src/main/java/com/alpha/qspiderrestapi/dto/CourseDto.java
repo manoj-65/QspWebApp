@@ -10,4 +10,5 @@ public class CourseDto {
 	private long courseId;
 	private String courseName;
 	private List<BranchDto> branches;
+
 }

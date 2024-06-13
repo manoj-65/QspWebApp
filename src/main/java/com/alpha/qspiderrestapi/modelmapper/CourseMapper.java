@@ -3,6 +3,7 @@ package com.alpha.qspiderrestapi.modelmapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseResponse;
 import com.alpha.qspiderrestapi.entity.Course;
 
@@ -44,6 +45,15 @@ public class CourseMapper {
 
 		courses.forEach(response -> responseList.add(mapToCourseResponse(response)));
 		return responseList;
+
+	}
+
+	public static CourseIdResponse mapToCourseDto(Course course) {
+
+		return CourseIdResponse.builder().courseId(course.getCourseId()).courseName(course.getCourseName())
+				.mode(course.getMode()).courseSummary(course.getCourseSummary()).courseAbout(course.getCourseAbout())
+				.courseHighlight(course.getCourseHighlight()).faqs(course.getFaqs())
+				.courseImage(course.getCourseImage()).build();
 
 	}
 

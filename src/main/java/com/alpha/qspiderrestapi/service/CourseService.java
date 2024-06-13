@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.entity.Course;
 
 public interface CourseService {
@@ -14,7 +15,7 @@ public interface CourseService {
 
 	ResponseEntity<ApiResponse<List<Course>>> fetchAllCourse();
 
-	ResponseEntity<ApiResponse<Course>> fetchCourseById(long courseId);
+	ResponseEntity<ApiResponse<CourseIdResponse>> fetchCourseById(long courseId);
 
 	ResponseEntity<ApiResponse<Course>> assignSubjectsToCourse(long courseId, List<Long> subjectIds);
 
