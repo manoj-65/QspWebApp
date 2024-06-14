@@ -1,5 +1,6 @@
 package com.alpha.qspiderrestapi.dao;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,6 @@ public interface BatchDao {
 
 	int updateBatchStatus(BatchStatus fromStatus, BatchStatus toStatus);
 
-	void createBatches(String branchType, List<Long> courseIds);
+	void createBatches(String branchType, List<Long> courseIds, Time startTime);
 
 }

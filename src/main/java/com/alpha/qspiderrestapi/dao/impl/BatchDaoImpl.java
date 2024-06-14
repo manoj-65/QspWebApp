@@ -1,5 +1,6 @@
 package com.alpha.qspiderrestapi.dao.impl;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,8 +59,8 @@ public class BatchDaoImpl implements BatchDao {
 	}
 
 	@Override
-	public void createBatches(String branchType, List<Long> courseIds) {
-		batchRepository.createBatches(branchType, courseIds.toArray(new Long[0]));
+	public void createBatches(String branchType, List<Long> courseIds,Time startTime) {
+		batchRepository.createBatches(branchType, courseIds.toArray(new Long[0]),startTime);
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.alpha.qspiderrestapi.repository;
 
+import java.sql.Time;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,7 +26,7 @@ public interface BatchRepository extends JpaRepository<Batch, Long> {
 	int updateBatchStatus(String fromStatus, String toStatus);
 	
 	@Transactional
-	@Query(value = "SELECT create_batches(:branchType, CAST(:courseIds AS bigint[]))", nativeQuery = true)
-    void createBatches(@Param("branchType") String branchType, @Param("courseIds") Long[] courseIds);
+	@Query(value = "SELECT create_batches(:branchType, CAST(:courseIds AS bigint[]),:startTime)", nativeQuery = true)
+    void createBatches(@Param("branchType") String branchType, @Param("courseIds") Long[] courseIds,Time startTime);
 
 }
