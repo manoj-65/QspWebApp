@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.alpha.qspiderrestapi.entity.validators.ValidEmail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -30,6 +31,7 @@ public class Email {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long emailId;
 	@Column(unique = true)
+	@ValidEmail(message = "Ensure that the  Email is not null. Kindly enter a valid Email.")
 	private String email;
 
 	@ManyToOne
