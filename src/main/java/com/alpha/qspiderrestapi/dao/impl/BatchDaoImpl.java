@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.alpha.qspiderrestapi.dao.BatchDao;
 import com.alpha.qspiderrestapi.entity.Batch;
+import com.alpha.qspiderrestapi.entity.enums.BatchStatus;
 import com.alpha.qspiderrestapi.repository.BatchRepository;
 
 @Repository
@@ -39,6 +40,26 @@ public class BatchDaoImpl implements BatchDao {
 	@Override
 	public long isBatchPresent(long batchId) {
 		return batchRepository.findByBatchId(batchId);
+	}
+
+	@Override
+	public List<Batch> fetchAllUpcomingAndOngoingBatches() {
+		return batchRepository.fetchAllUpcomingAndOngoingBatches();
+	}
+
+	@Override
+	public List<Batch> saveAll(List<Batch> batches) {
+		return batchRepository.saveAll(batches);
+	}
+
+	@Override
+	public int updateBatchStatus(BatchStatus fromStatus, BatchStatus toStatus) {
+		return batchRepository.updateBatchStatus(fromStatus.toString(), toStatus.toString());
+	}
+
+	@Override
+	public void createBatches(String branchType, List<Long> courseIds) {
+		batchRepository.createBatches(branchType, courseIds.toArray(new Long[0]));
 	}
 
 }

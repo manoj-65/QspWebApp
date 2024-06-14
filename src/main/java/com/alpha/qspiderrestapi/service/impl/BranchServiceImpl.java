@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alpha.qspiderrestapi.dao.BranchDao;
 import com.alpha.qspiderrestapi.dao.CityCourseBranchViewDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.BranchByIdDto;
 import com.alpha.qspiderrestapi.dto.BranchDto;
 import com.alpha.qspiderrestapi.dto.CityDto;
 import com.alpha.qspiderrestapi.dto.CountryDto;
@@ -144,6 +145,12 @@ public class BranchServiceImpl implements BranchService {
 		});
 		countries.sort(Comparator.comparing(CountryDto::getCountryName));
 		return ResponseUtil.getOk(countries);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<BranchByIdDto>>> fetchById(long branchId, long courseId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
