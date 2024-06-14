@@ -119,7 +119,7 @@ public class CourseController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Ok", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
-	@GetMapping
+	@GetMapping("/getbyid")
 	public ResponseEntity<ApiResponse<CourseIdResponse>> fetchCourseById(@RequestParam long courseId,
 			@PathVariable String version) {
 		if (version.equals("v1"))
@@ -148,7 +148,7 @@ public class CourseController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
-			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400") })
 	@PatchMapping(value = "/uploadIcon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadIcon(@PathVariable String version,
 			@RequestParam("file") MultipartFile file, @RequestParam long courseId) {
@@ -166,5 +166,12 @@ public class CourseController {
 		throw new UnauthorizedVersionException();
 	}
 
+	@PatchMapping(value = "/uploadImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<ApiResponse<String>> uploadImage(@PathVariable String version,
+			@RequestParam("file") MultipartFile file, @RequestParam long courseId) {
+		if (version.equals("v1"))
+			return courseService.uploadImages(file, courseId);
+		throw new UnauthorizedVersionException();
+	}
 
 }
