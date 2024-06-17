@@ -39,9 +39,9 @@ public class BranchDaoImpl implements BranchDao {
 
 	@Override
 	public boolean isBranchPresent(long branchId) {
-		return branchRepository.findByBranchId(branchId)!=null;
+		return branchRepository.findByBranchId(branchId) != null;
 	}
-	
+
 	@Override
 	public Branch findBranchWithUpcomingBatches(long branchId) {
 		return branchRepository.findBranchWithUpcomingBatches(branchId);

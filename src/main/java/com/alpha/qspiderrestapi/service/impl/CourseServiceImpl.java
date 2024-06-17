@@ -175,6 +175,7 @@ public class CourseServiceImpl implements CourseService {
 		if (optional.isPresent()) {
 			Course course = optional.get();
 			CourseIdResponse courseResponse = CourseMapper.mapToCourseDto(course);
+			
 			courseResponse.setBranches(branchDao.fetchAllBranchDto());
 			System.out.println(fetchAllCourse());
 			log.info("Course with the id: {} fetched ", courseId);
