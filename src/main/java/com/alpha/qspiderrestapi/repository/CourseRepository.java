@@ -1,7 +1,5 @@
 package com.alpha.qspiderrestapi.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -51,7 +49,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 	@Modifying
 	@Query(value = "delete from category_course where  course_id = :courseId", nativeQuery = true)
 	int removeCourseAndCategoryById(@Param("courseId") long courseId);
-	
+
 //    @Query("SELECT c FROM Course c JOIN c.batches bt WHERE bt.batchStatus = 'UPCOMING' AND bt.branch.branchId = :branchId")
 //    List<Course> findCoursesWithUpcomingBatches(@Param("branchId") Long branchId);
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.alpha.qspiderrestapi.dao.BranchDao;
+import com.alpha.qspiderrestapi.dto.BranchCourseDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.repository.BranchRepository;
 
@@ -44,6 +45,11 @@ public class BranchDaoImpl implements BranchDao {
 	@Override
 	public Branch findBranchWithUpcomingBatches(long branchId) {
 		return branchRepository.findBranchWithUpcomingBatches(branchId);
+	}
+
+	@Override
+	public List<BranchCourseDto> fetchAllBranchDto() {
+		return null;
 	}
 
 }

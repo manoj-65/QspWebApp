@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alpha.qspiderrestapi.dao.BranchDao;
 import com.alpha.qspiderrestapi.dao.CategoryDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dao.SubCategoryDao;
@@ -44,6 +45,9 @@ public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private SubjectDao subjectDao;
+
+	@Autowired
+	private BranchDao branchDao;
 
 	@Autowired
 	private ChapterUtil chapterUtil;
@@ -171,6 +175,8 @@ public class CourseServiceImpl implements CourseService {
 		if (optional.isPresent()) {
 			Course course = optional.get();
 			CourseIdResponse courseResponse = CourseMapper.mapToCourseDto(course);
+			courseResponse.setBranches(branchDao.fetchAllBranchDto());
+			System.out.println(fetchAllCourse());
 			log.info("Course with the id: {} fetched ", courseId);
 			return ResponseUtil.getOk(courseResponse);
 		} else {

@@ -17,7 +17,6 @@ public class CategoryResponse {
 	private String icon;
 	private String title;
 
-	
 	private List<SubCategoryResponse> subCourse;
 	private List<CourseResponse> courseResponse;
 
