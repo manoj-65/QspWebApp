@@ -9,11 +9,13 @@ import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.entity.FeedBack;
 import com.alpha.qspiderrestapi.exception.InvalidPhoneNumberException;
 import com.alpha.qspiderrestapi.service.FeedbackSevice;
+import com.alpha.qspiderrestapi.service.MailService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
+import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -23,11 +25,19 @@ public class FeedbackServiceImpl implements FeedbackSevice {
 	@Autowired
 	private FeedbackDao feedbackDao;
 
+	@Autowired
+	private MailService mailSender;
+
 	@Override
 	public ResponseEntity<ApiResponse<FeedBack>> saveFeedback(FeedBack feedBack) {
 		if (isValidPhoneNumber(feedBack.getPhoneNumber())) {
 			log.info("The process of saving feedback has been initiated......");
 			feedBack = feedbackDao.saveFeedback(feedBack);
+			try {
+				mailSender.sendMail(feedBack);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
 			log.info("The process of saving feedback has been completed.");
 			return ResponseUtil.getCreated(feedBack);
 		}

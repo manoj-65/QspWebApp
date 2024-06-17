@@ -14,6 +14,7 @@ public class CourseResponse {
 	private long courseResponseId;
 	private String icon;
 	private String title;
+	private String image_url;
 	private String description;
 
 }

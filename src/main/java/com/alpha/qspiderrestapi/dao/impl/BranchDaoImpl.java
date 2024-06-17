@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.alpha.qspiderrestapi.dao.BranchDao;
+import com.alpha.qspiderrestapi.dto.BranchCourseDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.repository.BranchRepository;
 
@@ -39,6 +40,11 @@ public class BranchDaoImpl implements BranchDao {
 	@Override
 	public long isBranchPresent(long branchId) {
 		return branchRepository.findByBranchId(branchId);
+	}
+
+	@Override
+	public List<BranchCourseDto> fetchAllBranchDto() {
+		return null;
 	}
 
 }
