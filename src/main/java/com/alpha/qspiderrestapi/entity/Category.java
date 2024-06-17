@@ -36,6 +36,7 @@ public class Category {
 	private String categoryTitle;
 
 	private String categoryIcon;
+	private String categoryAlternativeIcon;
 
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
 	private List<SubCategory> subCategories = new ArrayList<SubCategory>();

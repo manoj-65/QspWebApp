@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.BranchByIdDto;
 import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
@@ -80,6 +81,14 @@ public class BranchController {
 	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll(@PathVariable String version) {
 		if (version.equals("v1"))
 			return branchService.fetchAll();
+
+		throw new UnauthorizedVersionException();
+	}
+	
+	@GetMapping("/getbyid")
+	public ResponseEntity<ApiResponse<BranchByIdDto>> fetchById(@PathVariable String version,@RequestParam long branchId,@RequestParam long courseId) {
+		if (version.equals("v1"))
+			return branchService.fetchById(branchId,courseId);
 
 		throw new UnauthorizedVersionException();
 	}

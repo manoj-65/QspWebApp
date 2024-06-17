@@ -1,7 +1,12 @@
 package com.alpha.qspiderrestapi.service.impl;
 
+import java.sql.Time;
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.alpha.qspiderrestapi.dao.BatchDao;
@@ -11,6 +16,7 @@ import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.entity.Batch;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.entity.Course;
+import com.alpha.qspiderrestapi.entity.enums.BatchStatus;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.service.BatchService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
@@ -50,5 +56,29 @@ public class BatchServiceImpl implements BatchService {
 
 		return ResponseUtil.getCreated(batch);
 	}
+
+	@Override
+	@Scheduled(cron = "0 0 2 ? * MON,THU")
+	public void updateBatchStatus() {
+		
+		batchDao.updateBatchStatus(BatchStatus.ONGOING, BatchStatus.BLOCKED);
+		batchDao.updateBatchStatus(BatchStatus.UPCOMING, BatchStatus.ONGOING);
+	}
+	
+	@Override
+	@Scheduled(cron = "0 0 3 ? * MON,THU")
+	public void createBatch() {
+		List<String> branchTypies =  Arrays.asList("JSP","QSP","PYSP");
+		Time morning = Time.valueOf("10:00:00");;
+		Time afternoon =Time.valueOf("14:00:00");
+		
+		batchDao.createBatches(branchTypies.get(0), Arrays.asList(11l),morning );
+		batchDao.createBatches(branchTypies.get(0), Arrays.asList(13l),afternoon );
+		
+		batchDao.createBatches(branchTypies.get(1), Arrays.asList(2l,5l),morning );
+		batchDao.createBatches(branchTypies.get(1), Arrays.asList(7l),afternoon );
+		
+		batchDao.createBatches(branchTypies.get(2), Arrays.asList(12l),morning );
+		batchDao.createBatches(branchTypies.get(2), Arrays.asList(13l),afternoon );	}
 
 }

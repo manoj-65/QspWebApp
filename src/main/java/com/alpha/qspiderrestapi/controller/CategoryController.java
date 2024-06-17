@@ -119,7 +119,7 @@ public class CategoryController {
 		throw new UnauthorizedVersionException();
 	}
 
-	@Operation(description = "Category icon url is added to a Category", summary = "Updates the Category icon")
+	@Operation(description = "Category icon url and a Alternative icon url is added to a Category", summary = "Updates the Category icons")
 	@ApiResponses(value = {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
@@ -127,9 +127,9 @@ public class CategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
 	@PatchMapping(value = "/uploadIcon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadIcon(@PathVariable String version,
-			@RequestParam("file") MultipartFile file, @RequestParam long categoryId) {
+			@RequestParam("iconfile") MultipartFile iconfile,@RequestParam("alternativeIconfile") MultipartFile alternativeIconfile, @RequestParam long categoryId) {
 		if (version.equals("v1"))
-			return categoryService.uploadIcon(file, categoryId);
+			return categoryService.uploadIcon(iconfile,alternativeIconfile, categoryId);
 		throw new UnauthorizedVersionException();
 	}
 

@@ -14,7 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dao.BranchDao;
 import com.alpha.qspiderrestapi.dao.CityCourseBranchViewDao;
+import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.BranchByIdDto;
+import com.alpha.qspiderrestapi.dto.BranchById_BatchDto;
+import com.alpha.qspiderrestapi.dto.BranchById_CourseDto;
 import com.alpha.qspiderrestapi.dto.BranchDto;
 import com.alpha.qspiderrestapi.dto.CityDto;
 import com.alpha.qspiderrestapi.dto.CountryDto;
@@ -22,6 +26,7 @@ import com.alpha.qspiderrestapi.dto.CourseDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
+import com.alpha.qspiderrestapi.modelmapper.BranchById_Mapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
 import com.alpha.qspiderrestapi.service.BranchService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
@@ -34,6 +39,9 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private BranchDao branchDao;
+	
+	@Autowired
+	private CourseDao courseDao;
 
 	@Autowired
 	private AWSS3Service awss3Service;
@@ -144,6 +152,25 @@ public class BranchServiceImpl implements BranchService {
 		});
 		countries.sort(Comparator.comparing(CountryDto::getCountryName));
 		return ResponseUtil.getOk(countries);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<BranchByIdDto>> fetchById(long branchId, long courseId) {
+		
+		if(branchDao.isBranchPresent(branchId)){
+			if(courseDao.isCourseExist(courseId)) {
+				Branch branch = branchDao.findBranchWithUpcomingBatches(branchId);
+				
+				BranchByIdDto branchResponse = BranchById_Mapper.mapToBranchByIdDto(branch);
+				branchResponse.getCourses().sort(Comparator.comparing((BranchById_CourseDto dto) -> dto.getCourseId()!= courseId).thenComparing(BranchById_CourseDto::getCourseId));
+				branchResponse.getBatches().sort(Comparator.comparing((BranchById_BatchDto dto) -> !dto.getBatchName().equals(branchResponse.getCourses().get(0).getCourseName())).thenComparing(BranchById_BatchDto::getBatchId));
+
+				return ResponseUtil.getOk(branchResponse);
+			}else 
+				throw new IdNotFoundException("Course not found with the Id : "+courseId);
+		}
+			throw new IdNotFoundException("Branch not found with the Id : "+branchId);
+		
 	}
 
 }

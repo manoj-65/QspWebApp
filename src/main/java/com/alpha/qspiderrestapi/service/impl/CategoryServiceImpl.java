@@ -97,21 +97,24 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile file, long categoryId) {
+	public ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile iconfile,MultipartFile alternativeIconfile, long categoryId) {
 		log.info("Uploading icon for category ID: {}", categoryId);
 		String folder = "CATEGORY/";
 		Optional<Category> optionalcategory = categoryDao.fetchCategoryById(categoryId);
 		if (optionalcategory.isPresent()) {
 			folder += optionalcategory.get().getCategoryTitle();
 			String iconUrl;
+			String alternativeIconUrl;
 			try {
-				iconUrl = awss3Service.uploadFile(file, folder);
+				iconUrl = awss3Service.uploadFile(iconfile, folder);
+				alternativeIconUrl = awss3Service.uploadFile(iconfile, folder);
 				log.info("File Uploaded successfully to sw3: {}", iconUrl);
 			} catch (NullPointerException e) {
 				log.error("Error uploading icon to S3: {}", e.getMessage());
 				throw new NullPointerException("Error uploading icon");
 			}
 			optionalcategory.get().setCategoryIcon(iconUrl);
+			optionalcategory.get().setCategoryAlternativeIcon(alternativeIconUrl);
 			categoryDao.saveCategory(optionalcategory.get());
 			return ResponseUtil.getCreated("Icon Uploaded!!");
 		}

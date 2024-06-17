@@ -16,7 +16,9 @@ public interface BranchDao {
 
 	void deleteBranch(long branchId);
 
-	long isBranchPresent(long branchId);
-	
 	List<BranchCourseDto> fetchAllBranchDto();
+
+	boolean isBranchPresent(long branchId);
+
+	Branch findBranchWithUpcomingBatches(long branchId);
 }

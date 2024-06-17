@@ -9,11 +9,15 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.alpha.qspiderrestapi.entity.enums.BatchStatus;
+import com.alpha.qspiderrestapi.entity.enums.Mode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -55,11 +59,17 @@ public class Batch {
 	@JoinColumn(name = "courseId")
 	@JsonIgnore
 	private Course course;
+	
+	@Enumerated(EnumType.STRING)
+	private Mode batchMode;
 
 	@ManyToOne
 	@JoinColumn(name = "branchId")
 	@JsonIgnore
 	private Branch branch;
+	
+	@Enumerated(EnumType.STRING)
+	private BatchStatus batchStatus;
 
 	@CreationTimestamp
 	private LocalDateTime createdDateAndTime;
