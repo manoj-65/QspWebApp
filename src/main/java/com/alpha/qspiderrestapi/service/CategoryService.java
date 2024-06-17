@@ -18,7 +18,7 @@ public interface CategoryService {
 
 	ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId);
 
-	ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile file, long categoryId);
+	ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile iconfile,MultipartFile alternativeIconfile, long categoryId);
 
 	ResponseEntity<ApiResponse<Category>> assignCoursesToCategory(long categoryId, List<Long> courseIds);
 

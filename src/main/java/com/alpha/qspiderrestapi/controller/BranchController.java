@@ -85,8 +85,8 @@ public class BranchController {
 		throw new UnauthorizedVersionException();
 	}
 	
-	@GetMapping
-	public ResponseEntity<ApiResponse<List<BranchByIdDto>>> fetchById(@PathVariable String version,@RequestParam long branchId,@RequestParam long courseId) {
+	@GetMapping("/getbyid")
+	public ResponseEntity<ApiResponse<BranchByIdDto>> fetchById(@PathVariable String version,@RequestParam long branchId,@RequestParam long courseId) {
 		if (version.equals("v1"))
 			return branchService.fetchById(branchId,courseId);
 
