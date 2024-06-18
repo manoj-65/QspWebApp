@@ -168,9 +168,11 @@ public class CourseController {
 
 	@PatchMapping(value = "/uploadImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadImage(@PathVariable String version,
-			@RequestParam("file") MultipartFile file, @RequestParam long courseId) {
+			@RequestParam("imagefile") MultipartFile imagefile,
+			@RequestParam("homePageImagefile") MultipartFile homePageImage,
+			@RequestParam long courseId) {
 		if (version.equals("v1"))
-			return courseService.uploadImages(file, courseId);
+			return courseService.uploadImages(imagefile,homePageImage, courseId);
 		throw new UnauthorizedVersionException();
 	}
 

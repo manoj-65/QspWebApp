@@ -108,7 +108,8 @@ public class CategoryServiceImpl implements CategoryService {
 			try {
 				iconUrl = awss3Service.uploadFile(iconfile, folder);
 				alternativeIconUrl = awss3Service.uploadFile(iconfile, folder);
-				log.info("File Uploaded successfully to sw3: {}", iconUrl);
+				log.info("icon file Uploaded successfully to sw3: {}", iconUrl);
+				log.info("alternative Icon file Uploaded successfully to sw3: {}", alternativeIconUrl);
 			} catch (NullPointerException e) {
 				log.error("Error uploading icon to S3: {}", e.getMessage());
 				throw new NullPointerException("Error uploading icon");

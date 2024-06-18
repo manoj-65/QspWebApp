@@ -295,7 +295,7 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<String>> uploadImages(MultipartFile file, long courseId) {
+	public ResponseEntity<ApiResponse<String>> uploadImages(MultipartFile image, MultipartFile homePageImage, long courseId) {
 		log.info("Uploading icon for course ID: {}", courseId);
 
 		String folder = "COURSE/";
@@ -303,17 +303,23 @@ public class CourseServiceImpl implements CourseService {
 
 		if (optionalCourse.isPresent()) {
 			Course course = optionalCourse.get();
-			folder += course.getCourseName();
+			folder += "IMAGE/"+course.getCourseName();
 
 			log.info("Uploading image file to folder: {}", folder);
-			String imageUrl = awss3Service.uploadFile(file, folder);
+			String imageUrl = awss3Service.uploadFile(image, folder);
+			
+			log.info("Uploading image file to folder: {}", folder);
+			String homePageImageUrl = awss3Service.uploadFile(homePageImage, folder);
 
 			if (!imageUrl.isEmpty()) {
-				log.info("File uploaded successfully. URL: {}", imageUrl);
+				log.info("Image File uploaded successfully. URL: {}", imageUrl);
+				log.info("Home Page Image File uploaded successfully. URL: {}", homePageImageUrl);
 				course.setCourseImage(imageUrl);
+				course.setHomePageCourseImage(homePageImageUrl);
 				courseDao.saveCourse(course);
 				log.info("Course image updated successfully for course ID: {}", courseId);
-				return ResponseUtil.getCreated(imageUrl);
+				log.info("Course home page image updated successfully for course ID: {}", courseId);
+				return ResponseUtil.getCreated(imageUrl+"; "+homePageImageUrl);
 			}
 
 			log.error("Failed to upload icon due to admin restriction.");
