@@ -87,6 +87,7 @@ public class Course {
 	private List<Faq> faqs = new ArrayList<Faq>();
 
 	private String courseImage;
+	private String homePageCourseImage;
 
 	@CreationTimestamp
 	private LocalDateTime createdDateAndTime;

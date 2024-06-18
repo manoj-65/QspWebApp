@@ -36,7 +36,8 @@ public class CustomAuthenticationManager {
 			"/swagger-ui.html", "/swagger-ui/index.html", "/api/{version}/users/login",
 			"/api/{version}/users/getProfile", "/api/v1/categories/formresponse", "/api/{version}/categories/getall",
 			"/api/{version}/categories/getbyid", "/api/{version}/subjects/course", "/api/{version}/branches/getAll",
-			"/api/{version}/feedback", "/api/{version}/cities", "/api/{version}/courses/getbyid","/api/{version}/branches/getbyid" };
+			"/api/{version}/feedback", "/api/{version}/cities", "/api/{version}/courses/getbyid","/api/{version}/branches/getbyid",
+			"/api/{version}/courses/uploadImage","/api/{version}/courses/uploadIcon" };
 
 	private static final String[] ADMIN_URLS = { "/api/{version}/users/saveUser", "/api/{version}/categories",
 			"/api/{version}/subcategories", "/api/{version}/categories/uploadIcon",

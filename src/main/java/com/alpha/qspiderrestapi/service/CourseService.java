@@ -23,6 +23,6 @@ public interface CourseService {
 
 	ResponseEntity<ApiResponse<String>> removeCourseById(long courseId);
 
-	ResponseEntity<ApiResponse<String>> uploadImages(MultipartFile file, long courseId);
+	ResponseEntity<ApiResponse<String>> uploadImages(MultipartFile image, MultipartFile homePageImage, long courseId);
 
 }
