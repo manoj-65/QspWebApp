@@ -33,7 +33,7 @@ public class Chapter {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long chapterId;
-	@Column(unique = true)
+//	@Column(unique = true)
 	private String chapterTitle;
 	private String chapterDescription;
 
