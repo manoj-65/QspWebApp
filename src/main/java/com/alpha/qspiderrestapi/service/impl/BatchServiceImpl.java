@@ -66,19 +66,20 @@ public class BatchServiceImpl implements BatchService {
 	}
 	
 	@Override
-	@Scheduled(cron = "0 0 3 ? * MON,THU")
+	@Scheduled(cron = "0 * * * * ?")
 	public void createBatch() {
 		List<String> branchTypies =  Arrays.asList("JSP","QSP","PYSP");
 		Time morning = Time.valueOf("10:00:00");;
 		Time afternoon =Time.valueOf("14:00:00");
 		
-		batchDao.createBatches(branchTypies.get(0), Arrays.asList(11l),morning );
-		batchDao.createBatches(branchTypies.get(0), Arrays.asList(13l),afternoon );
+		batchDao.createBatches(branchTypies.get(0), Arrays.asList(48l,69l),morning );
+		batchDao.createBatches(branchTypies.get(0), Arrays.asList(58l),afternoon );
 		
-		batchDao.createBatches(branchTypies.get(1), Arrays.asList(2l,5l),morning );
-		batchDao.createBatches(branchTypies.get(1), Arrays.asList(7l),afternoon );
-		
-		batchDao.createBatches(branchTypies.get(2), Arrays.asList(12l),morning );
-		batchDao.createBatches(branchTypies.get(2), Arrays.asList(13l),afternoon );	}
+//		batchDao.createBatches(branchTypies.get(1), Arrays.asList(2l,5l),morning );
+//		batchDao.createBatches(branchTypies.get(1), Arrays.asList(7l),afternoon );
+//		
+//		batchDao.createBatches(branchTypies.get(2), Arrays.asList(12l),morning );
+//		batchDao.createBatches(branchTypies.get(2), Arrays.asList(13l),afternoon );	
+	}
 
 }
