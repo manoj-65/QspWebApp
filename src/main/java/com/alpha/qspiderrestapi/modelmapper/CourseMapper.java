@@ -27,7 +27,10 @@ public class CourseMapper {
 	public static CourseResponse mapToCourseResponse(Course course) {
 		return CourseResponse.builder().courseResponseId(course.getCourseId()).icon(course.getCourseIcon())
 				.image_url(course.getCourseImage()).title(course.getCourseName())
-				.description(course.getCourseDescription()).build();
+				.description(course.getCourseDescription())
+				.homePageCourseImage(course.getHomePageCourseImage())
+				.modes(course.getMode())
+				.build();
 	}
 
 	/**
