@@ -127,7 +127,7 @@ public class BranchServiceImpl implements BranchService {
 					CourseDto course = new CourseDto();
 					course.setCourseId(courseId);
 					course.setCourseName(branchesList.get(0).getCourseName());
-					List<BranchDto> branches = branchesList.stream().map(branchView -> {
+					List<BranchDto> branches = branchesList.stream().distinct().map(branchView -> {
 						BranchDto branch = new BranchDto();
 						branch.setBranchId(branchView.getBranchId());
 						branch.setBranchName(branchView.getDisplayName());
@@ -135,7 +135,7 @@ public class BranchServiceImpl implements BranchService {
 						branch.setLocation(branchView.getLocation());
 						branch.setPhoneNumber(branchView.getContacts());
 						branch.setUpcomingBatches(branchView.getUpcomingBatches());
-						branch.setOngoingBatches(branchView.getUpcomingBatches());
+						branch.setOngoingBatches(branchView.getOngoingBatches());
 						return branch;
 					}).sorted(Comparator.comparing(BranchDto::getBranchId)).collect(Collectors.toList());
 					course.setBranches(branches);
