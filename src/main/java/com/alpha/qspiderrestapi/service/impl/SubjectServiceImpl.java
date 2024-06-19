@@ -1,6 +1,7 @@
 package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dao.SubjectDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.Subject;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.service.SubjectService;
@@ -87,6 +89,24 @@ public class SubjectServiceImpl implements SubjectService {
 	@Override
 	public ResponseEntity<ApiResponse<List<Subject>>> fetchAllSubjects() {
 		return ResponseUtil.getOk(subjectDao.fetchAllSubjects());
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> deleteById(long subjectId) {
+		Optional<Subject> subject = subjectDao.fetchSubjectById(subjectId);
+
+		if (subject.isPresent()) {
+
+			if (!(subject.get().getCourses().isEmpty())) {
+				subjectDao.removeSubjectAndCourseById(subjectId);
+			}
+			
+			subjectDao.deleteSubject(subjectId);
+
+		} else
+			throw new IdNotFoundException("Given Subject Id: " + subjectId + " not found");
+
+		return ResponseUtil.getNoContent("Subject Deleted");
 	}
 
 }
