@@ -78,4 +78,9 @@ public class SubjectDaoImpl implements SubjectDao {
 		return subjectRepository.findBySubjectId(subjectId) != null;
 	}
 
+	@Override
+	public int removeSubjectAndCourseById(long subjectId) {
+		return subjectRepository.removeSubjectAndCourseById(subjectId);
+	}
+
 }

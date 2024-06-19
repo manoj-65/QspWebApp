@@ -17,4 +17,6 @@ public interface SubjectService {
 
 	ResponseEntity<ApiResponse<List<Subject>>> fetchAllSubjects();
 
+	ResponseEntity<ApiResponse<String>> deleteById(long subjectId);
+
 }
