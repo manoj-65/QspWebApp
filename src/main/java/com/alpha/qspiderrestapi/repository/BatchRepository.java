@@ -26,7 +26,7 @@ public interface BatchRepository extends JpaRepository<Batch, Long> {
 	int updateBatchStatus(String fromStatus, String toStatus);
 	
 	@Transactional
-	@Query(value = "SELECT create_batches(:branchType, CAST(:courseIds AS bigint[]),:startTime)", nativeQuery = true)
-    void createBatches(@Param("branchType") String branchType, @Param("courseIds") Long[] courseIds,Time startTime);
-
+	@Query(value = "SELECT create_batches(:branchTypes, :startTime1, :startTime2)", nativeQuery = true)
+	 void createBatches(@Param("branchTypes") String[] branchTypes, @Param("startTime1") Time startTime1, @Param("startTime2") Time startTime2);
+	
 }

@@ -59,8 +59,8 @@ public class BatchDaoImpl implements BatchDao {
 	}
 
 	@Override
-	public void createBatches(String branchType, List<Long> courseIds,Time startTime) {
-		batchRepository.createBatches(branchType, courseIds.toArray(new Long[0]),startTime);
+	public void createBatches(List<String> branchTypes, Time startTime1, Time startTime2) {
+		batchRepository.createBatches(branchTypes.toArray(new String[0]),startTime1,startTime2);
 	}
 
 }
