@@ -1,8 +1,10 @@
 package com.alpha.qspiderrestapi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alpha.qspiderrestapi.entity.Subject;
 
@@ -21,4 +23,10 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
 	 */
 	@Query(value = "Select s.subjectId From Subject s Where s.subjectId = :subjectId")
 	Long findBySubjectId(@Param("subjectId") long subjectId);
+
+	@Transactional
+	@Modifying
+	@Query(value = "delete from course_subject where subject_id = :subjectId", nativeQuery = true)
+	int removeSubjectAndCourseById(long subjectId);
+
 }

@@ -16,4 +16,6 @@ public interface SubjectDao {
 	void deleteSubject(long subjectId);
 
 	boolean isSubjectPresent(long subjectId);
+
+	int removeSubjectAndCourseById(long subjectId);
 }

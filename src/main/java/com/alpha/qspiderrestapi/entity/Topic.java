@@ -33,7 +33,7 @@ public class Topic {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long topicId;
-	@Column(unique = true)
+//	@Column(unique = true)
 	private String topicTitle;
 	private String topicDescription;
 

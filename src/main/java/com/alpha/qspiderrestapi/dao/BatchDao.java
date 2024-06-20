@@ -25,6 +25,6 @@ public interface BatchDao {
 
 	int updateBatchStatus(BatchStatus fromStatus, BatchStatus toStatus);
 
-	void createBatches(String branchType, List<Long> courseIds, Time startTime);
+	void createBatches(List<String> branchTypes, Time startTime1, Time startTime2);
 
 }
