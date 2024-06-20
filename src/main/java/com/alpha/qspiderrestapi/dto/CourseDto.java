@@ -9,6 +9,8 @@ public class CourseDto {
 
 	private long courseId;
 	private String courseName;
+	private String courseDescription;
+	private String courseIcon;
 	private List<BranchDto> branches;
 
 }

@@ -17,5 +17,10 @@ public class CityDaoImpl implements CityDao {
 	public City save(City city) {
 		return cityRepository.save(city);
 	}
+	
+	@Override
+	public void updateCityBranchCount() {
+		cityRepository.updateCityBranchCount();
+	}
 
 }
