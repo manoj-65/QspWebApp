@@ -180,19 +180,19 @@ public class CourseServiceImpl implements CourseService {
 		if (optional.isPresent()) {
 			Course course = optional.get();
 			CourseIdResponse courseResponse = CourseMapper.mapToCourseDto(course);
-			System.err.println(branchDao.fetchAllCityBranchView());
+//			System.err.println(branchDao.fetchAllCityBranchView());
 
 			List<CityBranchView> viewList = new ArrayList<CityBranchView>();
-			List<CityBranchView> view = branchDao.fetchAllCityBranchView();
+			List<CityBranchView> view = branchDao.fetchAllCityBranchView(courseId);
 			Map<String, List<CityBranchView>> cityBranchViewMap = view.stream()
 					.collect(Collectors.groupingBy(CityBranchView::getCity));
 
 			for (Map.Entry<String, List<CityBranchView>> entry : cityBranchViewMap.entrySet()) {
 //				String cityName = entry.getKey();
-				long branchCountInCity = entry.getValue().size();
-
 				for (CityBranchView cityBranch : view) {
-					cityBranch.setBranchCount(branchCountInCity);
+					long branchCountInCity = entry.getValue().size();
+					if (cityBranch.getCity().equals(entry.getKey()))
+						cityBranch.setBranchCount(branchCountInCity);
 					viewList.add(cityBranch);
 				}
 			}
@@ -321,7 +321,8 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<String>> uploadImages(MultipartFile image, MultipartFile homePageImage, long courseId) {
+	public ResponseEntity<ApiResponse<String>> uploadImages(MultipartFile image, MultipartFile homePageImage,
+			long courseId) {
 		log.info("Uploading icon for course ID: {}", courseId);
 
 		String folder = "COURSE/";
@@ -329,11 +330,11 @@ public class CourseServiceImpl implements CourseService {
 
 		if (optionalCourse.isPresent()) {
 			Course course = optionalCourse.get();
-			folder += "IMAGE/"+course.getCourseName();
+			folder += "IMAGE/" + course.getCourseName();
 
 			log.info("Uploading image file to folder: {}", folder);
 			String imageUrl = awss3Service.uploadFile(image, folder);
-			
+
 			log.info("Uploading image file to folder: {}", folder);
 			String homePageImageUrl = awss3Service.uploadFile(homePageImage, folder);
 
@@ -345,7 +346,7 @@ public class CourseServiceImpl implements CourseService {
 				courseDao.saveCourse(course);
 				log.info("Course image updated successfully for course ID: {}", courseId);
 				log.info("Course home page image updated successfully for course ID: {}", courseId);
-				return ResponseUtil.getCreated(imageUrl+"; "+homePageImageUrl);
+				return ResponseUtil.getCreated(imageUrl + "; " + homePageImageUrl);
 			}
 
 			log.error("Failed to upload icon due to admin restriction.");

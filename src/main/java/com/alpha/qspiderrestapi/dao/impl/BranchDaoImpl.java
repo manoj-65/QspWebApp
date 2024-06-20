@@ -52,8 +52,8 @@ public class BranchDaoImpl implements BranchDao {
 	}
 
 	@Override
-	public List<CityBranchView> fetchAllCityBranchView() {
-		return cityBranchViewProjectionRepository.findAllCityBranchInfo();
+	public List<CityBranchView> fetchAllCityBranchView(long courseId) {
+		return cityBranchViewProjectionRepository.findAllCityBranchInfo(courseId);
 	}
 
 }

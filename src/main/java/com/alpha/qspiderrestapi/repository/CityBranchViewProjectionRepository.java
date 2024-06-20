@@ -8,6 +8,6 @@ import com.alpha.qspiderrestapi.entity.CityBranchView;
 
 public interface CityBranchViewProjectionRepository extends ReadOnlyRepository<CityBranchView, Long> {
 
-	@Query(value = "SELECT * FROM city_branch_count_view", nativeQuery = true)
-	List<CityBranchView> findAllCityBranchInfo();
+	@Query(value = "SELECT * FROM city_branch_count_view where course_id = :courseId", nativeQuery = true)
+	List<CityBranchView> findAllCityBranchInfo(long courseId);
 }
