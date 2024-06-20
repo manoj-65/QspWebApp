@@ -3,8 +3,8 @@ package com.alpha.qspiderrestapi.dao;
 import java.util.List;
 import java.util.Optional;
 
-import com.alpha.qspiderrestapi.dto.BranchCourseDto;
 import com.alpha.qspiderrestapi.entity.Branch;
+import com.alpha.qspiderrestapi.entity.CityBranchView;
 
 public interface BranchDao {
 
@@ -16,9 +16,9 @@ public interface BranchDao {
 
 	void deleteBranch(long branchId);
 
-	List<BranchCourseDto> fetchAllBranchDto();
-
 	boolean isBranchPresent(long branchId);
 
 	Branch findBranchWithUpcomingBatches(long branchId);
+
+	List<CityBranchView> fetchAllCityBranchView(long courseId);
 }

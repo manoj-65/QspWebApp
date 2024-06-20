@@ -1,8 +1,12 @@
 
 package com.alpha.qspiderrestapi.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,7 @@ import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dao.SubjectDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
+import com.alpha.qspiderrestapi.entity.CityBranchView;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.Subject;
@@ -175,9 +180,30 @@ public class CourseServiceImpl implements CourseService {
 		if (optional.isPresent()) {
 			Course course = optional.get();
 			CourseIdResponse courseResponse = CourseMapper.mapToCourseDto(course);
-			
-			courseResponse.setBranches(branchDao.fetchAllBranchDto());
-			System.out.println(fetchAllCourse());
+//			System.err.println(branchDao.fetchAllCityBranchView());
+
+			List<CityBranchView> viewList = new ArrayList<CityBranchView>();
+			List<CityBranchView> view = branchDao.fetchAllCityBranchView(courseId);
+			Map<String, List<CityBranchView>> cityBranchViewMap = view.stream()
+					.collect(Collectors.groupingBy(CityBranchView::getCity));
+
+			for (Map.Entry<String, List<CityBranchView>> entry : cityBranchViewMap.entrySet()) {
+//				String cityName = entry.getKey();
+				for (CityBranchView cityBranch : view) {
+					long branchCountInCity = entry.getValue().size();
+					if (cityBranch.getCity().equals(entry.getKey()))
+						cityBranch.setBranchCount(branchCountInCity);
+					viewList.add(cityBranch);
+				}
+			}
+			Map<String, CityBranchView> test = new HashMap<String, CityBranchView>();
+			for (CityBranchView cityBranchView : viewList) {
+				test.put(cityBranchView.getCity(), cityBranchView);
+			}
+
+			courseResponse.setBranches(new ArrayList<CityBranchView>(test.values()));
+
+//			System.out.println(fetchAllCourse());
 			log.info("Course with the id: {} fetched ", courseId);
 			return ResponseUtil.getOk(courseResponse);
 		} else {
@@ -295,7 +321,8 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<String>> uploadImages(MultipartFile image, MultipartFile homePageImage, long courseId) {
+	public ResponseEntity<ApiResponse<String>> uploadImages(MultipartFile image, MultipartFile homePageImage,
+			long courseId) {
 		log.info("Uploading icon for course ID: {}", courseId);
 
 		String folder = "COURSE/";
@@ -303,11 +330,11 @@ public class CourseServiceImpl implements CourseService {
 
 		if (optionalCourse.isPresent()) {
 			Course course = optionalCourse.get();
-			folder += "IMAGE/"+course.getCourseName();
+			folder += "IMAGE/" + course.getCourseName();
 
 			log.info("Uploading image file to folder: {}", folder);
 			String imageUrl = awss3Service.uploadFile(image, folder);
-			
+
 			log.info("Uploading image file to folder: {}", folder);
 			String homePageImageUrl = awss3Service.uploadFile(homePageImage, folder);
 
@@ -319,7 +346,7 @@ public class CourseServiceImpl implements CourseService {
 				courseDao.saveCourse(course);
 				log.info("Course image updated successfully for course ID: {}", courseId);
 				log.info("Course home page image updated successfully for course ID: {}", courseId);
-				return ResponseUtil.getCreated(imageUrl+"; "+homePageImageUrl);
+				return ResponseUtil.getCreated(imageUrl + "; " + homePageImageUrl);
 			}
 
 			log.error("Failed to upload icon due to admin restriction.");
