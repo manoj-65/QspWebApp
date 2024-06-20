@@ -7,15 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.alpha.qspiderrestapi.dao.BranchDao;
-import com.alpha.qspiderrestapi.dto.BranchCourseDto;
 import com.alpha.qspiderrestapi.entity.Branch;
+import com.alpha.qspiderrestapi.entity.CityBranchView;
 import com.alpha.qspiderrestapi.repository.BranchRepository;
+import com.alpha.qspiderrestapi.repository.CityBranchViewProjectionRepository;
 
 @Repository
 public class BranchDaoImpl implements BranchDao {
 
 	@Autowired
 	private BranchRepository branchRepository;
+
+	@Autowired
+	private CityBranchViewProjectionRepository cityBranchViewProjectionRepository;
 
 	@Override
 	public Branch saveBranch(Branch branch) {
@@ -48,8 +52,8 @@ public class BranchDaoImpl implements BranchDao {
 	}
 
 	@Override
-	public List<BranchCourseDto> fetchAllBranchDto() {
-		return null;
+	public List<CityBranchView> fetchAllCityBranchView(long courseId) {
+		return cityBranchViewProjectionRepository.findAllCityBranchInfo(courseId);
 	}
 
 }

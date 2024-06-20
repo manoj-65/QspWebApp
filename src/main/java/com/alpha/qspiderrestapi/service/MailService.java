@@ -9,5 +9,5 @@ import jakarta.mail.MessagingException;
 @Service
 public interface MailService {
 
-	public String sendMail(FeedBack feedback) throws MessagingException;
+	public void sendMail(FeedBack feedback) throws MessagingException;
 }
