@@ -6,4 +6,6 @@ public interface CityDao {
 
 	City save(City city);
 
+	void updateCityBranchCount();
+
 }

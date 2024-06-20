@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dao.BranchDao;
 import com.alpha.qspiderrestapi.dao.CityCourseBranchViewDao;
+import com.alpha.qspiderrestapi.dao.CityDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.BranchByIdDto;
@@ -48,6 +49,9 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private CityCourseBranchViewDao viewDao;
+	
+	@Autowired
+	private CityDao cityDao;
 
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch) {
@@ -56,7 +60,9 @@ public class BranchServiceImpl implements BranchService {
 		branch.setBranchFaqs(
 				branch.getBranchFaqs().stream().peek((faqs) -> faqs.setBranch(branch)).collect(Collectors.toList()));
 		log.info("Branch saved successfully: {}", branch);
-		return ResponseUtil.getCreated(branchDao.saveBranch(branch));
+		Branch savedBranch = branchDao.saveBranch(branch);
+		cityDao.updateCityBranchCount();
+		return ResponseUtil.getCreated(savedBranch);
 	}
 
 	@Override
@@ -122,12 +128,16 @@ public class BranchServiceImpl implements BranchService {
 				CityDto city = new CityDto();
 				city.setCityName(cityName);
 				city.setCityIcon(coursesMap.values().iterator().next().get(0).getCityIconUrl());
+				city.setCityImage(coursesMap.values().iterator().next().get(0).getCityImageUrl());
+				city.setBranchCount(coursesMap.values().iterator().next().get(0).getBranchCount());
 				List<CourseDto> courses = new ArrayList<>();
 
 				coursesMap.forEach((courseId, branchesList) -> {
 					CourseDto course = new CourseDto();
 					course.setCourseId(courseId);
 					course.setCourseName(branchesList.get(0).getCourseName());
+					course.setCourseIcon(branchesList.get(0).getCourseIcon());
+					course.setCourseDescription(branchesList.get(0).getCourseDescription());
 					List<BranchDto> branches = branchesList.stream().distinct().map(branchView -> {
 						BranchDto branch = new BranchDto();
 						branch.setBranchId(branchView.getBranchId());

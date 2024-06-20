@@ -10,4 +10,6 @@ public class CityDto {
 	private String cityIcon;
 	private String cityName;
 	private List<CourseDto> courses;
+	private String cityImage;
+	private long branchCount;
 }

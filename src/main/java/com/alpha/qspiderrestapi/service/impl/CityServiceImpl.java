@@ -41,7 +41,9 @@ public class CityServiceImpl implements CityService{
 					city.setCityName(cityName);
 					city.setCityIconUrl(iconUrl);
 					city.setCityImageUrl(imageUrl);
-					return ResponseUtil.getCreated(cityDao.save(city));
+					city = cityDao.save(city);
+					cityDao.updateCityBranchCount();
+					return ResponseUtil.getCreated(city);
 				}else
 					throw new NullPointerException("CityImage can't be Upload Due the Admin restriction");
 			}else
