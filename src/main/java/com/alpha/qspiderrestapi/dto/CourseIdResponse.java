@@ -3,6 +3,7 @@ package com.alpha.qspiderrestapi.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alpha.qspiderrestapi.entity.CityBranchView;
 import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.Subject;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
@@ -24,7 +25,7 @@ public class CourseIdResponse {
 	private List<Faq> faqs = new ArrayList<Faq>();
 	private List<Organization> branchType;
 	private String courseImage;
-	private List<BranchCourseDto> branches;
+	private List<CityBranchView> branches;
 	private List<BatchDto> onlineBatches;
 	private List<Subject> subjects;
 }

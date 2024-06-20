@@ -1,8 +1,12 @@
 
 package com.alpha.qspiderrestapi.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,7 @@ import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dao.SubjectDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
+import com.alpha.qspiderrestapi.entity.CityBranchView;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.Subject;
@@ -175,9 +180,30 @@ public class CourseServiceImpl implements CourseService {
 		if (optional.isPresent()) {
 			Course course = optional.get();
 			CourseIdResponse courseResponse = CourseMapper.mapToCourseDto(course);
-			
-			courseResponse.setBranches(branchDao.fetchAllBranchDto());
-			System.out.println(fetchAllCourse());
+			System.err.println(branchDao.fetchAllCityBranchView());
+
+			List<CityBranchView> viewList = new ArrayList<CityBranchView>();
+			List<CityBranchView> view = branchDao.fetchAllCityBranchView();
+			Map<String, List<CityBranchView>> cityBranchViewMap = view.stream()
+					.collect(Collectors.groupingBy(CityBranchView::getCity));
+
+			for (Map.Entry<String, List<CityBranchView>> entry : cityBranchViewMap.entrySet()) {
+//				String cityName = entry.getKey();
+				long branchCountInCity = entry.getValue().size();
+
+				for (CityBranchView cityBranch : view) {
+					cityBranch.setBranchCount(branchCountInCity);
+					viewList.add(cityBranch);
+				}
+			}
+			Map<String, CityBranchView> test = new HashMap<String, CityBranchView>();
+			for (CityBranchView cityBranchView : viewList) {
+				test.put(cityBranchView.getCity(), cityBranchView);
+			}
+
+			courseResponse.setBranches(new ArrayList<CityBranchView>(test.values()));
+
+//			System.out.println(fetchAllCourse());
 			log.info("Course with the id: {} fetched ", courseId);
 			return ResponseUtil.getOk(courseResponse);
 		} else {
