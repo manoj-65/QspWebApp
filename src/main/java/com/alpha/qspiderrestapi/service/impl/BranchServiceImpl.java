@@ -52,6 +52,7 @@ public class BranchServiceImpl implements BranchService {
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch) {
 		log.info("Saving branch: {}", branch);
+		branch.setBranchTitle( branch.getDisplayName()+"-"+branch.getBranchType());
 		branch.setBranchFaqs(
 				branch.getBranchFaqs().stream().peek((faqs) -> faqs.setBranch(branch)).collect(Collectors.toList()));
 		log.info("Branch saved successfully: {}", branch);
