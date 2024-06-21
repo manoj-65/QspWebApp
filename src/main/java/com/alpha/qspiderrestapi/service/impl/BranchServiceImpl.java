@@ -122,10 +122,7 @@ public class BranchServiceImpl implements BranchService {
 	
 	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll() {
         List<CityCourseBranchView> view = viewDao.fetchAll();
-        view.forEach(v->{
-        	System.err.println(v);
-        	
-        });
+       
         // Group by country -> city -> courseId
         Map<String, Map<String, Map<Long, List<CityCourseBranchView>>>> groupedData = view.stream()
                 .collect(Collectors.groupingBy(
