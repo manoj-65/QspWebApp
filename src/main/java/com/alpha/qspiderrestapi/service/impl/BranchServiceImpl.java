@@ -27,10 +27,12 @@ import com.alpha.qspiderrestapi.dto.CourseDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
+import com.alpha.qspiderrestapi.exception.InvalidPhoneNumberException;
 import com.alpha.qspiderrestapi.modelmapper.BranchById_Mapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
 import com.alpha.qspiderrestapi.service.BranchService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
+import com.alpha.qspiderrestapi.util.ValidatePhoneNumber;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,7 +42,7 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private BranchDao branchDao;
-	
+
 	@Autowired
 	private CourseDao courseDao;
 
@@ -49,14 +51,22 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private CityCourseBranchViewDao viewDao;
-	
+
 	@Autowired
 	private CityDao cityDao;
+	
+	@Autowired
+	private ValidatePhoneNumber validatePhoneNumber;
 
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch) {
 		log.info("Saving branch: {}", branch);
-		branch.setBranchTitle( branch.getDisplayName()+"-"+branch.getBranchType());
+		branch.setBranchTitle(branch.getDisplayName() + "-" + branch.getBranchType());
+		for (String contact : branch.getContacts()) {
+			if (!validatePhoneNumber.isValidPhoneNumber(contact)) {
+				throw new InvalidPhoneNumberException("Invalid contact : "+contact);
+			}
+		}
 		branch.setBranchFaqs(
 				branch.getBranchFaqs().stream().peek((faqs) -> faqs.setBranch(branch)).collect(Collectors.toList()));
 		log.info("Branch saved successfully: {}", branch);
@@ -167,21 +177,27 @@ public class BranchServiceImpl implements BranchService {
 
 	@Override
 	public ResponseEntity<ApiResponse<BranchByIdDto>> fetchById(long branchId, long courseId) {
-		
-		if(branchDao.isBranchPresent(branchId)){
-			if(courseDao.isCourseExist(courseId)) {
+
+		if (branchDao.isBranchPresent(branchId)) {
+			if (courseDao.isCourseExist(courseId)) {
 				Branch branch = branchDao.findBranchWithUpcomingBatches(branchId);
-				
+
 				BranchByIdDto branchResponse = BranchById_Mapper.mapToBranchByIdDto(branch);
-				branchResponse.getCourses().sort(Comparator.comparing((BranchById_CourseDto dto) -> dto.getCourseId()!= courseId).thenComparing(BranchById_CourseDto::getCourseId));
-				branchResponse.getBatches().sort(Comparator.comparing((BranchById_BatchDto dto) -> !dto.getBatchName().equals(branchResponse.getCourses().get(0).getCourseName())).thenComparing(BranchById_BatchDto::getBatchId));
+				branchResponse.getCourses()
+						.sort(Comparator.comparing((BranchById_CourseDto dto) -> dto.getCourseId() != courseId)
+								.thenComparing(BranchById_CourseDto::getCourseId));
+				branchResponse.getBatches()
+						.sort(Comparator
+								.comparing((BranchById_BatchDto dto) -> !dto.getBatchName()
+										.equals(branchResponse.getCourses().get(0).getCourseName()))
+								.thenComparing(BranchById_BatchDto::getBatchId));
 
 				return ResponseUtil.getOk(branchResponse);
-			}else 
-				throw new IdNotFoundException("Course not found with the Id : "+courseId);
+			} else
+				throw new IdNotFoundException("Course not found with the Id : " + courseId);
 		}
-			throw new IdNotFoundException("Branch not found with the Id : "+branchId);
-		
+		throw new IdNotFoundException("Branch not found with the Id : " + branchId);
+
 	}
 
 }
