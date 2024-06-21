@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
+import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.CourseService;
@@ -169,10 +170,18 @@ public class CourseController {
 	@PatchMapping(value = "/uploadImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadImage(@PathVariable String version,
 			@RequestParam("imagefile") MultipartFile imagefile,
-			@RequestParam("homePageImagefile") MultipartFile homePageImage,
-			@RequestParam long courseId) {
+			@RequestParam("homePageImagefile") MultipartFile homePageImage, @RequestParam long courseId) {
 		if (version.equals("v1"))
-			return courseService.uploadImages(imagefile,homePageImage, courseId);
+			return courseService.uploadImages(imagefile, homePageImage, courseId);
+		throw new UnauthorizedVersionException();
+	}
+
+	@GetMapping("/viewAll")
+	public ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> viewAllResponseHomePage(
+			@PathVariable String version) {
+		if (version.equals("v1"))
+			return courseService.fetchViewForHomepage();
+
 		throw new UnauthorizedVersionException();
 	}
 

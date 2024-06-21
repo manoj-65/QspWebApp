@@ -39,7 +39,7 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private BranchDao branchDao;
-	
+
 	@Autowired
 	private CourseDao courseDao;
 
@@ -52,7 +52,7 @@ public class BranchServiceImpl implements BranchService {
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch) {
 		log.info("Saving branch: {}", branch);
-		branch.setBranchTitle( branch.getDisplayName()+"-"+branch.getBranchType());
+		branch.setBranchTitle(branch.getDisplayName() + "-" + branch.getBranchType());
 		branch.setBranchFaqs(
 				branch.getBranchFaqs().stream().peek((faqs) -> faqs.setBranch(branch)).collect(Collectors.toList()));
 		log.info("Branch saved successfully: {}", branch);
@@ -134,9 +134,9 @@ public class BranchServiceImpl implements BranchService {
 						branch.setBranchName(branchView.getDisplayName());
 						branch.setBranchImage(branchView.getBranchImage());
 						branch.setLocation(branchView.getLocation());
-						branch.setPhoneNumber(branchView.getContacts());
-						branch.setUpcomingBatches(branchView.getUpcomingBatches());
-						branch.setOngoingBatches(branchView.getOngoingBatches());
+						branch.setPhoneNumber((branchView.getContacts()));
+						branch.setUpcomingBatches((long) branchView.getUpcomingBatches());
+						branch.setOngoingBatches((long) branchView.getOngoingBatches());
 						return branch;
 					}).sorted(Comparator.comparing(BranchDto::getBranchId)).collect(Collectors.toList());
 					course.setBranches(branches);
@@ -157,21 +157,27 @@ public class BranchServiceImpl implements BranchService {
 
 	@Override
 	public ResponseEntity<ApiResponse<BranchByIdDto>> fetchById(long branchId, long courseId) {
-		
-		if(branchDao.isBranchPresent(branchId)){
-			if(courseDao.isCourseExist(courseId)) {
+
+		if (branchDao.isBranchPresent(branchId)) {
+			if (courseDao.isCourseExist(courseId)) {
 				Branch branch = branchDao.findBranchWithUpcomingBatches(branchId);
-				
+
 				BranchByIdDto branchResponse = BranchById_Mapper.mapToBranchByIdDto(branch);
-				branchResponse.getCourses().sort(Comparator.comparing((BranchById_CourseDto dto) -> dto.getCourseId()!= courseId).thenComparing(BranchById_CourseDto::getCourseId));
-				branchResponse.getBatches().sort(Comparator.comparing((BranchById_BatchDto dto) -> !dto.getBatchName().equals(branchResponse.getCourses().get(0).getCourseName())).thenComparing(BranchById_BatchDto::getBatchId));
+				branchResponse.getCourses()
+						.sort(Comparator.comparing((BranchById_CourseDto dto) -> dto.getCourseId() != courseId)
+								.thenComparing(BranchById_CourseDto::getCourseId));
+				branchResponse.getBatches()
+						.sort(Comparator
+								.comparing((BranchById_BatchDto dto) -> !dto.getBatchName()
+										.equals(branchResponse.getCourses().get(0).getCourseName()))
+								.thenComparing(BranchById_BatchDto::getBatchId));
 
 				return ResponseUtil.getOk(branchResponse);
-			}else 
-				throw new IdNotFoundException("Course not found with the Id : "+courseId);
+			} else
+				throw new IdNotFoundException("Course not found with the Id : " + courseId);
 		}
-			throw new IdNotFoundException("Branch not found with the Id : "+branchId);
-		
+		throw new IdNotFoundException("Branch not found with the Id : " + branchId);
+
 	}
 
 }

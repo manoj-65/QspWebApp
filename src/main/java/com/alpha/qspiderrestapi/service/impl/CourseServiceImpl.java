@@ -16,11 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dao.BranchDao;
 import com.alpha.qspiderrestapi.dao.CategoryDao;
+import com.alpha.qspiderrestapi.dao.CityCourseBranchViewDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dao.SubjectDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.BranchDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
+import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.CityBranchView;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.Faq;
@@ -31,6 +34,7 @@ import com.alpha.qspiderrestapi.modelmapper.CourseMapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
 import com.alpha.qspiderrestapi.service.CourseService;
 import com.alpha.qspiderrestapi.util.ChapterUtil;
+import com.alpha.qspiderrestapi.util.CourseUtil;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +63,15 @@ public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private AWSS3Service awss3Service;
+
+//	@Autowired
+//	private CityDao cityDao;
+
+	@Autowired
+	private CityCourseBranchViewDao viewDao;
+
+	@Autowired
+	private CourseUtil courseUtil;
 
 	/**
 	 * Saves a new course associated with a specified category (implementation).
@@ -355,6 +368,30 @@ public class CourseServiceImpl implements CourseService {
 
 		log.error("Course with ID {} not found", courseId);
 		throw new IdNotFoundException("Course With the Given Id Not Found");
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> fetchViewForHomepage() {
+		List<Map<String, Object>> var = viewDao.fetchAllViewByCityName();
+		List<BranchDto> branches = courseUtil.getTheBranchDto(var);
+		Map<String, List<BranchDto>> collect = branches.stream().collect(Collectors.groupingBy(BranchDto::getCity));
+
+//		Map<String, BranchDto> test = new HashMap<String, BranchDto>();
+//		for (BranchDto branchDto: branches) {
+//			test.put(branchDto.getCity(), branchDto);
+//		}
+
+		List<ViewAllHomePageResponse> response = new ArrayList<ViewAllHomePageResponse>();
+
+		for (Map.Entry<String, List<BranchDto>> entry : collect.entrySet()) {
+			ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
+			pageResponse.setBranches(entry.getValue());
+			pageResponse.setCityName(entry.getKey());
+			response.add(pageResponse);
+
+		}
+
+		return ResponseUtil.getOk(response);
 	}
 
 }
