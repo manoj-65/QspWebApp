@@ -54,7 +54,7 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private CityDao cityDao;
-	
+
 	@Autowired
 	private ValidatePhoneNumber validatePhoneNumber;
 
@@ -64,7 +64,7 @@ public class BranchServiceImpl implements BranchService {
 		branch.setBranchTitle(branch.getDisplayName() + "-" + branch.getBranchType());
 		for (String contact : branch.getContacts()) {
 			if (!validatePhoneNumber.isValidPhoneNumber(contact)) {
-				throw new InvalidPhoneNumberException("Invalid contact : "+contact);
+				throw new InvalidPhoneNumberException("Invalid contact : " + contact);
 			}
 		}
 		branch.setBranchFaqs(
@@ -166,7 +166,7 @@ public class BranchServiceImpl implements BranchService {
                         branch.setLocation(branchView.getLocation());
                         branch.setPhoneNumber(branchView.getContacts());
                         branch.setUpcomingBatches(branchView.getUpcomingBatches());
-                        branch.setOngoingBatches(branchView.getOngoingBatches());
+						branch.setOngoingBatches(branchView.getOngoingBatches());
                         return branch;
                     }).sorted(Comparator.comparing(BranchDto::getBranchId)).collect(Collectors.toList());
                     course.setBranches(branches);
@@ -190,6 +190,7 @@ public class BranchServiceImpl implements BranchService {
         countries.sort(Comparator.comparing(CountryDto::getCountryName));
         return ResponseUtil.getOk(countries);
     }
+
 
 
 	@Override

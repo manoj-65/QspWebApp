@@ -28,8 +28,8 @@ public class CityCourseBranchView {
 	private String branchImage;
 	private String location;
 	private String contacts;
-	private int upcomingBatches; 
-	private int ongoingBatches;
+	private long upcomingBatches; 
+	private long ongoingBatches;
 	private String cityImageUrl;
 	private long branchCount;
 	private String courseIcon;

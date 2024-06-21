@@ -10,6 +10,7 @@ public class BranchDto {
 	private String phoneNumber;
 	private String location;
 	private String branchImage;
-	private int upcomingBatches; 
-	private int ongoingBatches;
+	private Long upcomingBatches;
+	private Long ongoingBatches;
+	private String city;
 }
