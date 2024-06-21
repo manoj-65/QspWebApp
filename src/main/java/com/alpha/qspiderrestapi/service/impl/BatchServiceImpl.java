@@ -66,7 +66,7 @@ public class BatchServiceImpl implements BatchService {
 	}
 	
 	@Override
-	  @Scheduled(cron = "0 */2 * * * ?")
+	  @Scheduled(cron = "0 0 3 ? * MON,THU")
 	public void createBatch() {
 		 List<String> branchTypes = Arrays.asList("JSP", "QSP", "PYSP");  // Example branch types
 	        Time startTime1 = Time.valueOf("10:00:00");  // Start time 10:00 AM
