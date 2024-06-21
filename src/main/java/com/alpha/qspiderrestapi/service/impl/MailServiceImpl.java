@@ -1,7 +1,5 @@
 package com.alpha.qspiderrestapi.service.impl;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -27,7 +25,7 @@ public class MailServiceImpl implements MailService {
 		MimeMessageHelper helper = new MimeMessageHelper(mail, true);
 		helper.setTo("luvrishi64@gmail.com");
 		helper.setSubject("Feedbacks have been recorded");
-		helper.setText("Feedback ID : " + UUID.randomUUID().toString() + "\n" + feedback);
+		helper.setText("Feedback ID : "+feedback.getFeedBackId()+"\n" + feedback);
 
 		mailSender.send(mail);
 	}
