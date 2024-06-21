@@ -15,7 +15,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "city_course_branch_view")
 public class CityCourseBranchView {
+	
 	@Id
+    private long id;
 	private long branchId;
 	private String country;
 	private String city;
