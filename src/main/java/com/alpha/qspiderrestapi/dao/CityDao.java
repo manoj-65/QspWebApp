@@ -10,4 +10,6 @@ public interface CityDao {
 
 	List<String> fetchCityName();
 
+	void updateCityBranchCount();
+
 }

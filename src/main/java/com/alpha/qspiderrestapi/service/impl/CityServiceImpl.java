@@ -2,6 +2,7 @@ package com.alpha.qspiderrestapi.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,7 @@ public class CityServiceImpl implements CityService{
 	@Autowired
 	private AddressDao addressDao;
 	
+
 	@Override
 	public ResponseEntity<ApiResponse<City>> saveCity(MultipartFile cityIcon, MultipartFile cityImage,
 			String cityName) {
@@ -41,7 +43,9 @@ public class CityServiceImpl implements CityService{
 					city.setCityName(cityName);
 					city.setCityIconUrl(iconUrl);
 					city.setCityImageUrl(imageUrl);
-					return ResponseUtil.getCreated(cityDao.save(city));
+					city = cityDao.save(city);
+					cityDao.updateCityBranchCount();
+					return ResponseUtil.getCreated(city);
 				}else
 					throw new NullPointerException("CityImage can't be Upload Due the Admin restriction");
 			}else

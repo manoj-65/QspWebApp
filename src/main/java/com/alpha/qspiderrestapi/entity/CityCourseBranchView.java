@@ -28,5 +28,9 @@ public class CityCourseBranchView {
 	private String contacts;
 	private int upcomingBatches; 
 	private int ongoingBatches;
+	private String cityImageUrl;
+	private long branchCount;
+	private String courseIcon;
+	private String courseDescription;
 
 }
