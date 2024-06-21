@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
+import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.Course;
 
 public interface CourseService {
@@ -24,5 +25,7 @@ public interface CourseService {
 	ResponseEntity<ApiResponse<String>> removeCourseById(long courseId);
 
 	ResponseEntity<ApiResponse<String>> uploadImages(MultipartFile image, MultipartFile homePageImage, long courseId);
+
+	ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> fetchViewForHomepage();
 
 }
