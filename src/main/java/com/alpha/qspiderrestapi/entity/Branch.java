@@ -50,9 +50,9 @@ public class Branch {
 	@JoinColumn(name = "branchId", referencedColumnName = "branchId")
 	private List<Contact> contacts = new ArrayList<Contact>();
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "branchId", referencedColumnName = "branchId")
-	private List<Email> emails = new ArrayList<Email>();
+	@ElementCollection
+	@Column(name = "branch_emails")
+	private List<String> emails = new ArrayList<String>();
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "addressId")
