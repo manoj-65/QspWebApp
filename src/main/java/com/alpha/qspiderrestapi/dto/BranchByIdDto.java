@@ -21,7 +21,7 @@ public class BranchByIdDto {
 	private String branchImage;
 	private List<String> branchGallery;
 	private Address address;
-	private List<Contact> contacts;
+	private List<String> contacts;
 //	private int upcomingBatches;
 //	private int ongoingBatches;
 	private List<BranchById_CourseDto> courses;

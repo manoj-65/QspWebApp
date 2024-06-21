@@ -8,6 +8,7 @@ public class BranchById_Mapper {
 	public static BranchByIdDto mapToBranchByIdDto(Branch branch) {
 		return BranchByIdDto.builder()
 							.name(branch.getDisplayName())
+							.contacts(branch.getContacts())
 							.branchImage(branch.getBranchImage())
 							.branchGallery(branch.getGallery())
 							.address(branch.getBranchAddress())
