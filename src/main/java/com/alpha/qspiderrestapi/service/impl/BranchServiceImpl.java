@@ -227,4 +227,14 @@ public class BranchServiceImpl implements BranchService {
 		return ResponseUtil.getNoContent("Deleted Successfully");
 	}
 
+	@Override
+	public ResponseEntity<ApiResponse<String>> updateBranchLocation(long branchId, String location) {
+		if(branchDao.isBranchPresent(branchId)) {
+			branchDao.updateBranchLocation(branchId,location);
+			return ResponseUtil.getOk("Updated Successfull");
+		}
+			throw new IdNotFoundException("Branch with the Id: "+branchId);
+			
+	}
+
 }

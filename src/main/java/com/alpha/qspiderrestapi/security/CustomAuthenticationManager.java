@@ -46,7 +46,7 @@ public class CustomAuthenticationManager {
 	private static final String[] COURSEADDER_URLS = { "/api/{version}/courses", "/api/{version}/subjects/getall",
 			"/api/{version}/subjects", "/api/{version}/categories/getCategory", "/api/{version}/branches",
 			"/api/{version}/courses/uploadImage", "/api/{version}/courses/uploadIcon",
-			"/api/{version}/branches/uploadImages", "/api/{version}/branches/uploadIcon" };
+			"/api/{version}/branches/uploadImages", "/api/{version}/branches/uploadIcon","/api/{version}/branches/modifyLocationUrl" };
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
