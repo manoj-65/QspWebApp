@@ -94,9 +94,10 @@ public class BranchServiceImpl implements BranchService {
 				gallery.add(iconUrl);
 				branch.setGallery(gallery);
 				branchDao.saveBranch(branch);
-			} else
+			} else {
 				log.error("Icon cant be uploaded due to admin restriction");
-			throw new NullPointerException("Icon can't be Upload Due the Admin restriction");
+				throw new NullPointerException("Icon can't be Upload Due the Admin restriction");
+			}
 		}
 		return ResponseUtil.getCreated("Icon Uplodaed!!");
 	}

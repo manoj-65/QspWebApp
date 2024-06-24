@@ -13,6 +13,7 @@ public class BranchById_CourseDto {
 
 	private long courseId;
 	private String courseImage;
+	private String homePageCourseImage;
 	private String courseName;
 	private String courseDescription;
 }

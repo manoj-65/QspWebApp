@@ -18,6 +18,7 @@ public class BranchById_CourseDtoMapper {
 								.courseId(courseId)
 								.courseName(uniqueBatches.get(0).getCourse().getCourseName())
 								.courseImage(uniqueBatches.get(0).getCourse().getCourseImage())
+								.homePageCourseImage(uniqueBatches.get(0).getCourse().getHomePageCourseImage())
 								.courseDescription(uniqueBatches.get(0).getCourse().getCourseDescription())
 								.build());
 		});
