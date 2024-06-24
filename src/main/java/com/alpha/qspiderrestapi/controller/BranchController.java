@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -89,6 +90,14 @@ public class BranchController {
 	public ResponseEntity<ApiResponse<BranchByIdDto>> fetchById(@PathVariable String version,@RequestParam long branchId,@RequestParam long courseId) {
 		if (version.equals("v1"))
 			return branchService.fetchById(branchId,courseId);
+
+		throw new UnauthorizedVersionException();
+	}
+	
+	@DeleteMapping
+	public ResponseEntity<ApiResponse<String>> deleteById(@PathVariable String version,@RequestParam long branchId) {
+		if (version.equals("v1"))
+			return branchService.deleteById(branchId);
 
 		throw new UnauthorizedVersionException();
 	}
