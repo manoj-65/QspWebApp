@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
 public class UnauthorizedVersionException extends RuntimeException {
 
-	private String message;
+	private String message="Given version build is not available";
 	
 	@Override
 	public String getMessage() {
