@@ -17,12 +17,14 @@ public interface BranchService {
 	ResponseEntity<ApiResponse<String>> uploadImagesToGallery(List<MultipartFile> files, long branchId);
 
 	ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile file, long branchId);
-	
+
 	ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll();
 
 	ResponseEntity<ApiResponse<BranchByIdDto>> fetchById(long branchId, long courseId);
 
 	ResponseEntity<ApiResponse<String>> deleteById(long branchId);
+
+	ResponseEntity<ApiResponse<List<Branch>>> findAll();
 
 	ResponseEntity<ApiResponse<String>> updateBranchLocation(long branchId, String location);
 }

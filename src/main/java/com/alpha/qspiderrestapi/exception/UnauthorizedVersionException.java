@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+@SuppressWarnings("serial")
 @NoArgsConstructor
 @AllArgsConstructor
 @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
