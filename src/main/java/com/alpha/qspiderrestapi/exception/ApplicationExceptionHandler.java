@@ -101,4 +101,9 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		return ResponseUtil.getBadRequest(exception.getMessage());
 	}
 
+	@ExceptionHandler(InvalidInfoException.class)
+	public ResponseEntity<ApiResponse<String>> handleInvalidInfoException(InvalidInfoException exception) {
+		return ResponseUtil.getBadRequest(exception.getMessage());
+	}
+
 }
