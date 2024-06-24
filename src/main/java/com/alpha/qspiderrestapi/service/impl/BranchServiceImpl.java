@@ -34,6 +34,7 @@ import com.alpha.qspiderrestapi.service.BranchService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 import com.alpha.qspiderrestapi.util.ValidatePhoneNumber;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -213,6 +214,16 @@ public class BranchServiceImpl implements BranchService {
 		}
 		throw new IdNotFoundException("Branch not found with the Id : " + branchId);
 
+	}
+
+	@Override
+	@Transactional
+	public ResponseEntity<ApiResponse<String>> deleteById(long branchId) {
+		if(branchDao.isBranchPresent(branchId))
+			branchDao.deleteBranch(branchId);
+		else
+			throw new IdNotFoundException("No branch found with the id: "+branchId);
+		return ResponseUtil.getNoContent("Deleted Successfully");
 	}
 
 }
