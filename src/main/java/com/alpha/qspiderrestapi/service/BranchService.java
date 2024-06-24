@@ -23,4 +23,6 @@ public interface BranchService {
 	ResponseEntity<ApiResponse<BranchByIdDto>> fetchById(long branchId, long courseId);
 
 	ResponseEntity<ApiResponse<String>> deleteById(long branchId);
+
+	ResponseEntity<ApiResponse<List<Branch>>> findAll();
 }

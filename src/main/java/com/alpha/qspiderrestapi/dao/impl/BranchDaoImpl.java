@@ -56,4 +56,9 @@ public class BranchDaoImpl implements BranchDao {
 		return cityBranchViewProjectionRepository.findAllCityBranchInfo(courseId);
 	}
 
+	@Override
+	public List<Branch> findAll() {
+		return branchRepository.findAll();
+	}
+
 }

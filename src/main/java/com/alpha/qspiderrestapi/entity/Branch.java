@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.alpha.qspiderrestapi.entity.enums.Organization;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -59,12 +60,15 @@ public class Branch {
 	private Address branchAddress;
 
 	@OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Faq> branchFaqs = new ArrayList<Faq>();
 
 	@OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Review> branchReviews = new ArrayList<Review>();
 
 	@OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Batch> batches = new ArrayList<Batch>();
 
 	private String branchImage;
