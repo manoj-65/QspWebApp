@@ -34,7 +34,8 @@ public class FeedbackServiceImpl implements FeedbackSevice {
 			log.info("The process of saving feedback has been initiated......");
 			feedBack = feedbackDao.saveFeedback(feedBack);
 			try {
-				mailSender.sendMail(feedBack);
+				FeedbackEmailData data = new FeedbackEmailData(feedBack);
+				mailSender.sendMail(data);
 			} catch (MessagingException e) {
 				e.printStackTrace();
 			}
