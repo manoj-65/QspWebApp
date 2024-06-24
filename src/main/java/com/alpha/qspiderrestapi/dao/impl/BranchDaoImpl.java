@@ -60,5 +60,9 @@ public class BranchDaoImpl implements BranchDao {
 	public List<Branch> findAll() {
 		return branchRepository.findAll();
 	}
+	@Override
+	public void updateBranchLocation(long branchId, String location) {
+		branchRepository.updateBranchLocation(branchId, location);
+	}
 
 }

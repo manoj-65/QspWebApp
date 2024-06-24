@@ -102,6 +102,14 @@ public class BranchController {
 
 		throw new UnauthorizedVersionException();
 	}
+	
+	@PatchMapping("/modifyLocationUrl")
+	public ResponseEntity<ApiResponse<String>> updateBranchLocation(@PathVariable String version,@RequestParam long branchId,@RequestParam String locationUrl) {
+		if (version.equals("v1"))
+			return branchService.updateBranchLocation(branchId,locationUrl);
+
+		throw new UnauthorizedVersionException();
+	}
 
 	@GetMapping("/findAll")
 	public ResponseEntity<ApiResponse<List<Branch>>> findAll(@PathVariable String version) {
