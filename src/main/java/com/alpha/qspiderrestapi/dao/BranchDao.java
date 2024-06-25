@@ -22,5 +22,7 @@ public interface BranchDao {
 
 	List<CityBranchView> fetchAllCityBranchView(long courseId);
 
+	List<Branch> findAll();
+
 	void updateBranchLocation(long branchId, String location);
 }
