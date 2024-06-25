@@ -3,6 +3,8 @@ package com.alpha.qspiderrestapi.modelmapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseResponse;
 import com.alpha.qspiderrestapi.entity.Course;
@@ -12,6 +14,7 @@ import lombok.Data;
 
 @Builder
 @Data
+@Component
 public class CourseMapper {
 
 	/**
@@ -27,10 +30,8 @@ public class CourseMapper {
 	public static CourseResponse mapToCourseResponse(Course course) {
 		return CourseResponse.builder().courseResponseId(course.getCourseId()).icon(course.getCourseIcon())
 				.image_url(course.getCourseImage()).title(course.getCourseName())
-				.description(course.getCourseDescription())
-				.homePageCourseImage(course.getHomePageCourseImage())
-				.modes(course.getMode())
-				.build();
+				.description(course.getCourseDescription()).homePageCourseImage(course.getHomePageCourseImage())
+				.modes(course.getMode()).build();
 	}
 
 	/**

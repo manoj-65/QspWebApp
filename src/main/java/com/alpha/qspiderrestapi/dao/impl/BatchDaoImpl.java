@@ -39,8 +39,8 @@ public class BatchDaoImpl implements BatchDao {
 	}
 
 	@Override
-	public long isBatchPresent(long batchId) {
-		return batchRepository.findByBatchId(batchId);
+	public boolean isBatchPresent(long batchId) {
+		return batchRepository.findByBatchId(batchId)!=null;
 	}
 
 	@Override

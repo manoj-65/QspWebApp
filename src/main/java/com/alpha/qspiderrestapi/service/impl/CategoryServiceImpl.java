@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alpha.qspiderrestapi.dao.CategoryDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
 import com.alpha.qspiderrestapi.dto.CategoryFormResponse;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
 import com.alpha.qspiderrestapi.entity.Category;
@@ -20,6 +21,7 @@ import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.modelmapper.CategoryMapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
 import com.alpha.qspiderrestapi.service.CategoryService;
+import com.alpha.qspiderrestapi.util.CategoryUtil;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 
 import jakarta.transaction.Transactional;
@@ -37,6 +39,8 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Autowired
 	private AWSS3Service awss3Service;
+	@Autowired
+	private CategoryUtil categoryUtil;
 
 	/**
 	 * Saves a new category.
@@ -97,7 +101,8 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile iconfile,MultipartFile alternativeIconfile, long categoryId) {
+	public ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile iconfile, MultipartFile alternativeIconfile,
+			long categoryId) {
 		log.info("Uploading icon for category ID: {}", categoryId);
 		String folder = "CATEGORY/";
 		Optional<Category> optionalcategory = categoryDao.fetchCategoryById(categoryId);
@@ -159,5 +164,12 @@ public class CategoryServiceImpl implements CategoryService {
 			log.debug("Mapped category ID {} to CategoryFormResponse", category.getCategoryId());
 		});
 		return ResponseUtil.getOk(categoryFormResponse);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<CategoryDashboardResponse>>> findSortedCategories() {
+		List<Category> categories = categoryDao.fetchAllCategories();
+
+		return ResponseUtil.getOk(categoryUtil.mapToCategoryDashboardResponse(categories));
 	}
 }
