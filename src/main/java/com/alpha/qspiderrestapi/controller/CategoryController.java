@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
 import com.alpha.qspiderrestapi.dto.CategoryFormResponse;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
 import com.alpha.qspiderrestapi.entity.Category;
@@ -153,6 +154,14 @@ public class CategoryController {
 	public ResponseEntity<ApiResponse<List<CategoryFormResponse>>> fetchAllCategory(@PathVariable String version) {
 		if (version.equals("v1"))
 			return categoryService.fetchAllCategoryAndSubCategory();
+
+		throw new UnauthorizedVersionException();
+	}
+	
+	@GetMapping("/findAllCategories")
+	public ResponseEntity<ApiResponse<List<CategoryDashboardResponse>>> findSortedCategories(@PathVariable String version) {
+		if (version.equals("v1"))
+			return categoryService.findSortedCategories();
 
 		throw new UnauthorizedVersionException();
 	}

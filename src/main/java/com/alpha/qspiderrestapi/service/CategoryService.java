@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
 import com.alpha.qspiderrestapi.dto.CategoryFormResponse;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
 import com.alpha.qspiderrestapi.entity.Category;
@@ -23,5 +24,7 @@ public interface CategoryService {
 	ResponseEntity<ApiResponse<Category>> assignCoursesToCategory(long categoryId, List<Long> courseIds);
 
 	ResponseEntity<ApiResponse<List<CategoryFormResponse>>> fetchAllCategoryAndSubCategory();
+
+	ResponseEntity<ApiResponse<List<CategoryDashboardResponse>>> findSortedCategories();
 
 }

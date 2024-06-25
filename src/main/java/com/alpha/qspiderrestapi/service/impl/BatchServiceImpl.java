@@ -18,6 +18,7 @@ import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.enums.BatchStatus;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
+import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.service.BatchService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 
@@ -48,31 +49,46 @@ public class BatchServiceImpl implements BatchService {
 			log.error("Branch not found with ID: {}", branchId);
 			return new IdNotFoundException("No Branch Found with id: " + branchId);
 		});
-
-		batch.setCourse(course);
-		batch.setBranch(branch);
-		batch = batchDao.saveBatch(batch);
-		log.info("Batch saved successfully: {}", batch);
-
-		return ResponseUtil.getCreated(batch);
+		if (course.getMode().contains(batch.getBatchMode())) {
+			if(branch.getBranchType().equals(course.getBranchType().get(0))) {
+				batch.setBatchStatus(BatchStatus.UPCOMING);
+				batch.setEndingTime(batch.getStartingTime().plusHours(2l));
+				batch.setCourse(course);
+				batch.setBranch(branch);
+				batch = batchDao.saveBatch(batch);
+				log.info("Batch saved successfully: {}", batch); 
+				return ResponseUtil.getCreated(batch);
+			}
+			throw new InvalidInfoException("Given course and branch belong to different Organisation Type");
+		}
+			throw new InvalidInfoException("Given course and batch mode is not matching");
 	}
 
 	@Override
 	@Scheduled(cron = "0 0 2 ? * MON,THU")
 	public void updateBatchStatus() {
-		
+
 		batchDao.updateBatchStatus(BatchStatus.ONGOING, BatchStatus.BLOCKED);
 		batchDao.updateBatchStatus(BatchStatus.UPCOMING, BatchStatus.ONGOING);
 	}
-	
-	@Override
-	  @Scheduled(cron = "0 0 3 ? * MON,THU")
-	public void createBatch() {
-		 List<String> branchTypes = Arrays.asList("JSP", "QSP", "PYSP");  // Example branch types
-	        Time startTime1 = Time.valueOf("10:00:00");  // Start time 10:00 AM
-	        Time startTime2 = Time.valueOf("14:00:00");  // Start time 2:00 PM
 
-	        batchDao.createBatches(branchTypes, startTime1, startTime2);
+	@Override
+	@Scheduled(cron = "0 0 3 ? * MON,THU")
+	public void createBatch() {
+		List<String> branchTypes = Arrays.asList("JSP", "QSP", "PYSP"); // Example branch types
+		Time startTime1 = Time.valueOf("10:00:00"); // Start time 10:00 AM
+		Time startTime2 = Time.valueOf("14:00:00"); // Start time 2:00 PM
+
+		batchDao.createBatches(branchTypes, startTime1, startTime2);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> deleteBatch(long batchId) {
+		if(batchDao.isBatchPresent(batchId)) {
+			batchDao.deleteBatch(batchId);
+		}
+			
+		return ResponseUtil.getNoContent("Deletion Successful");
 	}
 
 }
