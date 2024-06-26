@@ -47,9 +47,10 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Autowired
 	private AWSS3Service awss3Service;
+
 	@Autowired
 	private CategoryUtil categoryUtil;
-	
+
 	@Value(value = "organization.qsp")
 	private String qspDomainName;
 

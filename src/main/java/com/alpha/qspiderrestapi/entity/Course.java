@@ -1,6 +1,6 @@
 package com.alpha.qspiderrestapi.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDateTime; 
 import java.util.ArrayList;
 import java.util.List;
 
