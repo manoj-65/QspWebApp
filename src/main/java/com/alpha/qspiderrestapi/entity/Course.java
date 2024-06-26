@@ -58,22 +58,22 @@ public class Course {
 	@CollectionTable(name = "mode_course", joinColumns = @JoinColumn(name = "course_id"))
 	@Column(name = "mode")
 	@Enumerated(EnumType.STRING)
-		private List<Mode> mode;
-		private String courseSummary;
-	
-		private String courseAbout;
-	
-		private String courseHighlight;
+	private List<Mode> mode;
+	private String courseSummary;
+
+	private String courseAbout;
+
+	private String courseHighlight;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "course_subject", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
 	private List<Subject> subjects = new ArrayList<Subject>();
 
-	@ManyToMany(mappedBy = "courses", cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToMany(mappedBy = "courses", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JsonIgnore
 	private List<Category> categories = new ArrayList<>();
 
-	@ManyToMany(mappedBy = "courses", cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToMany(mappedBy = "courses", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JsonIgnore
 	private List<SubCategory> subCategories = new ArrayList<SubCategory>();
 
@@ -85,6 +85,9 @@ public class Course {
 
 	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
 	private List<Faq> faqs = new ArrayList<Faq>();
+
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+	private List<Weightage> weightages;
 
 	private String courseImage;
 	private String homePageCourseImage;

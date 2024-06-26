@@ -19,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,6 +49,9 @@ public class SubCategory {
 	@JoinColumn(name = "categoryId")
 	@JsonIgnore
 	private Category category;
+
+	@OneToMany(mappedBy = "subCategory", cascade = CascadeType.ALL)
+	private List<Weightage> weightage;
 
 	@CreationTimestamp
 	private LocalDateTime createdDateAndTime;
