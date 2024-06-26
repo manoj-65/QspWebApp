@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,7 +42,6 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Autowired
 	private CategoryDao categoryDao;
-
 	@Autowired
 	private CourseDao courseDao;
 
@@ -49,6 +49,9 @@ public class CategoryServiceImpl implements CategoryService {
 	private AWSS3Service awss3Service;
 	@Autowired
 	private CategoryUtil categoryUtil;
+	
+	@Value(value = "organization.qsp")
+	private String qspDomainName;
 
 	/**
 	 * Saves a new category.
@@ -86,7 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
 	 *                   during data access.
 	 */
 	@Override
-	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories() {
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName) {
 
 		log.info("Entering fetchAllCategories");
 		List<Category> categories = categoryDao.fetchAllCategories();
@@ -180,48 +183,42 @@ public class CategoryServiceImpl implements CategoryService {
 //
 //		return ResponseUtil.getOk(categoryUtil.mapToCategoryDashboardResponse(categories));
 //	}
-	
+
 	@Override
 	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories() {
 		List<Category> categories = categoryDao.fetchAllCategories();
 		for (Category category : categories) {
-			if(!category.getSubCategories().isEmpty()) {
+			if (!category.getSubCategories().isEmpty()) {
 				List<Course> subCategoryCourses = new ArrayList<Course>();
 				for (SubCategory subCategory : category.getSubCategories()) {
-					subCategoryCourses.addAll(subCategory.getCourses());	
+					subCategoryCourses.addAll(subCategory.getCourses());
 				}
 				category.setCourses(subCategoryCourses);
 			}
 		}
-		
-		
+
 		Map<Mode, List<CategoryDashboardResponse>> result = new HashMap<Mode, List<CategoryDashboardResponse>>();
-		
-		for(Mode mode : Mode.values()) {
-			
-									  List<CategoryDashboardResponse> filteredCategory = categories.stream()
-												.filter(category -> category.getCourses()
-																			.stream()
-																			.anyMatch(course->course.getMode().contains(mode)))
-												.map(category->mapToCategoryDashboardResponse(category,mode))
-												.collect(Collectors.toList());
-			
+
+		for (Mode mode : Mode.values()) {
+
+			List<CategoryDashboardResponse> filteredCategory = categories.stream().filter(
+					category -> category.getCourses().stream().anyMatch(course -> course.getMode().contains(mode)))
+					.map(category -> mapToCategoryDashboardResponse(category, mode)).collect(Collectors.toList());
+
 			result.put(mode, filteredCategory);
 		}
 		return ResponseUtil.getOk(result);
 	}
-	
-	public CategoryDashboardResponse mapToCategoryDashboardResponse(Category category,Mode mode) {
-		return CategoryDashboardResponse.builder()
-			.categoryName(category.getCategoryTitle())
-			.categoryId(category.getCategoryId())
-			.categoryAlternativeIcon(category.getCategoryAlternativeIcon())
-			.categoryIcon(category.getCategoryIcon())
-			.courses(mapToCourse(category.getCourses(),mode))
-			.build();	
+
+	public CategoryDashboardResponse mapToCategoryDashboardResponse(Category category, Mode mode) {
+		return CategoryDashboardResponse.builder().categoryName(category.getCategoryTitle())
+				.categoryId(category.getCategoryId()).categoryAlternativeIcon(category.getCategoryAlternativeIcon())
+				.categoryIcon(category.getCategoryIcon()).courses(mapToCourse(category.getCourses(), mode)).build();
 	}
 
-	private List<CourseResponse> mapToCourse(List<Course> courses,Mode mode) {
-		return courses.stream().filter(course->course.getMode().contains(mode)).map(course->CourseMapper.mapToCourseResponse(course)).collect(Collectors.toList());
+	private List<CourseResponse> mapToCourse(List<Course> courses, Mode mode) {
+		return courses.stream().filter(course -> course.getMode().contains(mode))
+				.map(course -> CourseMapper.mapToCourseResponse(course)).collect(Collectors.toList());
 	}
+
 }
