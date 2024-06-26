@@ -1,6 +1,7 @@
 package com.alpha.qspiderrestapi.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
 import com.alpha.qspiderrestapi.dto.CategoryFormResponse;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
 import com.alpha.qspiderrestapi.entity.Category;
+import com.alpha.qspiderrestapi.entity.enums.Mode;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.CategoryService;
 
@@ -153,6 +156,22 @@ public class CategoryController {
 	public ResponseEntity<ApiResponse<List<CategoryFormResponse>>> fetchAllCategory(@PathVariable String version) {
 		if (version.equals("v1"))
 			return categoryService.fetchAllCategoryAndSubCategory();
+
+		throw new UnauthorizedVersionException();
+	}
+	
+//	@GetMapping("/findAllCategories")
+//	public ResponseEntity<ApiResponse<List<CategoryDashboardResponse>>> findSortedCategories(@PathVariable String version) {
+//		if (version.equals("v1"))
+//			return categoryService.findSortedCategories();
+//
+//		throw new UnauthorizedVersionException();
+//	}
+	
+	@GetMapping("/findAllCategories")
+	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(@PathVariable String version) {
+		if (version.equals("v1"))
+			return categoryService.findSortedCategories();
 
 		throw new UnauthorizedVersionException();
 	}

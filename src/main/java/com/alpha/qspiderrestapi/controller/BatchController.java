@@ -3,6 +3,7 @@ package com.alpha.qspiderrestapi.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +39,13 @@ public class BatchController {
 			@RequestParam long courseId, @RequestBody Batch batch) {
 		if (version.equalsIgnoreCase("V1"))
 			return batchService.saveBatch(branchId, courseId, batch);
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	}
+	
+	@DeleteMapping
+	public ResponseEntity<ApiResponse<String>> deleteBatch(@PathVariable String version, @RequestParam long batchId) {
+		if (version.equalsIgnoreCase("V1"))
+			return batchService.deleteBatch(batchId);
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 
