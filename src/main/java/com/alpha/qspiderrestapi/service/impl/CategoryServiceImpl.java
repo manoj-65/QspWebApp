@@ -1,8 +1,11 @@
 package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +18,15 @@ import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
 import com.alpha.qspiderrestapi.dto.CategoryFormResponse;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
+import com.alpha.qspiderrestapi.dto.CourseResponse;
 import com.alpha.qspiderrestapi.entity.Category;
+import com.alpha.qspiderrestapi.entity.Course;
+import com.alpha.qspiderrestapi.entity.SubCategory;
+import com.alpha.qspiderrestapi.entity.enums.Mode;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.modelmapper.CategoryMapper;
+import com.alpha.qspiderrestapi.modelmapper.CourseMapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
 import com.alpha.qspiderrestapi.service.CategoryService;
 import com.alpha.qspiderrestapi.util.CategoryUtil;
@@ -166,10 +174,53 @@ public class CategoryServiceImpl implements CategoryService {
 		return ResponseUtil.getOk(categoryFormResponse);
 	}
 
+//	@Override
+//	public ResponseEntity<ApiResponse<List<CategoryDashboardResponse>>> findSortedCategories() {
+//		List<Category> categories = categoryDao.fetchAllCategories();
+//
+//		return ResponseUtil.getOk(categoryUtil.mapToCategoryDashboardResponse(categories));
+//	}
+	
 	@Override
-	public ResponseEntity<ApiResponse<List<CategoryDashboardResponse>>> findSortedCategories() {
+	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories() {
 		List<Category> categories = categoryDao.fetchAllCategories();
+		for (Category category : categories) {
+			if(!category.getSubCategories().isEmpty()) {
+				List<Course> subCategoryCourses = new ArrayList<Course>();
+				for (SubCategory subCategory : category.getSubCategories()) {
+					subCategoryCourses.addAll(subCategory.getCourses());	
+				}
+				category.setCourses(subCategoryCourses);
+			}
+		}
+		
+		
+		Map<Mode, List<CategoryDashboardResponse>> result = new HashMap<Mode, List<CategoryDashboardResponse>>();
+		
+		for(Mode mode : Mode.values()) {
+			
+									  List<CategoryDashboardResponse> filteredCategory = categories.stream()
+												.filter(category -> category.getCourses()
+																			.stream()
+																			.anyMatch(course->course.getMode().contains(mode)))
+												.map(category->mapToCategoryDashboardResponse(category,mode))
+												.collect(Collectors.toList());
+			
+			result.put(mode, filteredCategory);
+		}
+		return ResponseUtil.getOk(result);
+	}
+	
+	public CategoryDashboardResponse mapToCategoryDashboardResponse(Category category,Mode mode) {
+		return CategoryDashboardResponse.builder()
+			.categoryName(category.getCategoryTitle())
+			.categoryId(category.getCategoryId())
+			.categoryAlternativeIcon(category.getCategoryAlternativeIcon())
+			.courses(mapToCourse(category.getCourses(),mode))
+			.build();	
+	}
 
-		return ResponseUtil.getOk(categoryUtil.mapToCategoryDashboardResponse(categories));
+	private List<CourseResponse> mapToCourse(List<Course> courses,Mode mode) {
+		return courses.stream().filter(course->course.getMode().contains(mode)).map(course->CourseMapper.mapToCourseResponse(course)).collect(Collectors.toList());
 	}
 }
