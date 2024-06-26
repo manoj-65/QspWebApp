@@ -13,4 +13,5 @@ public class BranchDto {
 	private Long upcomingBatches;
 	private Long ongoingBatches;
 	private String city;
+	private String organizationType;
 }
