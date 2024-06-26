@@ -17,5 +17,6 @@ public class CategoryDashboardResponse {
 	private long categoryId;
 	private String categoryName;
 	private String categoryAlternativeIcon;
+	private String categoryIcon;
 	private List<CourseResponse> courses;
 }

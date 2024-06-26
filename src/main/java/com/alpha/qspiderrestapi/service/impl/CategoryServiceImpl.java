@@ -216,6 +216,7 @@ public class CategoryServiceImpl implements CategoryService {
 			.categoryName(category.getCategoryTitle())
 			.categoryId(category.getCategoryId())
 			.categoryAlternativeIcon(category.getCategoryAlternativeIcon())
+			.categoryIcon(category.getCategoryIcon())
 			.courses(mapToCourse(category.getCourses(),mode))
 			.build();	
 	}
