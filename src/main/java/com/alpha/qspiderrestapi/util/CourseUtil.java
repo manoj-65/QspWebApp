@@ -32,6 +32,7 @@ public class CourseUtil {
 			branchDto.setUpcomingBatches((Long) result.get("upcoming_batches"));
 			branchDto.setOngoingBatches((Long) result.get("ongoing_batches"));
 			branchDto.setCity((String) result.get("city"));
+			branchDto.setOrganizationType((String) result.get("branch_type"));
 			branchDtos.add(branchDto);
 		}
 		return branchDtos;
