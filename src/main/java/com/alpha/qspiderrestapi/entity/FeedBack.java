@@ -1,5 +1,10 @@
 package com.alpha.qspiderrestapi.entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.alpha.qspiderrestapi.entity.validators.ValidEmail;
 
 import jakarta.persistence.Column;
@@ -23,8 +28,8 @@ import lombok.ToString;
 public class FeedBack {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long feedBackId;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private String feedBackId;
 	@NotBlank(message = "Ensure that the User name is not null. Kindly enter a valid name.")
 	private String userName;
 	@NotBlank(message = "Ensure that the Phone Number not null. Kindly enter a valid Phone Number.")
@@ -34,4 +39,8 @@ public class FeedBack {
 	@Column(columnDefinition = "TEXT")
 	@NotBlank(message = "Ensure that the Message is not null. Kindly enter a valid Feed Back.")
 	private String message;
+	@CreationTimestamp
+	private LocalDateTime createdDateAndTime;
+	@UpdateTimestamp
+	private LocalDateTime updatedDateAndTime;
 }

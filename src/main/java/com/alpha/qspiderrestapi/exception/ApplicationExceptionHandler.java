@@ -51,7 +51,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 	}
 
 	@ExceptionHandler(DataIntegrityViolationException.class)
-	public ResponseEntity<ApiResponse<String>> ConstraintViolationException(DataIntegrityViolationException exception) {
+	public ResponseEntity<ApiResponse<String>> constraintViolationException(DataIntegrityViolationException exception) {
 		return ResponseUtil.getBadRequest("Constraint is being violated " + exception.getRootCause().getMessage());
 	}
 
