@@ -17,7 +17,7 @@ public interface CategoryService {
 
 	ResponseEntity<ApiResponse<Category>> saveCategory(Category category);
 
-	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories();
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName);
 
 	ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId);
 
