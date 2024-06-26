@@ -12,4 +12,6 @@ public interface BatchService {
 	void updateBatchStatus();
 
 	void createBatch();
+
+	ResponseEntity<ApiResponse<String>> deleteBatch(long batchId);
 }

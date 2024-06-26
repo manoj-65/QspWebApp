@@ -15,5 +15,5 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
 
 	@Query(value = "Select Count(a) From Address a Where a.city = :cityName")
 	long countAddressByCity(String cityName);
-
+	
 }

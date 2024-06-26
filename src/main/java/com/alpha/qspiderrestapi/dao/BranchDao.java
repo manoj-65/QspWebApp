@@ -21,4 +21,8 @@ public interface BranchDao {
 	Branch findBranchWithUpcomingBatches(long branchId);
 
 	List<CityBranchView> fetchAllCityBranchView(long courseId);
+
+	List<Branch> findAll();
+
+	void updateBranchLocation(long branchId, String location);
 }

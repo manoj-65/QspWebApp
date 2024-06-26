@@ -17,7 +17,7 @@ public interface BatchDao {
 
 	void deleteBatch(long batchId);
 
-	long isBatchPresent(long batchId);
+	boolean isBatchPresent(long batchId);
 	
 	List<Batch> fetchAllUpcomingAndOngoingBatches();
 

@@ -50,7 +50,7 @@ class TestDaoImpl {
 
 	@Test
 	public void testIsPresentBatch() {
-		long batchPresent = batchDao.isBatchPresent(1);
+		boolean batchPresent = batchDao.isBatchPresent(1);
 		assertEquals(1, batchPresent);
 		System.out.println(batchPresent);
 	}

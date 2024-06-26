@@ -35,7 +35,7 @@ public class BranchController {
 
 	@Autowired
 	private BranchService branchService;
-	
+
 	@Operation(description = "A Branch is saved into the database", summary = "Saves a Branch")
 	@ApiResponses(value = {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
@@ -85,21 +85,37 @@ public class BranchController {
 
 		throw new UnauthorizedVersionException();
 	}
-	
+
 	@GetMapping("/getbyid")
-	public ResponseEntity<ApiResponse<BranchByIdDto>> fetchById(@PathVariable String version,@RequestParam long branchId,@RequestParam long courseId) {
+	public ResponseEntity<ApiResponse<BranchByIdDto>> fetchById(@PathVariable String version,
+			@RequestParam long branchId, @RequestParam long courseId) {
 		if (version.equals("v1"))
-			return branchService.fetchById(branchId,courseId);
+			return branchService.fetchById(branchId, courseId);
 
 		throw new UnauthorizedVersionException();
 	}
-	
+
 	@DeleteMapping
-	public ResponseEntity<ApiResponse<String>> deleteById(@PathVariable String version,@RequestParam long branchId) {
+	public ResponseEntity<ApiResponse<String>> deleteById(@PathVariable String version, @RequestParam long branchId) {
 		if (version.equals("v1"))
 			return branchService.deleteById(branchId);
 
 		throw new UnauthorizedVersionException();
+	}
+	
+	@PatchMapping("/modifyLocationUrl")
+	public ResponseEntity<ApiResponse<String>> updateBranchLocation(@PathVariable String version,@RequestParam long branchId,@RequestParam String locationUrl) {
+		if (version.equals("v1"))
+			return branchService.updateBranchLocation(branchId,locationUrl);
+
+		throw new UnauthorizedVersionException();
+	}
+
+	@GetMapping("/findAll")
+	public ResponseEntity<ApiResponse<List<Branch>>> findAll(@PathVariable String version) {
+		if (version.equals("v1"))
+			return branchService.findAll();
+		throw new UnauthorizedVersionException("Given Version Build is Not Runing");
 	}
 
 }
