@@ -1,8 +1,12 @@
 package com.alpha.qspiderrestapi.entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.alpha.qspiderrestapi.entity.enums.EnquiryType;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -35,4 +39,9 @@ public class Enquiry {
 	private EnquiryType enquiryType;
 	private String requiredTraining;
 	private String companyName;
+	@CreationTimestamp
+	private LocalDateTime createdDateAndTime;
+	@UpdateTimestamp
+	private LocalDateTime updatedDateAndTime;
+
 }

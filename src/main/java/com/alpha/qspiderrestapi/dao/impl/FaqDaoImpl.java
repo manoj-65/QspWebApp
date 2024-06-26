@@ -17,8 +17,8 @@ public class FaqDaoImpl implements FaqDao {
 	private FaqRepository faqRepository;
 
 	@Override
-	public Faq saveFaq(Faq faq) {
-		return faqRepository.save(faq);
+	public List<Faq> saveFaq(List<Faq> faqs) {
+		return faqRepository.saveAll(faqs);
 	}
 
 	@Override
