@@ -48,7 +48,8 @@ public class CustomAuthenticationManager {
 			"/api/{version}/subjects", "/api/{version}/categories/getCategory", "/api/{version}/branches",
 			"/api/{version}/courses/uploadImage", "/api/{version}/courses/uploadIcon",
 			"/api/{version}/branches/uploadImages", "/api/{version}/branches/uploadIcon",
-			"/api/{version}/branches/findAll", "/api/{version}/branches/modifyLocationUrl", "/api/{version}/faqs" };
+			"/api/{version}/branches/findAll", "/api/{version}/branches/modifyLocationUrl", "/api/{version}/faqs",
+			"api/{version}/weightage/categories"};
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
