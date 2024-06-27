@@ -32,6 +32,9 @@ public class CourseUtil {
 			branchDto.setUpcomingBatches((Long) result.get("upcoming_batches"));
 			branchDto.setOngoingBatches((Long) result.get("ongoing_batches"));
 			branchDto.setCity((String) result.get("city"));
+			branchDto.setPinCode((int) result.get("pincode"));
+			branchDto.setState((String) result.get("state"));
+			branchDto.setStreet((String) result.get("street"));
 			branchDto.setOrganizationType((String) result.get("branch_type"));
 			branchDtos.add(branchDto);
 		}
@@ -44,7 +47,7 @@ public class CourseUtil {
 
 	public int generateRandomParticipant() {
 		int lowerBound = 30000;
-		int upperBound = 50001; 
+		int upperBound = 50001;
 
 		Random random = new Random();
 		return random.nextInt(upperBound - lowerBound) + lowerBound;

@@ -13,5 +13,8 @@ public class BranchDto {
 	private Long upcomingBatches;
 	private Long ongoingBatches;
 	private String city;
+	private int pinCode;
+	private String state;
+	private String street;
 	private String organizationType;
 }
