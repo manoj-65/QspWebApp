@@ -59,6 +59,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			Category category = categoryDao.fetchCategoryById(categoryId)
 					.orElseThrow(() -> new IdNotFoundException("No Category Found with the given Id"));
 			subCategory.setCategory(category);
+			
 			log.info("SubCategory saved successfully.");
 			return ResponseUtil.getCreated(subCategoryDao.saveSubCategory(subCategory));
 		} catch (Exception e) {
