@@ -12,4 +12,6 @@ import com.alpha.qspiderrestapi.entity.enums.Organization;
 public interface FaqService {
 
 	ResponseEntity<ApiResponse<List<Faq>>> saveFaq(List<FaqDto> faqs, Organization organizationType);
+
+	ResponseEntity<ApiResponse<List<Faq>>> fetchAllFaqs(Organization organization);
 }

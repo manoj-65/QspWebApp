@@ -106,4 +106,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		return ResponseUtil.getBadRequest(exception.getMessage());
 	}
 
+	@ExceptionHandler(InvalidOrganisationTypeException.class)
+	public ResponseEntity<ApiResponse<String>> handleInvalidOrganisationTypeException(
+			InvalidOrganisationTypeException exception) {
+		return ResponseUtil.getBadRequest(exception.getMessage());
+	}
+
 }
