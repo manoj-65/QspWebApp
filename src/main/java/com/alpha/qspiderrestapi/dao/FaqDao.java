@@ -7,7 +7,7 @@ import com.alpha.qspiderrestapi.entity.Faq;
 
 public interface FaqDao {
 
-	Faq saveFaq(Faq faq);
+	List<Faq> saveFaq(List<Faq> faqs);
 
 	Optional<Faq> fetchFaqById(long faqId);
 

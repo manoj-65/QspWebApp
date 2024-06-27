@@ -1,11 +1,12 @@
 package com.alpha.qspiderrestapi.entity;
 
-import java.time.LocalDateTime; 
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.alpha.qspiderrestapi.entity.enums.FaqType;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -36,6 +37,9 @@ public class Faq {
 
 	@Enumerated(EnumType.STRING)
 	private FaqType faqType;
+
+	@Enumerated(EnumType.STRING)
+	private Organization organizationType;
 
 	@JsonIgnore
 	@ManyToOne

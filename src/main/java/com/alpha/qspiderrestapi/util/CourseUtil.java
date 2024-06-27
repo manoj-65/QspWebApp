@@ -3,6 +3,7 @@ package com.alpha.qspiderrestapi.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.stereotype.Component;
 
@@ -31,9 +32,22 @@ public class CourseUtil {
 			branchDto.setUpcomingBatches((Long) result.get("upcoming_batches"));
 			branchDto.setOngoingBatches((Long) result.get("ongoing_batches"));
 			branchDto.setCity((String) result.get("city"));
+			branchDto.setOrganizationType((String) result.get("branch_type"));
 			branchDtos.add(branchDto);
 		}
 		return branchDtos;
+	}
+
+	public double generateRandomRating() {
+		return 4.5 + Math.random() * 0.4;
+	}
+
+	public int generateRandomParticipant() {
+		int lowerBound = 30000;
+		int upperBound = 50001; 
+
+		Random random = new Random();
+		return random.nextInt(upperBound - lowerBound) + lowerBound;
 	}
 
 }

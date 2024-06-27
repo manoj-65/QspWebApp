@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,6 +45,10 @@ public class Category {
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "category_course", joinColumns = @JoinColumn(name = "categoryId"), inverseJoinColumns = @JoinColumn(name = "courseId"))
 	private List<Course> courses = new ArrayList<Course>();
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn
+	private Weightage weightage;
 
 	@CreationTimestamp
 	private LocalDateTime createdDateAndTime;

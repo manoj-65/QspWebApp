@@ -47,7 +47,7 @@ public class EnquiryServiceImpl implements EnquiryService {
 				e.printStackTrace();
 			}
 
-			return ResponseUtil.getCreated("Saved Successfully");
+			return ResponseUtil.getCreated("Sent Successfully");
 
 		}
 		throw new InvalidPhoneNumberException("Enter a valid Phone Number");

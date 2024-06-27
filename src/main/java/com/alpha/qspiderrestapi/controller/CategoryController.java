@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -88,9 +89,11 @@ public class CategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@GetMapping("/getall")
-	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(@PathVariable String version) {
-		if (version.equalsIgnoreCase("V1"))
-			return categoryService.fetchAllCategories();
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(@PathVariable String version,
+			@RequestHeader("Host") String domainName) {
+		if (version.equalsIgnoreCase("V1")) {
+			return categoryService.fetchAllCategories(domainName);
+		}
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
@@ -127,12 +130,13 @@ public class CategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
-			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400") })
 	@PatchMapping(value = "/uploadIcon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadIcon(@PathVariable String version,
-			@RequestParam("iconfile") MultipartFile iconfile,@RequestParam("alternativeIconfile") MultipartFile alternativeIconfile, @RequestParam long categoryId) {
+			@RequestParam("iconfile") MultipartFile iconfile,
+			@RequestParam("alternativeIconfile") MultipartFile alternativeIconfile, @RequestParam long categoryId) {
 		if (version.equals("v1"))
-			return categoryService.uploadIcon(iconfile,alternativeIconfile, categoryId);
+			return categoryService.uploadIcon(iconfile, alternativeIconfile, categoryId);
 		throw new UnauthorizedVersionException();
 	}
 
@@ -141,7 +145,7 @@ public class CategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "OK", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
-			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400") })
 	@PatchMapping(value = "/assigncourses")
 	public ResponseEntity<ApiResponse<Category>> assignCoursesToCategory(@PathVariable String version,
 			@RequestParam long categoryId, @RequestBody List<Long> courseIds) {
@@ -159,7 +163,7 @@ public class CategoryController {
 
 		throw new UnauthorizedVersionException();
 	}
-	
+
 //	@GetMapping("/findAllCategories")
 //	public ResponseEntity<ApiResponse<List<CategoryDashboardResponse>>> findSortedCategories(@PathVariable String version) {
 //		if (version.equals("v1"))
@@ -167,13 +171,14 @@ public class CategoryController {
 //
 //		throw new UnauthorizedVersionException();
 //	}
-	
+
 	@GetMapping("/findAllCategories")
-	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(@PathVariable String version) {
+	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(
+			@PathVariable String version) {
 		if (version.equals("v1"))
 			return categoryService.findSortedCategories();
 
 		throw new UnauthorizedVersionException();
 	}
-	
+
 }

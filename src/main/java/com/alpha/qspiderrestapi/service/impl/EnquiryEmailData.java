@@ -14,7 +14,7 @@ public class EnquiryEmailData implements EmailData {
 
 	@Override
 	public String getSubject() {
-		return "Enquiry Received - " + enquiry.getEnquiryId() + "Enquiry Type: " + enquiry.getEnquiryType();
+		return "Enquiry Received - " + enquiry.getEnquiryId() + " Enquiry Type: " + enquiry.getEnquiryType();
 	}
 
 	@Override
