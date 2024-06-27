@@ -2,6 +2,7 @@ package com.alpha.qspiderrestapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,15 +35,15 @@ public class Weightage {
 	private long course_categoryId;
 	private long course_SubCategoryId;
 
-	@OneToOne(mappedBy = "weightage")
+	@OneToOne(mappedBy = "weightage",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JsonIgnore
 	private Category category;
 
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JoinColumn(name = "subCategoryId")
 	private SubCategory subCategory;
 
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JoinColumn(name = "courseId")
 	private Course course;
 
