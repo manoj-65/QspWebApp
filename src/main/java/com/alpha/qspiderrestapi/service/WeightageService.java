@@ -10,4 +10,10 @@ public interface WeightageService {
 
 	ResponseEntity<ApiResponse<Weightage>> saveCategoryWeightage(long categoryId, WeightageDto dto);
 
+	ResponseEntity<ApiResponse<Weightage>> saveSubCategoryWeightage(long categoryId, long subCategoryId,
+			WeightageDto dto);
+
+	ResponseEntity<ApiResponse<Weightage>> saveCourseWeightage(long categoryId, Long subCategoryId, long courseId,
+			WeightageDto dto);
+
 }
