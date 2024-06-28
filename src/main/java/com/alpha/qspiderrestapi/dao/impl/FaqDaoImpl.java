@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import com.alpha.qspiderrestapi.dao.FaqDao;
 import com.alpha.qspiderrestapi.entity.Faq;
+import com.alpha.qspiderrestapi.entity.enums.FaqType;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.repository.FaqRepository;
 
 @Repository
@@ -27,8 +29,8 @@ public class FaqDaoImpl implements FaqDao {
 	}
 
 	@Override
-	public List<Faq> fetchAllFaqs() {
-		return faqRepository.findAll();
+	public List<Faq> fetchAllFaqs(Organization organization) {
+		return faqRepository.findByOrganizationTypeAndFaqType(organization, FaqType.ORGANIZATION);
 	}
 
 	@Override

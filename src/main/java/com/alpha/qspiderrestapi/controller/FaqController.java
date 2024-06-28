@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,14 @@ public class FaqController {
 			@RequestParam Organization organizationType) {
 		if (version.equalsIgnoreCase("V1"))
 			return faqService.saveFaq(faqs, organizationType);
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	}
+
+	@GetMapping
+	public ResponseEntity<ApiResponse<List<Faq>>> fetchAllFaqByOrganisation(@PathVariable String version,
+			@RequestParam Organization organization) {
+		if (version.equalsIgnoreCase("V1"))
+			return faqService.fetchAllFaqs(organization);
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 

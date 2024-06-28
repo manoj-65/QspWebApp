@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import com.alpha.qspiderrestapi.dto.FaqDto;
 import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.enums.FaqType;
 import com.alpha.qspiderrestapi.entity.enums.Organization;
+import com.alpha.qspiderrestapi.exception.InvalidOrganisationTypeException;
 import com.alpha.qspiderrestapi.service.FaqService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 
@@ -21,6 +23,9 @@ public class FaqServiceImpl implements FaqService {
 
 	@Autowired
 	private FaqDao faqDao;
+
+	@Value("organisatin.qsp")
+	private String qspDomainName;
 
 	@Override
 	public ResponseEntity<ApiResponse<List<Faq>>> saveFaq(List<FaqDto> faqDtos, Organization organizationType) {
@@ -37,6 +42,21 @@ public class FaqServiceImpl implements FaqService {
 		});
 
 		return ResponseUtil.getCreated(faqDao.saveFaq(faqs));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<Faq>>> fetchAllFaqs(Organization organization) {
+
+		List<Faq> faQs = faqDao.fetchAllFaqs(organization);
+		if (faQs != null && !faQs.isEmpty()) {
+
+			// if ((!organization.equals(null)) && (!(organization.isBlank()))) {
+			// if (organization.equals(qspDomainName))
+			return ResponseUtil.getOk(faQs);
+		}
+
+		throw new InvalidOrganisationTypeException("Organisation type not found!!");
+
 	}
 
 }
