@@ -37,6 +37,7 @@ public class Weightage {
 
 	@OneToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JoinColumn(name = "categoryId")
+	@JsonIgnore
 	private Category category;
 
 	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
