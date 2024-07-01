@@ -30,10 +30,10 @@ public class Weightage {
 	private long pyspiders;
 	private long bspiders;
 
-	private long subCategory_categoryId;
+	private Long subCategory_categoryId;
 
-	private long course_categoryId;
-	private long course_SubCategoryId;
+	private Long course_categoryId;
+	private Long course_SubCategoryId;
 
 	@OneToOne(mappedBy = "weightage",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JsonIgnore
@@ -41,10 +41,12 @@ public class Weightage {
 
 	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JoinColumn(name = "subCategoryId")
+	@JsonIgnore
 	private SubCategory subCategory;
 
 	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
 	@JoinColumn(name = "courseId")
+	@JsonIgnore
 	private Course course;
 
 }
