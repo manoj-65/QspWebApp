@@ -71,7 +71,6 @@ public class WeightageUtil {
 	}
 
 	public long getCourseOfCategoryWeightage(Course course, String hostname, long categoryId) {
-		System.err.println("&&& &&& &&&   HostName = "+hostname);
 		if (qspDomainName.equals(hostname)) {
 			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
 				for (Weightage weightage : course.getWeightages()) {
