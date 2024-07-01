@@ -49,6 +49,7 @@ public class Category {
 	private List<Course> courses = new ArrayList<Course>();
 
 	@OneToOne(mappedBy = "category",cascade = CascadeType.ALL)
+	@JsonIgnore
 	private Weightage weightage;
 
 	@CreationTimestamp

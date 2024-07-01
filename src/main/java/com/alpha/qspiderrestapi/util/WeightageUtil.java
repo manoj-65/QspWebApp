@@ -29,7 +29,7 @@ public class WeightageUtil {
 	public long getCategoryWeightage(Category category, String hostname) {
 		if (qspDomainName.equals(hostname)) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getQspiders()) : 0l;
-		} else if (jspDomainName.equals(hostname)) {
+		} else if (jspDomainName.equals(hostname) ) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getJspiders()) : 0l;
 		} else if (pyspDomainName.equals(hostname)) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getPyspiders()) : 0l;
@@ -41,7 +41,7 @@ public class WeightageUtil {
 	}
 
 	public long getSubCategoryWeightage(SubCategory subCategory, String hostname, long categoryId) {
-		if (qspDomainName.equals(hostname)) {
+		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost") ) {
 			if (subCategory.getWeightage() != null) {
 				return subCategory.getWeightage().stream().filter(w -> w.getSubCategory_categoryId() == categoryId)
 						.findFirst().get().getQspiders();
@@ -71,7 +71,7 @@ public class WeightageUtil {
 	}
 
 	public long getCourseOfCategoryWeightage(Course course, String hostname, long categoryId) {
-		if (qspDomainName.equals(hostname)) {
+		if (qspDomainName.equals(hostname)||hostname.contains("http://localhost")) {
 			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
 				for (Weightage weightage : course.getWeightages()) {
 					if (weightage.getCourse_categoryId() != null && weightage.getCourse_categoryId() == categoryId) {
