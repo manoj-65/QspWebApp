@@ -27,7 +27,7 @@ public class WeightageUtil {
 	private String bspDomainName;
 
 	public long getCategoryWeightage(Category category, String hostname) {
-		if (qspDomainName.equals(hostname)) {
+		if (qspDomainName.equals(hostname)||hostname.contains("http://localhost")) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getQspiders()) : 0l;
 		} else if (jspDomainName.equals(hostname) ) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getJspiders()) : 0l;
