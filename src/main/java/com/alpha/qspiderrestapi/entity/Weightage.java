@@ -35,8 +35,8 @@ public class Weightage {
 	private Long course_categoryId;
 	private Long course_SubCategoryId;
 
-	@OneToOne(mappedBy = "weightage",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
-	@JsonIgnore
+	@OneToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+	@JoinColumn(name = "categoryId")
 	private Category category;
 
 	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})

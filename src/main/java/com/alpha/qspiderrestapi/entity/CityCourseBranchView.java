@@ -20,6 +20,10 @@ public class CityCourseBranchView {
     private long id;
 	private long branchId;
 	private String country;
+	private String street;
+	private String state;
+	private int pincode;
+	private long addressId;
 	private String city;
 	private String cityIconUrl;
 	private long courseId;
