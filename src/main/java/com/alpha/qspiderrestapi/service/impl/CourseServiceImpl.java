@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -374,22 +375,60 @@ public class CourseServiceImpl implements CourseService {
 	public ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> fetchViewForHomepage() {
 		List<Map<String, Object>> var = viewDao.fetchAllViewByCityName();
 		List<BranchDto> branches = courseUtil.getTheBranchDto(var);
-		Map<String, List<BranchDto>> collect = branches.stream().collect(Collectors.groupingBy(BranchDto::getCity));
 
+		// Group branches by city first
+		Map<String, List<BranchDto>> cityBranchListMap = branches.stream()
+				.collect(Collectors.groupingBy(BranchDto::getCity));
+
+		// Further group branches within each city by branch_type
+		Map<String, Map<String, List<BranchDto>>> cityBranchMap = cityBranchListMap.entrySet().stream()
+				.collect(Collectors.toMap(Map.Entry::getKey, // Key mapper for outer map (city name)
+						entry -> entry.getValue().stream() // Stream of BranchDto objects for each city
+								.collect(Collectors.groupingBy(BranchDto::getOrganizationType)))); // Group by
+
+		List<ViewAllHomePageResponse> response = new ArrayList<>();
+		ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
+
+		// Iterate over the entries of the cityBranchMap
+		for (Entry<String, Map<String, List<BranchDto>>> entry : cityBranchMap.entrySet()) {
+			String cityName = entry.getKey();
+			Map<String, List<BranchDto>> branchTypeMap = entry.getValue();
+
+			// Create a list to hold Branch objects for this city
+			List<BranchDto> branchDtos = new ArrayList<>();
+
+			// Iterate over the inner map (branch type -> list of BranchDto)
+			for (Entry<String, List<BranchDto>> branchTypeEntry : branchTypeMap.entrySet()) {
+				branchDtos = branchTypeEntry.getValue();
+
+				// Convert BranchDto objects to Branch objects (assuming conversion logic)
+				for (BranchDto dto : branchDtos) {
+					branches.add(dto);
+				}
+			}
+
+			// Create and populate ViewAllHomePageResponse object
+
+			pageResponse.setCityName(cityName);
+			pageResponse.setBranches(branches); // Now set the list of Branch objects
+
+			response.add(pageResponse);
+
+		}
 //		Map<String, BranchDto> test = new HashMap<String, BranchDto>();
 //		for (BranchDto branchDto: branches) {
 //			test.put(branchDto.getCity(), branchDto);
 //		}
 
-		List<ViewAllHomePageResponse> response = new ArrayList<ViewAllHomePageResponse>();
-
-		for (Map.Entry<String, List<BranchDto>> entry : collect.entrySet()) {
-			ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
-			pageResponse.setBranches(entry.getValue());
-			pageResponse.setCityName(entry.getKey());
-			response.add(pageResponse);
-
-		}
+//		List<ViewAllHomePageResponse> response = new ArrayList<ViewAllHomePageResponse>();
+//
+//		for (Entry<String, Map<String, List<BranchDto>>> entry : cityBranchMap.entrySet()) {
+//			ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
+//			pageResponse.setBranches(entry.getValue());
+//			pageResponse.setCityName(entry.getKey());
+//			response.add(pageResponse);
+//
+//		}
 
 		return ResponseUtil.getOk(response);
 	}
