@@ -90,7 +90,8 @@ public class CategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@GetMapping("/getall")
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(@PathVariable String version,
-			@RequestHeader("Host") String domainName) {
+			@RequestHeader("Origin") String domainName) {
+		System.err.println(domainName);
 		if (version.equalsIgnoreCase("V1")) {
 			return categoryService.fetchAllCategories(domainName);
 		}
