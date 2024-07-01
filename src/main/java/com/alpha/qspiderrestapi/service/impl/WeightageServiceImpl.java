@@ -128,7 +128,7 @@ public class WeightageServiceImpl implements WeightageService {
 		}
 		else {
 			if(category.getCourses().contains(course)) {
-				if(course.getWeightages().stream().anyMatch(w->w.getCourse_categoryId()==categoryId)) {
+				if(course.getWeightages().stream().anyMatch(w->w.getCourse_categoryId()!=null && w.getCourse_categoryId()==categoryId)) {
 					throw new InvalidInfoException("In given category and course pair already has a weihtage");
 				}
 				Weightage weightage = Weightage.builder()

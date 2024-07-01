@@ -7,6 +7,8 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,8 +48,7 @@ public class Category {
 	@JoinTable(name = "category_course", joinColumns = @JoinColumn(name = "categoryId"), inverseJoinColumns = @JoinColumn(name = "courseId"))
 	private List<Course> courses = new ArrayList<Course>();
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn
+	@OneToOne(mappedBy = "category",cascade = CascadeType.ALL)
 	private Weightage weightage;
 
 	@CreationTimestamp

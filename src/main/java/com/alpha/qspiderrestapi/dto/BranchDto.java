@@ -17,4 +17,5 @@ public class BranchDto {
 	private String state;
 	private String street;
 	private String organizationType;
+	private long addressId;
 }

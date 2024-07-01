@@ -162,6 +162,10 @@ public class BranchServiceImpl implements BranchService {
 						branch.setPhoneNumber(branchView.getContacts());
 						branch.setUpcomingBatches(branchView.getUpcomingBatches());
 						branch.setOngoingBatches(branchView.getOngoingBatches());
+						branch.setAddressId(branchView.getAddressId());
+						branch.setState(branchView.getState());
+						branch.setStreet(branchView.getStreet());
+						branch.setPinCode(branchView.getPincode());
 						return branch;
 					}).sorted(Comparator.comparing(BranchDto::getBranchId)).collect(Collectors.toList());
 					course.setBranches(branches);

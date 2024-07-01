@@ -19,7 +19,7 @@ public interface CategoryService {
 
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName);
 
-	ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId);
+	ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId,String domainName);
 
 	ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile iconfile,MultipartFile alternativeIconfile, long categoryId);
 
