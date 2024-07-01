@@ -101,7 +101,7 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName) {
 
-		log.info("Entering fetchAllCategories");
+		log.info("Entering fetchAllCategories=========="+domainName);
 		List<Category> categories = categoryDao.fetchAllCategories();
 		categories = weightageUtil.getSortedCategory(categories, domainName);
 		List<CategoryResponse> categoryResponse = new ArrayList<CategoryResponse>();
