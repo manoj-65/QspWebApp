@@ -26,6 +26,6 @@ public interface CourseService {
 
 	ResponseEntity<ApiResponse<String>> uploadImages(MultipartFile image, MultipartFile homePageImage, long courseId);
 
-	ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> fetchViewForHomepage();
+	ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> fetchViewForHomepage(String hostName);
 
 }

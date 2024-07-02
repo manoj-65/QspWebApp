@@ -2,12 +2,12 @@ package com.alpha.qspiderrestapi.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.springframework.stereotype.Component;
 
 import com.alpha.qspiderrestapi.dto.BranchDto;
+import com.alpha.qspiderrestapi.entity.ViewAllHomePage;
 
 @Component
 public class CourseUtil {
@@ -20,24 +20,24 @@ public class CourseUtil {
 //		return branchDtos;
 //	}
 
-	public List<BranchDto> getTheBranchDto(List<Map<String, Object>> fetchAllViewByCityName) {
+	public List<BranchDto> getTheBranchDto(List<ViewAllHomePage> fetchAllViewByCityName) {
 		List<BranchDto> branchDtos = new ArrayList<BranchDto>();
-		for (Map<String, Object> result : fetchAllViewByCityName) {
+		for (ViewAllHomePage result : fetchAllViewByCityName) {
 			BranchDto branchDto = new BranchDto();
-			branchDto.setBranchId((long) result.get("branch_id"));
-			branchDto.setBranchImage((String) result.get("branch_image"));
-			branchDto.setBranchName((String) result.get("display_name"));
-			branchDto.setPhoneNumber((String) result.get("contacts"));
-			branchDto.setLocation((String) result.get("location"));
-			branchDto.setUpcomingBatches((Long) result.get("upcoming_batches"));
-			branchDto.setOngoingBatches((Long) result.get("ongoing_batches"));
-			branchDto.setCity((String) result.get("city"));
-			branchDto.setPinCode((int) result.get("pincode"));
-			branchDto.setState((String) result.get("state"));
-			branchDto.setStreet((String) result.get("street"));
-			branchDto.setOrganizationType((String) result.get("branch_type"));
+			branchDto.setBranchId(result.getBranchId());
+			branchDto.setBranchImage(result.getBranchImage());
+			branchDto.setBranchName(result.getDisplayName());
+			branchDto.setPhoneNumber(result.getContacts());
+			branchDto.setLocation(result.getLocation());
+			branchDto.setUpcomingBatches(result.getUpcomingBatches());
+			branchDto.setOngoingBatches(result.getOngoingBatches());
+			branchDto.setCity(result.getCityName());
+			branchDto.setPinCode(result.getPincode());
+			branchDto.setState(result.getState());
+			branchDto.setStreet(result.getStreet());
+			branchDto.setOrganizationType(result.getBranchType());
 			branchDtos.add(branchDto);
-		}
+		} 
 		return branchDtos;
 	}
 

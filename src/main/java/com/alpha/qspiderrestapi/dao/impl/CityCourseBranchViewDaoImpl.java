@@ -1,13 +1,14 @@
 package com.alpha.qspiderrestapi.dao.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.alpha.qspiderrestapi.dao.CityCourseBranchViewDao;
 import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
+import com.alpha.qspiderrestapi.entity.ViewAllHomePage;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.repository.CityCourseBranchViewRepository;
 
 @Repository
@@ -21,9 +22,5 @@ public class CityCourseBranchViewDaoImpl implements CityCourseBranchViewDao {
 		return repository.findAll();
 	}
 
-	@Override
-	public  List<Map<String, Object>> fetchAllViewByCityName() {
-		return repository.findAllByCityName();
-	}
 
 }
