@@ -41,28 +41,40 @@ public class WeightageUtil {
 	}
 
 	public long getSubCategoryWeightage(SubCategory subCategory, String hostname, long categoryId) {
-		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost") ) {
-			if (subCategory.getWeightage() != null) {
-				return subCategory.getWeightage().stream().filter(w -> w.getSubCategory_categoryId() == categoryId)
-						.findFirst().get().getQspiders();
+		if (qspDomainName.equals(hostname) ||hostname.contains("http://localhost")) {
+			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
+				for (Weightage weightage : subCategory.getWeightage()) {
+					if (weightage.getSubCategory_categoryId() != null && weightage.getSubCategory_categoryId() == categoryId) {
+						return weightage.getQspiders();
+					}
+				}
 			}
 			return 0l;
 		} else if (jspDomainName.equals(hostname)) {
-			if (subCategory.getWeightage() != null) {
-				return subCategory.getWeightage().stream().filter(w -> w.getSubCategory_categoryId() == categoryId)
-						.findFirst().get().getJspiders();
+			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
+				for (Weightage weightage : subCategory.getWeightage()) {
+					if (weightage.getSubCategory_categoryId() != null && weightage.getSubCategory_categoryId() == categoryId) {
+						return weightage.getJspiders();
+					}
+				}
 			}
 			return 0l;
 		} else if (pyspDomainName.equals(hostname)) {
-			if (subCategory.getWeightage() != null) {
-				return subCategory.getWeightage().stream().filter(w -> w.getSubCategory_categoryId() == categoryId)
-						.findFirst().get().getPyspiders();
+			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
+				for (Weightage weightage : subCategory.getWeightage()) {
+					if (weightage.getSubCategory_categoryId() != null && weightage.getSubCategory_categoryId() == categoryId) {
+						return weightage.getPyspiders();
+					}
+				}
 			}
 			return 0l;
 		} else if (bspDomainName.equals(hostname)) {
-			if (subCategory.getWeightage() != null) {
-				return subCategory.getWeightage().stream().filter(w -> w.getSubCategory_categoryId() == categoryId)
-						.findFirst().get().getBspiders();
+			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
+				for (Weightage weightage : subCategory.getWeightage()) {
+					if (weightage.getSubCategory_categoryId() != null && weightage.getSubCategory_categoryId() == categoryId) {
+						return weightage.getBspiders();
+					}
+				}
 			}
 			return 0l;
 		} else {

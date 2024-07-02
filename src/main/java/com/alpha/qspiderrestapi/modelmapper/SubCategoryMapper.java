@@ -3,17 +3,24 @@ package com.alpha.qspiderrestapi.modelmapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.alpha.qspiderrestapi.dto.SubCategoryFormResponse;
 import com.alpha.qspiderrestapi.dto.SubCategoryResponse;
 import com.alpha.qspiderrestapi.entity.SubCategory;
+import com.alpha.qspiderrestapi.util.WeightageUtil;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Builder
 @Data
+@Component
 public class SubCategoryMapper {
 
+	@Autowired
+	private WeightageUtil weightageUtil;
 	/**
 	 * Converts a SubCategory entity to a SubCategoryResponse DTO.
 	 *
@@ -24,11 +31,10 @@ public class SubCategoryMapper {
 	 * @param subCategory The SubCategory entity to be converted.
 	 * @return A SubCategoryResponse DTO containing the mapped data.
 	 */
-	public static SubCategoryResponse mapToSubCategoryResponse(SubCategory subCategory) {
+	public SubCategoryResponse mapToSubCategoryResponse(SubCategory subCategory) {
 		return SubCategoryResponse.builder().subCourseId(subCategory.getSubCategoryId())
 				.icon(subCategory.getSubCategoryIcon()).title(subCategory.getSubCategoryTitle())
-				.subCourseResponse(SubCourseMapper.mapToSubCourseResponseList(subCategory.getCourses().stream()
-						.sorted((a, b) -> (int) a.getCourseId() - (int) b.getCourseId()).toList()))
+				.subCourseResponse(SubCourseMapper.mapToSubCourseResponseList(subCategory.getCourses()))
 				.build();
 	}
 
@@ -44,8 +50,8 @@ public class SubCategoryMapper {
 	 * @param subCategories The list of SubCategory entities to be converted.
 	 * @return A list of SubCategoryResponse DTOs containing the mapped data.
 	 */
-	public static List<SubCategoryResponse> mapToSubCategoryResponseList(List<SubCategory> subCategories) {
-
+	public List<SubCategoryResponse> mapToSubCategoryResponseList(List<SubCategory> subCategories,String hostname,long categoryId) {
+		weightageUtil.getSortedSubCategory(subCategories, hostname, categoryId);
 		List<SubCategoryResponse> responseList = new ArrayList<SubCategoryResponse>();
 
 		subCategories.forEach(response -> responseList.add(mapToSubCategoryResponse(response)));
@@ -54,14 +60,14 @@ public class SubCategoryMapper {
 
 	}
 
-	public static List<SubCategoryFormResponse> mapToListSubCategoryFormResponse(List<SubCategory> subCategories) {
+	public List<SubCategoryFormResponse> mapToListSubCategoryFormResponse(List<SubCategory> subCategories) {
 
 		List<SubCategoryFormResponse> subCategoryFormList = new ArrayList<SubCategoryFormResponse>();
 		subCategories.forEach(response -> subCategoryFormList.add(mapToSubCategoryFormResponse(response)));
 		return subCategoryFormList;
 	}
 
-	private static SubCategoryFormResponse mapToSubCategoryFormResponse(SubCategory response) {
+	private SubCategoryFormResponse mapToSubCategoryFormResponse(SubCategory response) {
 		return SubCategoryFormResponse.builder().subCategoryId(response.getSubCategoryId())
 				.subCategoryName(response.getSubCategoryTitle()).build();
 	}

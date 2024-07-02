@@ -19,6 +19,9 @@ public class CategoryMapper {
 	@Autowired
 	private WeightageUtil weightageUtil;
 	
+	@Autowired
+	private SubCategoryMapper subCategoryMapper;
+	
 	/**
 	 * Converts a Category entity to a CategoryResponse DTO.
 	 *
@@ -33,7 +36,7 @@ public class CategoryMapper {
 
 		return CategoryResponse.builder().courseId(category.getCategoryId()).icon(category.getCategoryIcon())
 				.title(category.getCategoryTitle())
-				.subCourse(SubCategoryMapper.mapToSubCategoryResponseList(category.getSubCategories()))
+				.subCourse(subCategoryMapper.mapToSubCategoryResponseList(category.getSubCategories(),hostname,category.getCategoryId()))
 				.courseResponse(CourseMapper.mapToCourseResponseList(weightageUtil.getSortedCourseOfCategory(category.getCourses(), hostname, category.getCategoryId())))
 				.build();
 	}
@@ -41,7 +44,7 @@ public class CategoryMapper {
 	public CategoryFormResponse mapToCategoryFormResponse(Category category) {
 		return CategoryFormResponse.builder().categoryId(category.getCategoryId())
 				.categoryName(category.getCategoryTitle())
-				.subCategoryResponse(SubCategoryMapper.mapToListSubCategoryFormResponse(category.getSubCategories()))
+				.subCategoryResponse(subCategoryMapper.mapToListSubCategoryFormResponse(category.getSubCategories()))
 				.build();
 	}
 
