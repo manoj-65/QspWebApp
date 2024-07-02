@@ -17,10 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dao.BranchDao;
 import com.alpha.qspiderrestapi.dao.CategoryDao;
-import com.alpha.qspiderrestapi.dao.CityCourseBranchViewDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dao.SubjectDao;
+import com.alpha.qspiderrestapi.dao.ViewAllHomePageDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.BranchDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
@@ -29,6 +29,8 @@ import com.alpha.qspiderrestapi.entity.CityBranchView;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.Subject;
+import com.alpha.qspiderrestapi.entity.ViewAllHomePage;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.modelmapper.CourseMapper;
@@ -69,7 +71,7 @@ public class CourseServiceImpl implements CourseService {
 //	private CityDao cityDao;
 
 	@Autowired
-	private CityCourseBranchViewDao viewDao;
+	private ViewAllHomePageDao viewDao;
 
 	@Autowired
 	private CourseUtil courseUtil;
@@ -373,64 +375,64 @@ public class CourseServiceImpl implements CourseService {
 
 	@Override
 	public ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> fetchViewForHomepage() {
-		List<Map<String, Object>> var = viewDao.fetchAllViewByCityName();
+		List<ViewAllHomePage> var = viewDao.fetchAllViewByCityName(Organization.QSP);
 		List<BranchDto> branches = courseUtil.getTheBranchDto(var);
 
 		// Group branches by city first
 		Map<String, List<BranchDto>> cityBranchListMap = branches.stream()
 				.collect(Collectors.groupingBy(BranchDto::getCity));
 
-		// Further group branches within each city by branch_type
-		Map<String, Map<String, List<BranchDto>>> cityBranchMap = cityBranchListMap.entrySet().stream()
-				.collect(Collectors.toMap(Map.Entry::getKey, // Key mapper for outer map (city name)
-						entry -> entry.getValue().stream() // Stream of BranchDto objects for each city
-								.collect(Collectors.groupingBy(BranchDto::getOrganizationType)))); // Group by
+//		// Further group branches within each city by branch_type
+//		Map<String, Map<String, List<BranchDto>>> cityBranchMap = cityBranchListMap.entrySet().stream()
+//				.collect(Collectors.toMap(Map.Entry::getKey, // Key mapper for outer map (city name)
+//						entry -> entry.getValue().stream() // Stream of BranchDto objects for each city
+//								.collect(Collectors.groupingBy(BranchDto::getOrganizationType)))); // Group by
 
 		List<ViewAllHomePageResponse> response = new ArrayList<>();
 		ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
 
 		// Iterate over the entries of the cityBranchMap
-		for (Entry<String, Map<String, List<BranchDto>>> entry : cityBranchMap.entrySet()) {
-			String cityName = entry.getKey();
-			Map<String, List<BranchDto>> branchTypeMap = entry.getValue();
-
-			// Create a list to hold Branch objects for this city
-			List<BranchDto> branchDtos = new ArrayList<>();
-
-			// Iterate over the inner map (branch type -> list of BranchDto)
-			for (Entry<String, List<BranchDto>> branchTypeEntry : branchTypeMap.entrySet()) {
-				branchDtos = branchTypeEntry.getValue();
-
-				// Convert BranchDto objects to Branch objects (assuming conversion logic)
-				for (BranchDto dto : branchDtos) {
-					branches.add(dto);
-				}
-			}
-
-			// Create and populate ViewAllHomePageResponse object
-
-			pageResponse.setCityName(cityName);
-			pageResponse.setBranches(branches); // Now set the list of Branch objects
-
-			response.add(pageResponse);
-
-		}
-//		Map<String, BranchDto> test = new HashMap<String, BranchDto>();
-//		for (BranchDto branchDto: branches) {
-//			test.put(branchDto.getCity(), branchDto);
-//		}
-
-//		List<ViewAllHomePageResponse> response = new ArrayList<ViewAllHomePageResponse>();
-//
 //		for (Entry<String, Map<String, List<BranchDto>>> entry : cityBranchMap.entrySet()) {
-//			ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
-//			pageResponse.setBranches(entry.getValue());
-//			pageResponse.setCityName(entry.getKey());
-//			response.add(pageResponse);
-//
-//		}
+//			String cityName = entry.getKey();
+//			Map<String, List<BranchDto>> branchTypeMap = entry.getValue();
+
+		// Create a list to hold Branch objects for this city
+		List<BranchDto> branchDtos = new ArrayList<>();
+		String cityName = null;
+		// Iterate over the inner map (branch type -> list of BranchDto)
+		for (Entry<String, List<BranchDto>> branchTypeEntry : cityBranchListMap.entrySet()) {
+			cityName = branchTypeEntry.getKey();
+			branchDtos = branchTypeEntry.getValue();
+
+			// Convert BranchDto objects to Branch objects (assuming conversion logic)
+			for (BranchDto dto : branchDtos) {
+				branches.add(dto);
+			}
+			pageResponse.setCityName(cityName);
+			pageResponse.setBranches(branches);
+		}
+
+		// Create and populate ViewAllHomePageResponse object
+
+		// Now set the list of Branch objects
+
+		response.add(pageResponse);
+
+//			Map<String, BranchDto> test = new HashMap<String, BranchDto>();
+//			for (BranchDto branchDto: branches) {
+//				test.put(branchDto.getCity(), branchDto);
+//			}
+
+//			List<ViewAllHomePageResponse> response = new ArrayList<ViewAllHomePageResponse>();
+		//
+//			for (Entry<String, Map<String, List<BranchDto>>> entry : cityBranchMap.entrySet()) {
+//				ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
+//				pageResponse.setBranches(entry.getValue());
+//				pageResponse.setCityName(entry.getKey());
+//				response.add(pageResponse);
+		//
+//			}
 
 		return ResponseUtil.getOk(response);
 	}
-
 }

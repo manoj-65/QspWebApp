@@ -2,6 +2,7 @@ package com.alpha.qspiderrestapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,4 +55,15 @@ public class WeightageController {
 
 		throw new UnauthorizedVersionException("Unauthorized Version");		
 	}
+	
+	@DeleteMapping("/categories")
+	public ResponseEntity<ApiResponse<Weightage>> deleteCategoryWeightage(@PathVariable String version,
+																		   @RequestParam long categoryId,
+																   @RequestBody WeightageDto dto){
+		if (version.equalsIgnoreCase("V1"))
+			return weightageService.saveCategoryWeightage(categoryId,dto);
+
+		throw new UnauthorizedVersionException("Unauthorized Version");		
+	}
+	
 }
