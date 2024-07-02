@@ -34,7 +34,9 @@ public class CategoryMapper {
 	 */
 	public CategoryResponse mapToCategoryDto(Category category,String hostname) {
 
-		return CategoryResponse.builder().courseId(category.getCategoryId()).icon(category.getCategoryIcon())
+		return CategoryResponse.builder().courseId(category.getCategoryId())
+				.icon(category.getCategoryIcon())
+				.alternativeIcon(category.getCategoryAlternativeIcon())
 				.title(category.getCategoryTitle())
 				.subCourse(subCategoryMapper.mapToSubCategoryResponseList(category.getSubCategories(),hostname,category.getCategoryId()))
 				.courseResponse(CourseMapper.mapToCourseResponseList(weightageUtil.getSortedCourseOfCategory(category.getCourses(), hostname, category.getCategoryId())))
