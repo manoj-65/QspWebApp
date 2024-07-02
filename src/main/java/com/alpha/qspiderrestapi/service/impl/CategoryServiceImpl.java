@@ -134,7 +134,7 @@ public class CategoryServiceImpl implements CategoryService {
 			String alternativeIconUrl;
 			try {
 				iconUrl = awss3Service.uploadFile(iconfile, folder);
-				alternativeIconUrl = awss3Service.uploadFile(iconfile, folder);
+				alternativeIconUrl = awss3Service.uploadFile(alternativeIconfile, folder);
 				log.info("icon file Uploaded successfully to sw3: {}", iconUrl);
 				log.info("alternative Icon file Uploaded successfully to sw3: {}", alternativeIconUrl);
 			} catch (NullPointerException e) {
