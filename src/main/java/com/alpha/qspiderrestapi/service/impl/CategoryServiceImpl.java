@@ -32,6 +32,7 @@ import com.alpha.qspiderrestapi.service.AWSS3Service;
 import com.alpha.qspiderrestapi.service.CategoryService;
 import com.alpha.qspiderrestapi.util.CategoryUtil;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
+import com.alpha.qspiderrestapi.util.WeightageUtil;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
+	
+	
 	@Autowired
 	private CategoryDao categoryDao;
 	@Autowired
@@ -50,7 +53,13 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Autowired
 	private CategoryUtil categoryUtil;
+	
+	@Autowired
+	private WeightageUtil weightageUtil;
 
+	@Autowired
+	private CategoryMapper categoryMapper;
+	
 	@Value(value = "organization.qsp")
 	private String qspDomainName;
 
@@ -92,23 +101,24 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName) {
 
-		log.info("Entering fetchAllCategories");
+		log.info("Entering fetchAllCategories=========="+domainName);
 		List<Category> categories = categoryDao.fetchAllCategories();
+		categories = weightageUtil.getSortedCategory(categories, domainName);
 		List<CategoryResponse> categoryResponse = new ArrayList<CategoryResponse>();
-		categories.forEach(category -> categoryResponse.add(CategoryMapper.mapToCategoryDto(category)));
+		categories.forEach(category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category,domainName)));
 		log.info("Category list has been upadated and set");
 		return ResponseUtil.getOk(categoryResponse);
 	}
 
 	// fetches category based on the given id
 	@Override
-	public ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId) {
+	public ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId,String domainName) {
 		Category category = categoryDao.fetchCategoryById(categoryId).orElseThrow(() -> {
 			log.error("Category not found with ID: {}", categoryId);
 			return new IdNotFoundException();
 		});
 		log.info("Category fetched successfully: {}", category);
-		return ResponseUtil.getOk(CategoryMapper.mapToCategoryDto(category));
+		return ResponseUtil.getOk(categoryMapper.mapToCategoryDto(category,domainName));
 
 	}
 
@@ -172,7 +182,7 @@ public class CategoryServiceImpl implements CategoryService {
 		List<CategoryFormResponse> categoryFormResponse = new ArrayList<CategoryFormResponse>();
 		log.info("Fetched {} categories from DAO", categoryList.size());
 		categoryList.stream().forEach((category) -> {
-			categoryFormResponse.add(CategoryMapper.mapToCategoryFormResponse(category));
+			categoryFormResponse.add(categoryMapper.mapToCategoryFormResponse(category));
 			log.debug("Mapped category ID {} to CategoryFormResponse", category.getCategoryId());
 		});
 		return ResponseUtil.getOk(categoryFormResponse);

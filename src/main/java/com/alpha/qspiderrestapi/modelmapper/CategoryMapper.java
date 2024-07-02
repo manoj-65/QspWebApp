@@ -1,17 +1,27 @@
 package com.alpha.qspiderrestapi.modelmapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.alpha.qspiderrestapi.dto.CategoryFormResponse;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
 import com.alpha.qspiderrestapi.entity.Category;
+import com.alpha.qspiderrestapi.util.WeightageUtil;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Builder
 @Data
-
+@Component
 public class CategoryMapper {
 
+	@Autowired
+	private WeightageUtil weightageUtil;
+	
+	@Autowired
+	private SubCategoryMapper subCategoryMapper;
+	
 	/**
 	 * Converts a Category entity to a CategoryResponse DTO.
 	 *
@@ -22,20 +32,21 @@ public class CategoryMapper {
 	 * @param category The Category entity to be converted.
 	 * @return A CategoryResponse DTO containing the mapped data.
 	 */
-	public static CategoryResponse mapToCategoryDto(Category category) {
+	public CategoryResponse mapToCategoryDto(Category category,String hostname) {
 
-		return CategoryResponse.builder().courseId(category.getCategoryId()).icon(category.getCategoryIcon())
+		return CategoryResponse.builder().courseId(category.getCategoryId())
+				.icon(category.getCategoryIcon())
+				.alternativeIcon(category.getCategoryAlternativeIcon())
 				.title(category.getCategoryTitle())
-				.subCourse(SubCategoryMapper.mapToSubCategoryResponseList(category.getSubCategories()))
-				.courseResponse(CourseMapper.mapToCourseResponseList(category.getCourses().stream()
-						.sorted((a, b) -> (int) a.getCourseId() - (int) b.getCourseId()).toList()))
+				.subCourse(subCategoryMapper.mapToSubCategoryResponseList(category.getSubCategories(),hostname,category.getCategoryId()))
+				.courseResponse(CourseMapper.mapToCourseResponseList(weightageUtil.getSortedCourseOfCategory(category.getCourses(), hostname, category.getCategoryId())))
 				.build();
 	}
 
-	public static CategoryFormResponse mapToCategoryFormResponse(Category category) {
+	public CategoryFormResponse mapToCategoryFormResponse(Category category) {
 		return CategoryFormResponse.builder().categoryId(category.getCategoryId())
 				.categoryName(category.getCategoryTitle())
-				.subCategoryResponse(SubCategoryMapper.mapToListSubCategoryFormResponse(category.getSubCategories()))
+				.subCategoryResponse(subCategoryMapper.mapToListSubCategoryFormResponse(category.getSubCategories()))
 				.build();
 	}
 

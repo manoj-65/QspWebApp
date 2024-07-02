@@ -73,5 +73,14 @@ public class ResponseUtil {
 
 		return ResponseEntity.status(structure.getStatus()).body(structure);
 	}
+	
+	public static <T> ResponseEntity<ApiResponse<T>> getInternalServerError(T t) {
+		ApiResponse<T> structure = initResponse();
+		structure.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		structure.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+		structure.setData(t);
+
+		return ResponseEntity.status(structure.getStatus()).body(structure);
+	}
 
 }

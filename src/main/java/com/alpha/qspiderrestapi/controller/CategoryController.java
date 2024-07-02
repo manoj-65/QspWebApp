@@ -90,7 +90,8 @@ public class CategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@GetMapping("/getall")
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(@PathVariable String version,
-			@RequestHeader("Host") String domainName) {
+			@RequestHeader("Origin") String domainName) {
+		System.err.println(domainName);
 		if (version.equalsIgnoreCase("V1")) {
 			return categoryService.fetchAllCategories(domainName);
 		}
@@ -118,9 +119,9 @@ public class CategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@GetMapping("/getbyid")
 	public ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(@RequestParam long categoryId,
-			@PathVariable String version) {
+			@PathVariable String version,@RequestHeader("Host") String domainName) {
 		if (version.equals("v1"))
-			return categoryService.fetchCategoryById(categoryId);
+			return categoryService.fetchCategoryById(categoryId,domainName);
 
 		throw new UnauthorizedVersionException();
 	}
