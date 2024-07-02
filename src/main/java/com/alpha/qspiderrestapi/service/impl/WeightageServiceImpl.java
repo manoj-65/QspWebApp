@@ -51,7 +51,7 @@ public class WeightageServiceImpl implements WeightageService {
 											   .category(optCategory.get())
 											   .build();
 				optCategory.get().setWeightage(weightage);
-				weightage.setCategory(optCategory.get());
+				weightage.setCategory(optCategory.get()); 
 				weightage = weightageDao.saveCategoryWeightage(weightage);
 				return ResponseUtil.getCreated(weightage);
 			}else {

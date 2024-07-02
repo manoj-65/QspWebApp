@@ -37,7 +37,7 @@ public class CourseUtil {
 			branchDto.setStreet(result.getStreet());
 			branchDto.setOrganizationType(result.getBranchType());
 			branchDtos.add(branchDto);
-		}
+		} 
 		return branchDtos;
 	}
 
