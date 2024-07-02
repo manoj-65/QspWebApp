@@ -15,6 +15,7 @@ public class CategoryResponse {
 
 	private long courseId;
 	private String icon;
+	private String alternativeIcon;
 	private String title;
 
 	private List<SubCategoryResponse> subCourse;
