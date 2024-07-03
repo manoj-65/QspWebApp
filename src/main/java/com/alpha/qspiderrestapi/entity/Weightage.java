@@ -50,7 +50,8 @@ public class Weightage {
 	@JsonIgnore
 	private Course course;
 	
-	@OneToOne(mappedBy = "weightage")
+	@OneToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+	@JoinColumn(name = "cityId")
 	@JsonIgnore
 	private City city;
 
