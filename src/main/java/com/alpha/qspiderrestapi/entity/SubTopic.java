@@ -31,9 +31,10 @@ public class SubTopic {
 	private String subTopicTitle;
 	private String subTopicDescription;
 
-//	private List<String> previews;
+	private String subTopicPreviewUrl;
 
 	private double subTopicPreviewDuration;
+	
 	@ManyToOne
 	@JoinColumn(name = "topicId")
 	@JsonIgnore

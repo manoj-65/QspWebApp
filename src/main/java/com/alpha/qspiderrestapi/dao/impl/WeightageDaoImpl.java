@@ -14,7 +14,7 @@ public class WeightageDaoImpl implements WeightageDao{
 	private WeightageRepository weightageRepository;
 	
 	@Override
-	public Weightage saveCategoryWeightage(Weightage weightage) {
+	public Weightage saveWeightage(Weightage weightage) {
 		return weightageRepository.save(weightage);
 	}
 

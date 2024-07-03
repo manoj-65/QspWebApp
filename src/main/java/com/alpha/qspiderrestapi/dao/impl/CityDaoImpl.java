@@ -1,6 +1,7 @@
 package com.alpha.qspiderrestapi.dao.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -28,6 +29,11 @@ public class CityDaoImpl implements CityDao {
 	@Override
 	public List<String> fetchCityName() {
 		return cityRepository.findCityName();
+	}
+	
+	@Override
+	public Optional<City> findCityByCityName(String cityName) {
+		return cityRepository.findCityByCityName(cityName);
 	}
 
 }

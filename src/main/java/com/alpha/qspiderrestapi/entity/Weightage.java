@@ -49,5 +49,9 @@ public class Weightage {
 	@JoinColumn(name = "courseId")
 	@JsonIgnore
 	private Course course;
+	
+	@OneToOne(mappedBy = "weightage")
+	@JsonIgnore
+	private City city;
 
 }

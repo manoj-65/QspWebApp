@@ -16,4 +16,6 @@ public interface WeightageService {
 	ResponseEntity<ApiResponse<Weightage>> saveCourseWeightage(long categoryId, Long subCategoryId, long courseId,
 			WeightageDto dto);
 
+	ResponseEntity<ApiResponse<Weightage>> saveCityWeightage(String cityName, WeightageDto dto);
+
 }
