@@ -33,6 +33,7 @@ import com.alpha.qspiderrestapi.service.AWSS3Service;
 import com.alpha.qspiderrestapi.service.BranchService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 import com.alpha.qspiderrestapi.util.ValidatePhoneNumber;
+import com.alpha.qspiderrestapi.util.WeightageUtil;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +59,9 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private ValidatePhoneNumber validatePhoneNumber;
+	
+	@Autowired
+	private WeightageUtil weightageUtil;
 
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch) {
@@ -122,9 +126,9 @@ public class BranchServiceImpl implements BranchService {
 		throw new IdNotFoundException("Branch With the Given Id Not Found");
 	}
 
-	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll() {
+	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll(String domainName) {
 		List<CityCourseBranchView> view = viewDao.fetchAll();
-
+		
 		// Group by country -> city -> courseId
 		Map<String, Map<String, Map<Long, List<CityCourseBranchView>>>> groupedData = view.stream()
 				.collect(Collectors.groupingBy(CityCourseBranchView::getCountry, Collectors.groupingBy(
@@ -144,6 +148,10 @@ public class BranchServiceImpl implements BranchService {
 				CityCourseBranchView anyBranch = coursesMap.values().iterator().next().get(0);
 				city.setCityIcon(anyBranch.getCityIconUrl());
 				city.setCityImage(anyBranch.getCityImageUrl());
+				city.setQspiders(anyBranch.getQspiders());
+				city.setJspiders(anyBranch.getJspiders());
+				city.setPyspiders(anyBranch.getPyspiders());
+				city.setBspiders(anyBranch.getBspiders());
 				city.setBranchCount(anyBranch.getBranchCount());
 				List<CourseDto> courses = new ArrayList<>();
 
@@ -153,6 +161,10 @@ public class BranchServiceImpl implements BranchService {
 					course.setCourseName(branchesList.get(0).getCourseName());
 					course.setCourseIcon(branchesList.get(0).getCourseIcon());
 					course.setCourseDescription(branchesList.get(0).getCourseDescription());
+					course.setCQspiders(branchesList.get(0).getCQspiders());
+					course.setCJspiders(branchesList.get(0).getCJspiders());
+					course.setCPyspiders(branchesList.get(0).getCPyspiders());
+					course.setCBspiders(branchesList.get(0).getCBspiders());
 					List<BranchDto> branches = branchesList.stream().distinct().map(branchView -> {
 						BranchDto branch = new BranchDto();
 						branch.setBranchId(branchView.getBranchId());
@@ -173,14 +185,14 @@ public class BranchServiceImpl implements BranchService {
 
 				});
 
-				// Sort courses by courseId
-				courses.sort(Comparator.comparing(CourseDto::getCourseId));
+				// Sort courses by domain weightage
+				weightageUtil.getSortedCourseDto(courses, domainName);
 				city.setCourses(courses);
 				cities.add(city);
 			});
 
-			// Sort cities by city name
-			cities.sort(Comparator.comparing(CityDto::getCityName));
+			// Sort cities by domain weightage
+			weightageUtil.getSortedCity(cities, domainName);
 			country.setCities(cities);
 			countries.add(country);
 		});
