@@ -174,4 +174,16 @@ public class WeightageServiceImpl implements WeightageService {
 
 	}
 
+	@Override
+	public ResponseEntity<ApiResponse<String>> deleteCategoryWeightage(Long weightageId) {
+		
+		if(weightageId != null) {
+			weightageDao.deleteWeightage(weightageId);
+			return ResponseUtil.getNoContent("Category with the given weightage is removed");
+		}
+		throw new IdNotFoundException("Weightage ID not be found");
+	}
+	
+	
+
 }

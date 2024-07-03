@@ -6,4 +6,6 @@ public interface WeightageDao {
 
 	Weightage saveWeightage(Weightage weightage);
 
+	void deleteWeightage(long weightageId);
+
 }
