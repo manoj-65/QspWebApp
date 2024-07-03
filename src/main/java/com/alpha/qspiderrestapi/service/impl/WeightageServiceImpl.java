@@ -58,6 +58,7 @@ public class WeightageServiceImpl implements WeightageService {
 				optCategory.get().setWeightage(weightage);
 				weightage.setCategory(optCategory.get());
 				weightage = weightageDao.saveWeightage(weightage);
+
 				return ResponseUtil.getCreated(weightage);
 			}else {
 				throw new InvalidInfoException("The given category already has a weightage");

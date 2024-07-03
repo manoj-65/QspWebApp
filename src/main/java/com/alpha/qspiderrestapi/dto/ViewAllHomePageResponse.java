@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class ViewAllHomePageResponse {
 
 	private String cityName;
-	List<BranchDto> branches;
+	List<BranchDto> branches; 
 
 }
