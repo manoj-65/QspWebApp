@@ -171,7 +171,6 @@ public class WeightageServiceImpl implements WeightageService {
 			return ResponseUtil.getCreated(weightage);
 		}
 		throw new InvalidInfoException("Given city already contains a weightage");
-
 	}
 
 	@Override
