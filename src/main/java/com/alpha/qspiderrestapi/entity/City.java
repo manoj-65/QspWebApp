@@ -2,6 +2,7 @@ package com.alpha.qspiderrestapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +27,7 @@ public class City {
 	@Column(nullable = true)
 	private long branchCount;
 	
-	@OneToOne(mappedBy = "city")
+	@OneToOne(mappedBy = "city",cascade = CascadeType.ALL)
 	@JsonIgnore
 	private Weightage weightage;
 }
