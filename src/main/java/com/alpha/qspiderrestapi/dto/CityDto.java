@@ -11,5 +11,9 @@ public class CityDto {
 	private String cityName;
 	private List<CourseDto> courses;
 	private String cityImage;
+	private long qspiders;
+	private long jspiders;
+	private long pyspiders;
+	private long bspiders;
 	private long branchCount;
 }
