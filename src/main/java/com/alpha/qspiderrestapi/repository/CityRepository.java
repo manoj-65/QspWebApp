@@ -1,6 +1,7 @@
 package com.alpha.qspiderrestapi.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,6 @@ public interface CityRepository extends JpaRepository<City, Long> {
 	@Transactional
 	@Query(value = "SELECT update_branch_count()", nativeQuery = true)
 	void updateCityBranchCount();
+	
+	Optional<City> findCityByCityName(String cityName);
 }

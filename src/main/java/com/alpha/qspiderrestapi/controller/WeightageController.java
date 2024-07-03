@@ -56,6 +56,16 @@ public class WeightageController {
 		throw new UnauthorizedVersionException("Unauthorized Version");		
 	}
 	
+	@PostMapping("/city")
+	public ResponseEntity<ApiResponse<Weightage>> saveCityWeightage(@PathVariable String version,
+																		   @RequestParam String cityName,
+																   @RequestBody WeightageDto dto){
+		if (version.equalsIgnoreCase("V1"))
+			return weightageService.saveCityWeightage(cityName,dto);
+
+		throw new UnauthorizedVersionException("Unauthorized Version");		
+	}
+
 	@DeleteMapping("/categories")
 	public ResponseEntity<ApiResponse<Weightage>> deleteCategoryWeightage(@PathVariable String version,
 																		   @RequestParam long categoryId,

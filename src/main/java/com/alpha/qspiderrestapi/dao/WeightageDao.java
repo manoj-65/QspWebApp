@@ -4,6 +4,6 @@ import com.alpha.qspiderrestapi.entity.Weightage;
 
 public interface WeightageDao {
 
-	Weightage saveCategoryWeightage(Weightage weightage);
+	Weightage saveWeightage(Weightage weightage);
 
 }

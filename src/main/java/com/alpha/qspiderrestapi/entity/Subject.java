@@ -43,8 +43,6 @@ public class Subject {
 	@JsonIgnore
 	private List<Course> courses = new ArrayList<Course>();
 
-//	private List<String> previews;
-
 	@CreationTimestamp
 	private LocalDateTime createdDateAndTime;
 	@UpdateTimestamp

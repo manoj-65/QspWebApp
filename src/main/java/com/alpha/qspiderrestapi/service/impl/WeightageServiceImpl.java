@@ -7,12 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.alpha.qspiderrestapi.dao.CategoryDao;
+import com.alpha.qspiderrestapi.dao.CityDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dao.WeightageDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.WeightageDto;
 import com.alpha.qspiderrestapi.entity.Category;
+import com.alpha.qspiderrestapi.entity.City;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.entity.Weightage;
@@ -32,6 +34,9 @@ public class WeightageServiceImpl implements WeightageService {
 	
 	@Autowired
 	private CourseDao courseDao;
+	
+	@Autowired
+	private CityDao cityDao;
 
 	@Autowired
 	private WeightageDao weightageDao;
@@ -51,8 +56,9 @@ public class WeightageServiceImpl implements WeightageService {
 											   .category(optCategory.get())
 											   .build();
 				optCategory.get().setWeightage(weightage);
-				weightage.setCategory(optCategory.get()); 
-				weightage = weightageDao.saveCategoryWeightage(weightage);
+				weightage.setCategory(optCategory.get());
+				weightage = weightageDao.saveWeightage(weightage);
+
 				return ResponseUtil.getCreated(weightage);
 			}else {
 				throw new InvalidInfoException("The given category already has a weightage");
@@ -82,7 +88,7 @@ public class WeightageServiceImpl implements WeightageService {
 											   .subCategory(subCategory)
 											   .subCategory_categoryId(categoryId)
 											   .build();
-						weightage = weightageDao.saveCategoryWeightage(weightage);
+						weightage = weightageDao.saveWeightage(weightage);
 						return ResponseUtil.getCreated(weightage);
 			
 		}
@@ -116,7 +122,7 @@ public class WeightageServiceImpl implements WeightageService {
 												   .course(course)
 												   .course_SubCategoryId(subCategoryId)
 												   .build();
-					weightage = weightageDao.saveCategoryWeightage(weightage);
+					weightage = weightageDao.saveWeightage(weightage);
 					return ResponseUtil.getCreated(weightage);
 				}
 				else {
@@ -139,13 +145,33 @@ public class WeightageServiceImpl implements WeightageService {
 											   .course(course)
 											   .course_categoryId(categoryId)
 											   .build();
-				weightage = weightageDao.saveCategoryWeightage(weightage);
+				weightage = weightageDao.saveWeightage(weightage);
 				return ResponseUtil.getCreated(weightage);
 			}
 			else {
 				throw new InvalidInfoException("In given info, category does not contain the course");
 			}
 		}
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Weightage>> saveCityWeightage(String cityName, WeightageDto dto) {
+		City city = cityDao.findCityByCityName(cityName).orElseThrow(()->new IdNotFoundException("No city found with the given city name"));
+		if(city.getWeightage()==null) {
+						Weightage weightage = Weightage.builder()
+								   .qspiders(dto.getQspiders())
+								   .jspiders(dto.getJspiders())
+								   .pyspiders(dto.getPyspiders())
+								   .bspiders(dto.getBspiders())
+								   .city(city)
+								   .build();
+			city.setWeightage(weightage);
+			weightage.setCity(city);
+			weightage = weightageDao.saveWeightage(weightage);
+			return ResponseUtil.getCreated(weightage);
+		}
+		throw new InvalidInfoException("Given city already contains a weightage");
+
 	}
 
 }
