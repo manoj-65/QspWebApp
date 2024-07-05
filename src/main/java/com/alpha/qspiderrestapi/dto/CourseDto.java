@@ -11,6 +11,10 @@ public class CourseDto {
 	private String courseName;
 	private String courseDescription;
 	private String courseIcon;
+	private long cQspiders;
+	private long cJspiders;
+	private long cPyspiders;
+	private long cBspiders;
 	private List<BranchDto> branches;
 
 }

@@ -18,7 +18,7 @@ public interface BranchService {
 
 	ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile file, long branchId);
 
-	ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll();
+	ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll(String domainName);
 
 	ResponseEntity<ApiResponse<BranchByIdDto>> fetchById(long branchId, long courseId);
 

@@ -38,5 +38,13 @@ public class CityCourseBranchView {
 	private long branchCount;
 	private String courseIcon;
 	private String courseDescription;
+	private long qspiders;
+	private long jspiders;
+	private long pyspiders;
+	private long bspiders;
+	private long cQspiders;
+	private long cJspiders;
+	private long cPyspiders;
+	private long cBspiders;
 
 }
