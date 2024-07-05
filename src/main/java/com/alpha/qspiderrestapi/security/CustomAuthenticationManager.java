@@ -38,7 +38,8 @@ public class CustomAuthenticationManager {
 			"/api/{version}/categories/getbyid", "/api/{version}/subjects/course", "/api/{version}/branches/getAll",
 			"/api/{version}/feedback", "/api/{version}/cities", "/api/{version}/courses/getbyid",
 			"/api/{version}/branches/getbyid", "/api/{version}/courses/viewAll", "/api/{version}/enquiry",
-			"/api/{version}/batches", "/api/{version}/categories/findAllCategories", "/api/{version}/faqs" };
+			"/api/{version}/batches", "/api/{version}/categories/findAllCategories", "/api/{version}/faqs",
+			"api/{version}/weightage/removeCategoryWeightage", "/api/{version}/weightage/removeSubCategoryWeightage" };
 
 	private static final String[] ADMIN_URLS = { "/api/{version}/users/saveUser", "/api/{version}/categories",
 			"/api/{version}/subcategories", "/api/{version}/categories/uploadIcon",
@@ -49,8 +50,8 @@ public class CustomAuthenticationManager {
 			"/api/{version}/courses/uploadImage", "/api/{version}/courses/uploadIcon",
 			"/api/{version}/branches/uploadImages", "/api/{version}/branches/uploadIcon",
 			"/api/{version}/branches/findAll", "/api/{version}/branches/modifyLocationUrl", "/api/{version}/faqs",
-			"api/{version}/weightage/categories","api/{version}/weightage/subCategories","api/{version}/weightage/courses",
-			"api/{version}/weightage/city"};
+			"api/{version}/weightage/categories", "api/{version}/weightage/subCategories",
+			"api/{version}/weightage/courses", "api/{version}/weightage/city" };
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
