@@ -3,6 +3,7 @@ package com.alpha.qspiderrestapi.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,11 +61,29 @@ public class WeightageController {
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 
-	@DeleteMapping("/removeWeightage")
+	@DeleteMapping("/removeCategoryWeightage")
 	public ResponseEntity<ApiResponse<String>> deleteCategoryWeightage(@PathVariable String version,
-			@RequestParam Long weightageId) {
+			@RequestParam Long categoryId) {
 		if (version.equalsIgnoreCase("V1"))
-			return weightageService.deleteCategoryWeightage(weightageId);
+			return weightageService.deleteCategoryWeightage(categoryId);
+
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	}
+
+	@DeleteMapping("/removeSubCategoryWeightage")
+	public ResponseEntity<ApiResponse<String>> deleteSubCategoryWeightage(@PathVariable String version,
+			@RequestParam Long subCategoryId) {
+		if (version.equalsIgnoreCase("V1"))
+			return weightageService.deleteSubCategoryWeightage(subCategoryId);
+
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	}
+
+	@PatchMapping("/updateCategoryWeightage")
+	public ResponseEntity<ApiResponse<String>> updateCategoryWeightage(@PathVariable String version,
+			@RequestParam Long categoryId, @RequestParam Long weightage) {
+		if (version.equalsIgnoreCase("V1"))
+			return weightageService.updateCategoryWeightage(categoryId, weightage);
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}

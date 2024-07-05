@@ -395,7 +395,7 @@ public class CourseServiceImpl implements CourseService {
 			pageResponse.setBranches(branchTypeEntry.getValue());
 			response.add(pageResponse);
 
-		}
+		} 
 
 		// Convert BranchDto objects to Branch objects (assuming conversion logic)
 //		for (BranchDto dto : branchDtos) {
