@@ -22,4 +22,12 @@ public interface WeightageService {
 	ResponseEntity<ApiResponse<String>> updateSubCategoryWeightage(long categoryId, long subCategoryId,
 			Organization organization, long weightage);
 
+	ResponseEntity<ApiResponse<String>> deleteCategoryWeightage(Long categoryId);
+
+	ResponseEntity<ApiResponse<String>> deleteSubCategoryWeightage(Long subCategoryId);
+
+	ResponseEntity<ApiResponse<String>> deleteCourseWeightage(Long courseId);
+
+	ResponseEntity<ApiResponse<String>> updateCategoryWeightage(Long categoryId, Long weightage);
+
 }
