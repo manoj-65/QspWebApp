@@ -8,11 +8,10 @@ import org.springframework.stereotype.Component;
 import com.alpha.qspiderrestapi.dto.CityDto;
 import com.alpha.qspiderrestapi.dto.CourseDto;
 import com.alpha.qspiderrestapi.entity.Category;
-import com.alpha.qspiderrestapi.entity.City;
-import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.entity.Weightage;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.DomainMismatchException;
 
 @Component
@@ -31,9 +30,9 @@ public class WeightageUtil {
 	private String bspDomainName;
 
 	public long getCategoryWeightage(Category category, String hostname) {
-		if (qspDomainName.equals(hostname)||hostname.contains("http://localhost")) {
+		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getQspiders()) : 0l;
-		} else if (jspDomainName.equals(hostname) ) {
+		} else if (jspDomainName.equals(hostname)) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getJspiders()) : 0l;
 		} else if (pyspDomainName.equals(hostname)) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getPyspiders()) : 0l;
@@ -45,10 +44,11 @@ public class WeightageUtil {
 	}
 
 	public long getSubCategoryWeightage(SubCategory subCategory, String hostname, long categoryId) {
-		if (qspDomainName.equals(hostname) ||hostname.contains("http://localhost")) {
+		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
 			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
 				for (Weightage weightage : subCategory.getWeightage()) {
-					if (weightage.getSubCategory_categoryId() != null && weightage.getSubCategory_categoryId() == categoryId) {
+					if (weightage.getSubCategory_categoryId() != null
+							&& weightage.getSubCategory_categoryId() == categoryId) {
 						return weightage.getQspiders();
 					}
 				}
@@ -57,7 +57,8 @@ public class WeightageUtil {
 		} else if (jspDomainName.equals(hostname)) {
 			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
 				for (Weightage weightage : subCategory.getWeightage()) {
-					if (weightage.getSubCategory_categoryId() != null && weightage.getSubCategory_categoryId() == categoryId) {
+					if (weightage.getSubCategory_categoryId() != null
+							&& weightage.getSubCategory_categoryId() == categoryId) {
 						return weightage.getJspiders();
 					}
 				}
@@ -66,7 +67,8 @@ public class WeightageUtil {
 		} else if (pyspDomainName.equals(hostname)) {
 			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
 				for (Weightage weightage : subCategory.getWeightage()) {
-					if (weightage.getSubCategory_categoryId() != null && weightage.getSubCategory_categoryId() == categoryId) {
+					if (weightage.getSubCategory_categoryId() != null
+							&& weightage.getSubCategory_categoryId() == categoryId) {
 						return weightage.getPyspiders();
 					}
 				}
@@ -75,7 +77,8 @@ public class WeightageUtil {
 		} else if (bspDomainName.equals(hostname)) {
 			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
 				for (Weightage weightage : subCategory.getWeightage()) {
-					if (weightage.getSubCategory_categoryId() != null && weightage.getSubCategory_categoryId() == categoryId) {
+					if (weightage.getSubCategory_categoryId() != null
+							&& weightage.getSubCategory_categoryId() == categoryId) {
 						return weightage.getBspiders();
 					}
 				}
@@ -87,7 +90,7 @@ public class WeightageUtil {
 	}
 
 	public long getCourseOfCategoryWeightage(Course course, String hostname, long categoryId) {
-		if (qspDomainName.equals(hostname)||hostname.contains("http://localhost")) {
+		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
 			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
 				for (Weightage weightage : course.getWeightages()) {
 					if (weightage.getCourse_categoryId() != null && weightage.getCourse_categoryId() == categoryId) {
@@ -127,8 +130,7 @@ public class WeightageUtil {
 			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
 		}
 	}
-	
-	
+
 	public List<Category> getSortedCategory(List<Category> categories, String hostname) {
 		categories.sort((a, b) -> (int) getCategoryWeightage(a, hostname) - (int) getCategoryWeightage(b, hostname));
 		return categories;
@@ -145,51 +147,55 @@ public class WeightageUtil {
 				- (int) getCourseOfCategoryWeightage(b, hostname, categoryId));
 		return courses;
 	}
-	
+
 	public List<CityDto> getSortedCity(List<CityDto> cities, String hostname) {
-		if(qspDomainName.equals(hostname)||hostname.contains("http://localhost")) {
-						cities.sort((a, b) -> (int)a.getQspiders() - (int) b.getQspiders());			
+		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
+			cities.sort((a, b) -> (int) a.getQspiders() - (int) b.getQspiders());
 			return cities;
-		}
-		else if(jspDomainName.equals(hostname)) {
-			cities.sort((a, b) -> (int)a.getJspiders() - (int) b.getJspiders());
+		} else if (jspDomainName.equals(hostname)) {
+			cities.sort((a, b) -> (int) a.getJspiders() - (int) b.getJspiders());
 			return cities;
-		}
-		else if(pyspDomainName.equals(hostname)) {
-			cities.sort((a, b) -> (int)a.getPyspiders() - (int) b.getPyspiders());
+		} else if (pyspDomainName.equals(hostname)) {
+			cities.sort((a, b) -> (int) a.getPyspiders() - (int) b.getPyspiders());
 			return cities;
-		}
-		else if(bspDomainName.equals(hostname)) {
-			cities.sort((a, b) -> (int)a.getBspiders() - (int) b.getBspiders());
+		} else if (bspDomainName.equals(hostname)) {
+			cities.sort((a, b) -> (int) a.getBspiders() - (int) b.getBspiders());
 			return cities;
-		}
-		else {
-			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
-		}
-	}
-	
-	public List<CourseDto> getSortedCourseDto(List<CourseDto> courses, String hostname) {
-		if(qspDomainName.equals(hostname)||hostname.contains("http://localhost")) {
-			courses.sort((a, b) -> (int)a.getCQspiders() - (int) b.getCQspiders());			
-			return courses;
-		}
-		else if(jspDomainName.equals(hostname)) {
-			courses.sort((a, b) -> (int)a.getCJspiders() - (int) b.getCJspiders());
-			return courses;
-		}
-		else if(pyspDomainName.equals(hostname)) {
-			courses.sort((a, b) -> (int)a.getCPyspiders() - (int) b.getCPyspiders());
-			return courses;
-		}
-		else if(bspDomainName.equals(hostname)) {
-			courses.sort((a, b) -> (int)a.getCBspiders() - (int) b.getCBspiders());
-			return courses;
-		}
-		else {
+		} else {
 			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
 		}
 	}
 
-	
+	public List<CourseDto> getSortedCourseDto(List<CourseDto> courses, String hostname) {
+		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
+			courses.sort((a, b) -> (int) a.getCQspiders() - (int) b.getCQspiders());
+			return courses;
+		} else if (jspDomainName.equals(hostname)) {
+			courses.sort((a, b) -> (int) a.getCJspiders() - (int) b.getCJspiders());
+			return courses;
+		} else if (pyspDomainName.equals(hostname)) {
+			courses.sort((a, b) -> (int) a.getCPyspiders() - (int) b.getCPyspiders());
+			return courses;
+		} else if (bspDomainName.equals(hostname)) {
+			courses.sort((a, b) -> (int) a.getCBspiders() - (int) b.getCBspiders());
+			return courses;
+		} else {
+			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
+		}
+	}
+
+	public boolean isValidOrganisation(Organization orgType) {
+		for (Organization org : Organization.values()) {
+			if (org.name().equals(orgType)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void incrementWeightage(long qspWeightage, Long weightage) {
+		
+		
+	}
 
 }

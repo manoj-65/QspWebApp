@@ -19,10 +19,12 @@ import com.alpha.qspiderrestapi.entity.City;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.entity.Weightage;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.service.WeightageService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
+import com.alpha.qspiderrestapi.util.WeightageUtil;
 
 @Service
 public class WeightageServiceImpl implements WeightageService {
@@ -42,6 +44,8 @@ public class WeightageServiceImpl implements WeightageService {
 	@Autowired
 	private WeightageDao weightageDao;
 
+	@Autowired
+	WeightageUtil weightageUtil;
 //	@Autowired
 //	private EntityManager entityManager;
 
@@ -168,12 +172,12 @@ public class WeightageServiceImpl implements WeightageService {
 				categoryDao.saveCategory(category);
 				return ResponseUtil.getNoContent("Category with the given weightage is removed");
 			}
-			
+
 		}
 		throw new IdNotFoundException("Category ID not be found");
 	}
-	
-	//under progress
+
+	// under progress
 
 	@Override
 	public ResponseEntity<ApiResponse<String>> deleteSubCategoryWeightage(Long subCategoryId) {
@@ -191,7 +195,7 @@ public class WeightageServiceImpl implements WeightageService {
 		throw new IdNotFoundException("SubCategory ID not be found");
 	}
 
-	//under progress
+	// under progress
 	@Override
 	public ResponseEntity<ApiResponse<String>> deleteCourseWeightage(Long courseId) {
 		if (courseId != null) {
@@ -207,19 +211,50 @@ public class WeightageServiceImpl implements WeightageService {
 
 	}
 
-
 	@Override
-	public ResponseEntity<ApiResponse<String>> updateCategoryWeightage(Long categoryId, Long weightage) {
-		
-//		if (categoryId != null) {
-//			Category category = categoryDao.fetchCategoryById(categoryId).get();
-//			
-//	}
-		return null;
-		
-		
-		
-	}
+	public ResponseEntity<ApiResponse<String>> updateCategoryWeightage(Long categoryId, Long weightage,
+			Organization orgType) {
 
+		if (categoryId != null && !weightageUtil.isValidOrganisation(orgType)) {
+			Category category = categoryDao.fetchCategoryById(categoryId).get();
+			Weightage categoryWeightage = category.getWeightage();
+			if (orgType.equals(Organization.QSP)) {
+				if (weightage < categoryWeightage.getQspiders()) {
+					WeightageUtil.incrementWeightage(categoryWeightage.getQspiders(), weightage);
+					categoryWeightage.setQspiders(weightage);
+				}
+				else {
+					WeightageUtil.decrementWeightage(categoryWeightage.getId(), weightage);
+					categoryWeightage.setQspiders(weightage);
+				}
+			}
+			
+			if (orgType.equals(Organization.JSP)) {
+				if (weightage < categoryWeightage.getQspiders()) {
+					WeightageUtil.incrementWeightage(categoryWeightage.getId(), weightage);
+					categoryWeightage.setQspiders(weightage);
+				}
+				else {
+					WeightageUtil.decrementWeightage(categoryWeightage.getId(), weightage);
+					categoryWeightage.setQspiders(weightage);
+				}
+			}
+			
+			if (orgType.equals(Organization.BSP)) {
+				if (weightage < categoryWeightage.getQspiders()) {
+					WeightageUtil.incrementWeightage(categoryWeightage.getId(), weightage);
+					categoryWeightage.setQspiders(weightage);
+				}
+				else {
+					WeightageUtil.decrementWeightage(categoryWeightage.getId(), weightage);
+					categoryWeightage.setQspiders(weightage);
+				}
+			}
+			
+
+		}
+		return null;
+
+	}
 
 }

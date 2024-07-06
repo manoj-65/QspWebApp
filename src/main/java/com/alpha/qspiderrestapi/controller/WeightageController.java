@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.WeightageDto;
 import com.alpha.qspiderrestapi.entity.Weightage;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.WeightageService;
 
@@ -81,9 +82,9 @@ public class WeightageController {
 
 	@PatchMapping("/updateCategoryWeightage")
 	public ResponseEntity<ApiResponse<String>> updateCategoryWeightage(@PathVariable String version,
-			@RequestParam Long categoryId, @RequestParam Long weightage) {
+			@RequestParam Long categoryId, @RequestParam Long weightage, Organization organisation) {
 		if (version.equalsIgnoreCase("V1"))
-			return weightageService.updateCategoryWeightage(categoryId, weightage);
+			return weightageService.updateCategoryWeightage(categoryId, weightage, organisation);
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}

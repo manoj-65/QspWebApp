@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.WeightageDto;
 import com.alpha.qspiderrestapi.entity.Weightage;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 
 public interface WeightageService {
 
@@ -24,6 +25,7 @@ public interface WeightageService {
 
 	ResponseEntity<ApiResponse<String>> deleteCourseWeightage(Long courseId);
 
-	ResponseEntity<ApiResponse<String>> updateCategoryWeightage(Long categoryId, Long weightage);
+	ResponseEntity<ApiResponse<String>> updateCategoryWeightage(Long categoryId, Long weightage,
+			Organization organization);
 
 }
