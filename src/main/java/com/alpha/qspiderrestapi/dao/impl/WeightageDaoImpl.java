@@ -22,6 +22,15 @@ public class WeightageDaoImpl implements WeightageDao {
 	}
 
 	@Override
+	public List<Weightage> findSubCategoryWeightages(long categoryId) {
+		return weightageRepository.findBySubCategoryCategoryId(categoryId);
+	}
+
+	@Override
+	public List<Weightage> saveAllWeightage(List<Weightage> weightages) {
+		return weightageRepository.saveAll(weightages);
+	}
+	
 	public void deleteWeightage(Weightage weightage) {
 		weightageRepository.delete(weightage);
 	}
