@@ -1,5 +1,6 @@
 package com.alpha.qspiderrestapi.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.alpha.qspiderrestapi.entity.City;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.entity.Weightage;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.service.WeightageService;
@@ -172,6 +174,78 @@ public class WeightageServiceImpl implements WeightageService {
 		}
 		throw new InvalidInfoException("Given city already contains a weightage");
 
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> updateSubCategoryWeightage(long categoryId, long subCategoryId,
+			Organization organization, long weightage) {
+		if(!categoryDao.isCategoryPresent(categoryId))
+			throw new IdNotFoundException("No category found with the id :"+categoryId);
+		
+		if(!subcategoryDao.isSubCategoryPresent(subCategoryId))
+			throw new IdNotFoundException("No Sub-Category found with the id :"+subCategoryId);
+		
+		List<Weightage> weightages = weightageDao.findSubCategoryWeightages(categoryId);
+		
+		if(weightages.isEmpty()) {
+			throw new InvalidInfoException("No weightages found with the given category and sub-category pair");
+		}else {
+			Weightage target = weightages.stream().filter(w->w.getSubCategory().getSubCategoryId()==subCategoryId).findFirst().get();
+			if(getOrgWeightage(target, organization)>weightage) {
+				weightages.stream()
+						  .filter(w->getOrgWeightage(w, organization)>=weightage && getOrgWeightage(w, organization)<=getOrgWeightage(target, organization))
+						  .peek(w->w.setQspiders(getOrgWeightage(w, organization)+1l))
+						  .forEach(w->{
+							  if(w.getSubCategory().getSubCategoryId()==subCategoryId) {
+								  w.setQspiders(weightage);
+							  }
+						  });
+			}
+			else if(target.getQspiders()<weightage) {
+				weightages.stream()
+				  .filter(w->w.getQspiders()<=weightage && w.getQspiders()>=target.getQspiders())
+				  .peek(w->setOrgWeightage(w, organization, (w.getQspiders()-1l)))
+				  .forEach(w->{
+					  if(w.getSubCategory().getSubCategoryId()==subCategoryId) {
+						  setOrgWeightage(w, organization, weightage);
+					  }
+				  });
+			}
+			
+		}
+		
+		weightageDao.saveAllWeightage(weightages);		
+		return ResponseUtil.getOk("Updated Successfully");
+	}
+	
+	private long getOrgWeightage(Weightage weightage,Organization organization) {
+		if(organization.equals(Organization.QSP) ) {
+			return weightage.getQspiders();
+		}else if(organization.equals(Organization.JSP)) {
+			return weightage.getJspiders();
+		}else if(organization.equals(Organization.PYSP)) {
+			return weightage.getPyspiders();
+		}else if(organization.equals(Organization.BSP)) {
+			return weightage.getBspiders();
+		}
+		else{
+			throw new InvalidInfoException("Organization not found");
+		}
+	}
+	
+	private void setOrgWeightage(Weightage weightage,Organization organization,long setWeightage) {
+		if(organization.equals(Organization.QSP) ) {
+			weightage.setQspiders(setWeightage);
+		}else if(organization.equals(Organization.JSP)) {
+			weightage.setJspiders(setWeightage);
+		}else if(organization.equals(Organization.PYSP)) {
+			weightage.setPyspiders(setWeightage);
+		}else if(organization.equals(Organization.BSP)) {
+			weightage.setBspiders(setWeightage);
+		}
+		else{
+			throw new InvalidInfoException("Organization not found");
+		}
 	}
 
 }

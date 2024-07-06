@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 import com.alpha.qspiderrestapi.dto.CityDto;
 import com.alpha.qspiderrestapi.dto.CourseDto;
 import com.alpha.qspiderrestapi.entity.Category;
-import com.alpha.qspiderrestapi.entity.City;
-import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.entity.Weightage;
@@ -32,13 +30,13 @@ public class WeightageUtil {
 
 	public long getCategoryWeightage(Category category, String hostname) {
 		if (qspDomainName.equals(hostname)||hostname.contains("http://localhost")) {
-			return (category.getWeightage() != null) ? (category.getWeightage().getQspiders()) : 0l;
+			return (category.getWeightage() != null) ? (category.getWeightage().getQspiders()) : Integer.MAX_VALUE;
 		} else if (jspDomainName.equals(hostname) ) {
-			return (category.getWeightage() != null) ? (category.getWeightage().getJspiders()) : 0l;
+			return (category.getWeightage() != null) ? (category.getWeightage().getJspiders()) : Integer.MAX_VALUE;
 		} else if (pyspDomainName.equals(hostname)) {
-			return (category.getWeightage() != null) ? (category.getWeightage().getPyspiders()) : 0l;
+			return (category.getWeightage() != null) ? (category.getWeightage().getPyspiders()) : Integer.MAX_VALUE;
 		} else if (bspDomainName.equals(hostname)) {
-			return (category.getWeightage() != null) ? (category.getWeightage().getBspiders()) : 0l;
+			return (category.getWeightage() != null) ? (category.getWeightage().getBspiders()) : Integer.MAX_VALUE;
 		} else {
 			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
 		}
@@ -53,7 +51,7 @@ public class WeightageUtil {
 					}
 				}
 			}
-			return 0l;
+			return Integer.MAX_VALUE;
 		} else if (jspDomainName.equals(hostname)) {
 			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
 				for (Weightage weightage : subCategory.getWeightage()) {
@@ -71,7 +69,7 @@ public class WeightageUtil {
 					}
 				}
 			}
-			return 0l;
+			return Integer.MAX_VALUE;
 		} else if (bspDomainName.equals(hostname)) {
 			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
 				for (Weightage weightage : subCategory.getWeightage()) {
@@ -80,7 +78,7 @@ public class WeightageUtil {
 					}
 				}
 			}
-			return 0l;
+			return Integer.MAX_VALUE;
 		} else {
 			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
 		}
@@ -95,7 +93,7 @@ public class WeightageUtil {
 					}
 				}
 			}
-			return 0l;
+			return Integer.MAX_VALUE;
 		} else if (jspDomainName.equals(hostname)) {
 			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
 				for (Weightage weightage : course.getWeightages()) {
@@ -104,7 +102,7 @@ public class WeightageUtil {
 					}
 				}
 			}
-			return 0l;
+			return Integer.MAX_VALUE;
 		} else if (pyspDomainName.equals(hostname)) {
 			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
 				for (Weightage weightage : course.getWeightages()) {
@@ -122,7 +120,7 @@ public class WeightageUtil {
 					}
 				}
 			}
-			return 0l;
+			return Integer.MAX_VALUE;
 		} else {
 			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
 		}
