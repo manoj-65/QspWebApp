@@ -2,6 +2,7 @@ package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -224,24 +225,24 @@ public class WeightageServiceImpl implements WeightageService {
 		}else {
 			Weightage target = weightages.stream().filter(w->w.getSubCategory().getSubCategoryId()==subCategoryId).findFirst().get();
 			if(getOrgWeightage(target, organization)>weightage) {
-				weightages.stream()
-						  .filter(w->getOrgWeightage(w, organization)>=weightage && getOrgWeightage(w, organization)<=getOrgWeightage(target, organization))
-						  .peek(w->w.setQspiders(getOrgWeightage(w, organization)+1l))
-						  .forEach(w->{
+				weightages = weightages.stream()
+						  .filter(w->getOrgWeightage(w, organization)>=weightage && getOrgWeightage(w, organization)<=getOrgWeightage(target, organization)).collect(Collectors.toList());
+				weightages = weightages.stream().peek(w->setOrgWeightage(w, organization, (getOrgWeightage(w, organization)+1l)))
+						  .peek(w->{
 							  if(w.getSubCategory().getSubCategoryId()==subCategoryId) {
-								  w.setQspiders(weightage);
+								  setOrgWeightage(w, organization, weightage);
 							  }
-						  });
+						  }).collect(Collectors.toList());
 			}
-			else if(target.getQspiders()<weightage) {
-				weightages.stream()
-				  .filter(w->w.getQspiders()<=weightage && w.getQspiders()>=target.getQspiders())
-				  .peek(w->setOrgWeightage(w, organization, (w.getQspiders()-1l)))
-				  .forEach(w->{
-					  if(w.getSubCategory().getSubCategoryId()==subCategoryId) {
-						  setOrgWeightage(w, organization, weightage);
-					  }
-				  });
+			else if(getOrgWeightage(target, organization)<weightage) {
+				weightages = weightages.stream()
+						  .filter(w->getOrgWeightage(w, organization)<=weightage && getOrgWeightage(w, organization)>=getOrgWeightage(target, organization)).collect(Collectors.toList());
+				weightages = weightages.stream().peek(w->setOrgWeightage(w, organization, (getOrgWeightage(w, organization)-1l)))
+						  .peek(w->{
+							  if(w.getSubCategory().getSubCategoryId()==subCategoryId) {
+								  setOrgWeightage(w, organization, weightage);
+							  }
+						  }).collect(Collectors.toList());
 			}
 			
 		}
