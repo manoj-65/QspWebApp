@@ -60,7 +60,7 @@ public class WeightageUtil {
 					}
 				}
 			}
-			return 0l;
+			return Integer.MAX_VALUE;
 		} else if (pyspDomainName.equals(hostname)) {
 			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
 				for (Weightage weightage : subCategory.getWeightage()) {
@@ -111,7 +111,7 @@ public class WeightageUtil {
 					}
 				}
 			}
-			return 0l;
+			return Integer.MAX_VALUE;
 		} else if (bspDomainName.equals(hostname)) {
 			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
 				for (Weightage weightage : course.getWeightages()) {
