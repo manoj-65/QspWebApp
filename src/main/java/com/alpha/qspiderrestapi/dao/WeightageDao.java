@@ -14,10 +14,12 @@ public interface WeightageDao {
 	List<Weightage> saveAllWeightage(List<Weightage> weightages);
 
 	void deleteWeightage(Weightage weightage);
-	
+
 	Optional<Weightage> fetchWeightageById(long weightageId);
 
 	List<Integer> fetchMaximumWeightage(long categoryId);
+
+	List<Weightage> getAllWeightages();
 
 	List<Weightage> findCourseOfCategoryWeightages(long categoryId);
 
