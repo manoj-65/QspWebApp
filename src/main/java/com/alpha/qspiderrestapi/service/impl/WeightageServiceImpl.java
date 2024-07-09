@@ -2,6 +2,7 @@ package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import com.alpha.qspiderrestapi.entity.Weightage;
 import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
+import com.alpha.qspiderrestapi.exception.InvalidOrganisationTypeException;
 import com.alpha.qspiderrestapi.service.WeightageService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 import com.alpha.qspiderrestapi.util.WeightageUtil;
@@ -283,21 +285,46 @@ public class WeightageServiceImpl implements WeightageService {
 	public ResponseEntity<ApiResponse<String>> updateCategoryWeightage(Long categoryId, Long weightage,
 			Organization orgType) {
 
-		if (categoryId != null && weightageUtil.isValidOrganisation(orgType)) {
-			Category category = categoryDao.fetchCategoryById(categoryId).get();
-			Weightage categoryWeightage = category.getWeightage();
+		Optional<Category> category = categoryDao.fetchCategoryById(categoryId);
+		if (category.isEmpty())
+			throw new IdNotFoundException("Category Id incorrect");
 
-			if (categoryWeightage != null)
-				throw new InvalidInfoException("No weightages found with the given category and sub-category pair");
+		if (!weightageUtil.isValidOrganisation(orgType))
+			throw new InvalidOrganisationTypeException("Invalid Organisation Type");
 
-			if(getOrgWeightage(categoryWeightage, orgType) > weightage)
-			{
-				
-			}
+		Weightage categoryWeightage = category.get().getWeightage();
+		List<Weightage> allWeightages = weightageDao.getAllWeightages(categoryId);
 
+		if (!(categoryWeightage != null))
+			throw new InvalidInfoException("No weightages found with the given category");
+
+		if (getOrgWeightage(categoryWeightage, orgType) > weightage) {
+			allWeightages = allWeightages.stream()
+					.filter(w -> getOrgWeightage(w, orgType) >= weightage
+							&& getOrgWeightage(w, orgType) <= getOrgWeightage(categoryWeightage, orgType))
+					.collect(Collectors.toList());
+
+			allWeightages = allWeightages.stream()
+					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) + 1l))).peek(w -> {
+						if (w.getCategory().getCategoryId() == categoryId) {
+							setOrgWeightage(w, orgType, weightage);
+						}
+					}).collect(Collectors.toList());
+		} else if (getOrgWeightage(categoryWeightage, orgType) < weightage) {
+			allWeightages = allWeightages.stream()
+					.filter(w -> getOrgWeightage(w, orgType) <= weightage
+							&& getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
+					.collect(Collectors.toList());
+			allWeightages = allWeightages.stream()
+					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) - 1l))).peek(w -> {
+						if (w.getCategory().getCategoryId() == categoryId) {
+							setOrgWeightage(w, orgType, weightage);
+						}
+					}).collect(Collectors.toList());
 		}
 
-		return null;
+		weightageDao.saveAllWeightage(allWeightages);
+		return ResponseUtil.getOk("Updated Successfully");
 
 	}
 

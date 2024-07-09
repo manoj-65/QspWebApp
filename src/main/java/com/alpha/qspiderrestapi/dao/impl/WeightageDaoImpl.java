@@ -30,7 +30,7 @@ public class WeightageDaoImpl implements WeightageDao {
 	public List<Weightage> saveAllWeightage(List<Weightage> weightages) {
 		return weightageRepository.saveAll(weightages);
 	}
-	
+
 	public void deleteWeightage(Weightage weightage) {
 		weightageRepository.delete(weightage);
 	}
@@ -44,7 +44,10 @@ public class WeightageDaoImpl implements WeightageDao {
 	public List<Integer> fetchMaximumWeightage(long categoryId) {
 		return weightageRepository.fetchWeightById(categoryId);
 	}
-	
-	
+
+	@Override
+	public List<Weightage> getAllWeightages(long categoryId) {
+		return weightageRepository.fetchAllByCategoryId(categoryId);
+	}
 
 }
