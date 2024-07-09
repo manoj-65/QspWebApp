@@ -230,21 +230,30 @@ public class WeightageServiceImpl implements WeightageService {
 			Weightage target = weightages.stream().filter(w -> w.getSubCategory().getSubCategoryId() == subCategoryId)
 					.findFirst().get();
 			if (getOrgWeightage(target, organization) > weightage) {
-				weightages.stream()
+
+				weightages = weightages.stream()
 						.filter(w -> getOrgWeightage(w, organization) >= weightage
 								&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization))
-						.peek(w -> w.setQspiders(getOrgWeightage(w, organization) + 1l)).forEach(w -> {
-							if (w.getSubCategory().getSubCategoryId() == subCategoryId) {
-								w.setQspiders(weightage);
-							}
-						});
-			} else if (target.getQspiders() < weightage) {
-				weightages.stream().filter(w -> w.getQspiders() <= weightage && w.getQspiders() >= target.getQspiders())
-						.peek(w -> setOrgWeightage(w, organization, (w.getQspiders() - 1l))).forEach(w -> {
+						.collect(Collectors.toList());
+				weightages = weightages.stream()
+						.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l)))
+						.peek(w -> {
 							if (w.getSubCategory().getSubCategoryId() == subCategoryId) {
 								setOrgWeightage(w, organization, weightage);
 							}
-						});
+						}).collect(Collectors.toList());
+			} else if (getOrgWeightage(target, organization) < weightage) {
+				weightages = weightages.stream()
+						.filter(w -> getOrgWeightage(w, organization) <= weightage
+								&& getOrgWeightage(w, organization) >= getOrgWeightage(target, organization))
+						.collect(Collectors.toList());
+				weightages = weightages.stream()
+						.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) - 1l)))
+						.peek(w -> {
+							if (w.getSubCategory().getSubCategoryId() == subCategoryId) {
+								setOrgWeightage(w, organization, weightage);
+							}
+						}).collect(Collectors.toList());
 			}
 
 		}
@@ -331,8 +340,97 @@ public class WeightageServiceImpl implements WeightageService {
 	@Override
 	public ResponseEntity<ApiResponse<String>> updateCourseWeightage(long categoryId, Long subCategoryId, long courseId,
 			Organization organization, long weightage) {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (!categoryDao.isCategoryPresent(categoryId))
+			throw new IdNotFoundException("No category found with the id :" + categoryId);
+
+		if (subCategoryId != null) {
+			
+			if(!subcategoryDao.isSubCategoryPresent(subCategoryId))
+			throw new IdNotFoundException("No Sub-Category found with the id :"+subCategoryId);
+
+			if (!courseDao.isCourseExist(courseId))
+				throw new IdNotFoundException("No course found with the id :" + courseId);
+
+			List<Weightage> weightages = weightageDao.findCourseOfSubCategoryWeightages(subCategoryId);
+
+			if (weightages.isEmpty()) {
+				throw new InvalidInfoException("No weightages found with the given sub-category and course pair");
+			} else {
+				Weightage target = weightages.stream().filter(w -> w.getCourse().getCourseId() == courseId).findFirst()
+						.get();
+				if (getOrgWeightage(target, organization) > weightage) {
+					weightages = weightages.stream()
+							.filter(w -> getOrgWeightage(w, organization) >= weightage
+									&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization))
+							.collect(Collectors.toList());
+					weightages = weightages.stream()
+							.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l)))
+							.peek(w -> {
+								if (w.getCourse().getCourseId() == courseId) {
+									setOrgWeightage(w, organization, weightage);
+								}
+							}).collect(Collectors.toList());
+				} else if (getOrgWeightage(target, organization) < weightage) {
+					weightages = weightages.stream()
+							.filter(w -> getOrgWeightage(w, organization) <= weightage
+									&& getOrgWeightage(w, organization) >= getOrgWeightage(target, organization))
+							.collect(Collectors.toList());
+					weightages = weightages.stream()
+							.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) - 1l)))
+							.peek(w -> {
+								if (w.getCourse().getCourseId() == courseId) {
+									setOrgWeightage(w, organization, weightage);
+								}
+							}).collect(Collectors.toList());
+				}
+			}
+
+			weightageDao.saveAllWeightage(weightages);
+			return ResponseUtil.getOk("Updated Successfully");
+		} else {
+			
+			if (!courseDao.isCourseExist(courseId))
+				throw new IdNotFoundException("No course found with the id :" + courseId);
+
+			List<Weightage> weightages = weightageDao.findCourseOfCategoryWeightages(categoryId);
+
+			if (weightages.isEmpty()) {
+				throw new InvalidInfoException("No weightages found with the given category and course pair");
+			} else {
+				Weightage target = weightages.stream().filter(w -> w.getCourse().getCourseId() == courseId).findFirst()
+						.get();
+				if (getOrgWeightage(target, organization) > weightage) {
+					weightages = weightages.stream()
+							.filter(w -> getOrgWeightage(w, organization) >= weightage
+									&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization))
+							.collect(Collectors.toList());
+					weightages = weightages.stream()
+							.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l)))
+							.peek(w -> {
+								if (w.getCourse().getCourseId() == courseId) {
+									setOrgWeightage(w, organization, weightage);
+								}
+							}).collect(Collectors.toList());
+				} else if (getOrgWeightage(target, organization) < weightage) {
+					weightages = weightages.stream()
+							.filter(w -> getOrgWeightage(w, organization) <= weightage
+									&& getOrgWeightage(w, organization) >= getOrgWeightage(target, organization))
+							.collect(Collectors.toList());
+					weightages = weightages.stream()
+							.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) - 1l)))
+							.peek(w -> {
+								if (w.getCourse().getCourseId() == courseId) {
+									setOrgWeightage(w, organization, weightage);
+								}
+							}).collect(Collectors.toList());
+				}
+			}
+
+			weightageDao.saveAllWeightage(weightages);
+			return ResponseUtil.getOk("Updated Successfully");
+		}
+
 	}
 
 }

@@ -20,10 +20,10 @@ public interface WeightageRepository extends JpaRepository<Weightage, Long> {
 	@Query(value = "select * from weightage where category_id is not null", nativeQuery = true)
 	List<Weightage> fetchAllByCategoryId();
 
-	@Query(value = "SELECT * FROM weightage WHERE course_category_id = :categoryId ", nativeQuery = true)
+	@Query(value = "SELECT * FROM weightage WHERE course_category_id = :categoryId ",nativeQuery = true)
 	List<Weightage> findCourseOfCategoryWeightages(long categoryId);
-
-	@Query(value = "SELECT * FROM weightage WHERE course_sub_category_id = :subCategoryId ", nativeQuery = true)
+	
+	@Query(value = "SELECT * FROM weightage WHERE course_sub_category_id = :subCategoryId ",nativeQuery = true)
 	List<Weightage> findCourseOfSubCategoryWeightages(Long subCategoryId);
 
 }

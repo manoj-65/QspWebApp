@@ -58,5 +58,5 @@ public class WeightageDaoImpl implements WeightageDao {
 	public List<Weightage> findCourseOfSubCategoryWeightages(Long subCategoryId) {
 		return weightageRepository.findCourseOfSubCategoryWeightages(subCategoryId);
 	}
-
+	
 }
