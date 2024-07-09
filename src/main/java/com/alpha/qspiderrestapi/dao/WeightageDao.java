@@ -19,5 +19,9 @@ public interface WeightageDao {
 
 	List<Integer> fetchMaximumWeightage(long categoryId);
 
-	List<Weightage> getAllWeightages(long categoryId);
+	List<Weightage> getAllWeightages();
+
+	List<Weightage> findCourseOfCategoryWeightages(long categoryId);
+
+	List<Weightage> findCourseOfSubCategoryWeightages(Long subCategoryId);
 }

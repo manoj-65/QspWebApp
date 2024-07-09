@@ -293,7 +293,7 @@ public class WeightageServiceImpl implements WeightageService {
 			throw new InvalidOrganisationTypeException("Invalid Organisation Type");
 
 		Weightage categoryWeightage = category.get().getWeightage();
-		List<Weightage> allWeightages = weightageDao.getAllWeightages(categoryId);
+		List<Weightage> allWeightages = weightageDao.getAllWeightages();
 
 		if (!(categoryWeightage != null))
 			throw new InvalidInfoException("No weightages found with the given category");
@@ -326,6 +326,13 @@ public class WeightageServiceImpl implements WeightageService {
 		weightageDao.saveAllWeightage(allWeightages);
 		return ResponseUtil.getOk("Updated Successfully");
 
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> updateCourseWeightage(long categoryId, Long subCategoryId, long courseId,
+			Organization organization, long weightage) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

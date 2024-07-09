@@ -98,5 +98,18 @@ public class WeightageController {
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
+	
+	@PatchMapping("/courses")
+	public ResponseEntity<ApiResponse<String>> updateCourseWeightage(@PathVariable String version,
+																   @RequestParam long categoryId,
+																   @RequestParam(required = false) Long subCategoryId,
+																   @RequestParam long courseId,
+																   @RequestParam Organization organization,
+																   @RequestParam long weightage){
+		if (version.equalsIgnoreCase("V1"))
+			return weightageService.updateCourseWeightage(categoryId,subCategoryId,courseId,organization,weightage);
+
+		throw new UnauthorizedVersionException("Unauthorized Version");		
+	}
 
 }

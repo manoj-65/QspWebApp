@@ -46,8 +46,17 @@ public class WeightageDaoImpl implements WeightageDao {
 	}
 
 	@Override
-	public List<Weightage> getAllWeightages(long categoryId) {
-		return weightageRepository.fetchAllByCategoryId(categoryId);
+	public List<Weightage> getAllWeightages() {
+		return weightageRepository.fetchAllByCategoryId();
+	}
+
+	public List<Weightage> findCourseOfCategoryWeightages(long categoryId) {
+		return weightageRepository.findCourseOfCategoryWeightages(categoryId);
+	}
+
+	@Override
+	public List<Weightage> findCourseOfSubCategoryWeightages(Long subCategoryId) {
+		return weightageRepository.findCourseOfSubCategoryWeightages(subCategoryId);
 	}
 
 }
