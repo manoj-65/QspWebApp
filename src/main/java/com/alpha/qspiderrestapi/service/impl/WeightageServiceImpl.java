@@ -290,7 +290,10 @@ public class WeightageServiceImpl implements WeightageService {
 			if (categoryWeightage != null)
 				throw new InvalidInfoException("No weightages found with the given category and sub-category pair");
 
-			long orgWeightage = getOrgWeightage(categoryWeightage, orgType);
+			if(getOrgWeightage(categoryWeightage, orgType) > weightage)
+			{
+				
+			}
 
 		}
 

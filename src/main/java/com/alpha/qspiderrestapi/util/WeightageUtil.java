@@ -30,17 +30,10 @@ public class WeightageUtil {
 	private String bspDomainName;
 
 	public long getCategoryWeightage(Category category, String hostname) {
-<<<<<<< HEAD
 		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
-			return (category.getWeightage() != null) ? (category.getWeightage().getQspiders()) : 0l;
-		} else if (jspDomainName.equals(hostname)) {
-			return (category.getWeightage() != null) ? (category.getWeightage().getJspiders()) : 0l;
-=======
-		if (qspDomainName.equals(hostname)||hostname.contains("http://localhost")) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getQspiders()) : Integer.MAX_VALUE;
-		} else if (jspDomainName.equals(hostname) ) {
+		} else if (jspDomainName.equals(hostname)) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getJspiders()) : Integer.MAX_VALUE;
->>>>>>> 84696a2996bc3e961c05191b12818336f8fe2273
 		} else if (pyspDomainName.equals(hostname)) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getPyspiders()) : Integer.MAX_VALUE;
 		} else if (bspDomainName.equals(hostname)) {
@@ -70,7 +63,7 @@ public class WeightageUtil {
 					}
 				}
 			}
-			return 0l;
+			return Integer.MAX_VALUE;
 		} else if (pyspDomainName.equals(hostname)) {
 			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
 				for (Weightage weightage : subCategory.getWeightage()) {
@@ -123,7 +116,7 @@ public class WeightageUtil {
 					}
 				}
 			}
-			return 0l;
+			return Integer.MAX_VALUE;
 		} else if (bspDomainName.equals(hostname)) {
 			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
 				for (Weightage weightage : course.getWeightages()) {
