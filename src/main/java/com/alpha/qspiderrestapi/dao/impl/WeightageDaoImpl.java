@@ -44,6 +44,16 @@ public class WeightageDaoImpl implements WeightageDao {
 	public List<Integer> fetchMaximumWeightage(long categoryId) {
 		return weightageRepository.fetchWeightById(categoryId);
 	}
+
+	@Override
+	public List<Weightage> findCourseOfCategoryWeightages(long categoryId) {
+		return weightageRepository.findCourseOfCategoryWeightages(categoryId);
+	}
+
+	@Override
+	public List<Weightage> findCourseOfSubCategoryWeightages(Long subCategoryId) {
+		return weightageRepository.findCourseOfSubCategoryWeightages(subCategoryId);
+	}
 	
 	
 
