@@ -212,47 +212,88 @@ public class WeightageServiceImpl implements WeightageService {
 	}
 
 	@Override
+	public ResponseEntity<ApiResponse<String>> updateSubCategoryWeightage(long categoryId, long subCategoryId,
+			Organization organization, long weightage) {
+		if (!categoryDao.isCategoryPresent(categoryId))
+			throw new IdNotFoundException("No category found with the id :" + categoryId);
+
+		if (!subcategoryDao.isSubCategoryPresent(subCategoryId))
+			throw new IdNotFoundException("No Sub-Category found with the id :" + subCategoryId);
+
+		List<Weightage> weightages = weightageDao.findSubCategoryWeightages(categoryId);
+
+		if (weightages.isEmpty()) {
+			throw new InvalidInfoException("No weightages found with the given category and sub-category pair");
+		} else {
+			Weightage target = weightages.stream().filter(w -> w.getSubCategory().getSubCategoryId() == subCategoryId)
+					.findFirst().get();
+			if (getOrgWeightage(target, organization) > weightage) {
+				weightages.stream()
+						.filter(w -> getOrgWeightage(w, organization) >= weightage
+								&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization))
+						.peek(w -> w.setQspiders(getOrgWeightage(w, organization) + 1l)).forEach(w -> {
+							if (w.getSubCategory().getSubCategoryId() == subCategoryId) {
+								w.setQspiders(weightage);
+							}
+						});
+			} else if (target.getQspiders() < weightage) {
+				weightages.stream().filter(w -> w.getQspiders() <= weightage && w.getQspiders() >= target.getQspiders())
+						.peek(w -> setOrgWeightage(w, organization, (w.getQspiders() - 1l))).forEach(w -> {
+							if (w.getSubCategory().getSubCategoryId() == subCategoryId) {
+								setOrgWeightage(w, organization, weightage);
+							}
+						});
+			}
+
+		}
+
+		weightageDao.saveAllWeightage(weightages);
+		return ResponseUtil.getOk("Updated Successfully");
+	}
+
+	private long getOrgWeightage(Weightage weightage, Organization organization) {
+		if (organization.equals(Organization.QSP)) {
+			return weightage.getQspiders();
+		} else if (organization.equals(Organization.JSP)) {
+			return weightage.getJspiders();
+		} else if (organization.equals(Organization.PYSP)) {
+			return weightage.getPyspiders();
+		} else if (organization.equals(Organization.BSP)) {
+			return weightage.getBspiders();
+		} else {
+			throw new InvalidInfoException("Organization not found");
+		}
+	}
+
+	private void setOrgWeightage(Weightage weightage, Organization organization, long setWeightage) {
+		if (organization.equals(Organization.QSP)) {
+			weightage.setQspiders(setWeightage);
+		} else if (organization.equals(Organization.JSP)) {
+			weightage.setJspiders(setWeightage);
+		} else if (organization.equals(Organization.PYSP)) {
+			weightage.setPyspiders(setWeightage);
+		} else if (organization.equals(Organization.BSP)) {
+			weightage.setBspiders(setWeightage);
+		} else {
+			throw new InvalidInfoException("Organization not found");
+		}
+	}
+
+	@Override
 	public ResponseEntity<ApiResponse<String>> updateCategoryWeightage(Long categoryId, Long weightage,
 			Organization orgType) {
 
-		if (categoryId != null && !weightageUtil.isValidOrganisation(orgType)) {
+		if (categoryId != null && weightageUtil.isValidOrganisation(orgType)) {
 			Category category = categoryDao.fetchCategoryById(categoryId).get();
 			Weightage categoryWeightage = category.getWeightage();
-			if (orgType.equals(Organization.QSP)) {
-				if (weightage < categoryWeightage.getQspiders()) {
-					WeightageUtil.incrementWeightage(categoryWeightage.getQspiders(), weightage);
-					categoryWeightage.setQspiders(weightage);
-				}
-				else {
-					WeightageUtil.decrementWeightage(categoryWeightage.getId(), weightage);
-					categoryWeightage.setQspiders(weightage);
-				}
-			}
-			
-			if (orgType.equals(Organization.JSP)) {
-				if (weightage < categoryWeightage.getQspiders()) {
-					WeightageUtil.incrementWeightage(categoryWeightage.getId(), weightage);
-					categoryWeightage.setQspiders(weightage);
-				}
-				else {
-					WeightageUtil.decrementWeightage(categoryWeightage.getId(), weightage);
-					categoryWeightage.setQspiders(weightage);
-				}
-			}
-			
-			if (orgType.equals(Organization.BSP)) {
-				if (weightage < categoryWeightage.getQspiders()) {
-					WeightageUtil.incrementWeightage(categoryWeightage.getId(), weightage);
-					categoryWeightage.setQspiders(weightage);
-				}
-				else {
-					WeightageUtil.decrementWeightage(categoryWeightage.getId(), weightage);
-					categoryWeightage.setQspiders(weightage);
-				}
-			}
-			
+
+			if (categoryWeightage != null)
+				throw new InvalidInfoException("No weightages found with the given category and sub-category pair");
+
+			long orgWeightage = getOrgWeightage(categoryWeightage, orgType);
 
 		}
+
 		return null;
 
 	}

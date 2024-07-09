@@ -19,6 +19,9 @@ public interface WeightageService {
 
 	ResponseEntity<ApiResponse<Weightage>> saveCityWeightage(String cityName, WeightageDto dto);
 
+	ResponseEntity<ApiResponse<String>> updateSubCategoryWeightage(long categoryId, long subCategoryId,
+			Organization organization, long weightage);
+
 	ResponseEntity<ApiResponse<String>> deleteCategoryWeightage(Long categoryId);
 
 	ResponseEntity<ApiResponse<String>> deleteSubCategoryWeightage(Long subCategoryId);
