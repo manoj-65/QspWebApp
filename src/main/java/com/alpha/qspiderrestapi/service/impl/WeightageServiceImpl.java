@@ -58,6 +58,9 @@ public class WeightageServiceImpl implements WeightageService {
 						.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).category(optCategory.get()).build();
 				optCategory.get().setWeightage(weightage);
 				weightage.setCategory(optCategory.get());
+				
+				weightageDao.incrementWeightageValues(dto.getQspiders(),dto.getJspiders(),dto.getPyspiders(),dto.getBspiders(),"category_id",categoryId);
+
 				weightage = weightageDao.saveWeightage(weightage);
 
 				return ResponseUtil.getCreated(weightage);
@@ -84,6 +87,7 @@ public class WeightageServiceImpl implements WeightageService {
 			Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
 					.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).subCategory(subCategory)
 					.subCategory_categoryId(categoryId).build();
+			weightageDao.incrementWeightageValues(dto.getQspiders(),dto.getJspiders(),dto.getPyspiders(),dto.getBspiders(),"sub_category_category_id",categoryId);
 			weightage = weightageDao.saveWeightage(weightage);
 			return ResponseUtil.getCreated(weightage);
 
@@ -114,6 +118,7 @@ public class WeightageServiceImpl implements WeightageService {
 					Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
 							.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).course(course)
 							.course_SubCategoryId(subCategoryId).build();
+					weightageDao.incrementWeightageValues(dto.getQspiders(),dto.getJspiders(),dto.getPyspiders(),dto.getBspiders(),"course_sub_category_id",subCategoryId);
 					weightage = weightageDao.saveWeightage(weightage);
 					return ResponseUtil.getCreated(weightage);
 				} else {
@@ -131,6 +136,8 @@ public class WeightageServiceImpl implements WeightageService {
 				Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
 						.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).course(course)
 						.course_categoryId(categoryId).build();
+			//increment old weightages to save new weightages
+				weightageDao.incrementWeightageValues(dto.getQspiders(),dto.getJspiders(),dto.getPyspiders(),dto.getBspiders(),"course_category_id",categoryId);
 				weightage = weightageDao.saveWeightage(weightage);
 				return ResponseUtil.getCreated(weightage);
 			} else {
@@ -318,31 +325,9 @@ public class WeightageServiceImpl implements WeightageService {
 			} else {
 				Weightage target = weightages.stream().filter(w -> w.getCourse().getCourseId() == courseId).findFirst()
 						.get();
-				if (getOrgWeightage(target, organization) > weightage) {
-					weightages = weightages.stream()
-							.filter(w -> getOrgWeightage(w, organization) >= weightage
-									&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization))
-							.collect(Collectors.toList());
-					weightages = weightages.stream()
-							.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l)))
-							.peek(w -> {
-								if (w.getCourse().getCourseId() == courseId) {
-									setOrgWeightage(w, organization, weightage);
-								}
-							}).collect(Collectors.toList());
-				} else if (getOrgWeightage(target, organization) < weightage) {
-					weightages = weightages.stream()
-							.filter(w -> getOrgWeightage(w, organization) <= weightage
-									&& getOrgWeightage(w, organization) >= getOrgWeightage(target, organization))
-							.collect(Collectors.toList());
-					weightages = weightages.stream()
-							.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) - 1l)))
-							.peek(w -> {
-								if (w.getCourse().getCourseId() == courseId) {
-									setOrgWeightage(w, organization, weightage);
-								}
-							}).collect(Collectors.toList());
-				}
+				
+				weightages = getUpdatedWeightages(weightages,target, organization, weightage,courseId);
+				
 			}
 
 			weightageDao.saveAllWeightage(weightages);
@@ -359,37 +344,48 @@ public class WeightageServiceImpl implements WeightageService {
 			} else {
 				Weightage target = weightages.stream().filter(w -> w.getCourse().getCourseId() == courseId).findFirst()
 						.get();
-				if (getOrgWeightage(target, organization) > weightage) {
-					weightages = weightages.stream()
-							.filter(w -> getOrgWeightage(w, organization) >= weightage
-									&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization))
-							.collect(Collectors.toList());
-					weightages = weightages.stream()
-							.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l)))
-							.peek(w -> {
-								if (w.getCourse().getCourseId() == courseId) {
-									setOrgWeightage(w, organization, weightage);
-								}
-							}).collect(Collectors.toList());
-				} else if (getOrgWeightage(target, organization) < weightage) {
-					weightages = weightages.stream()
-							.filter(w -> getOrgWeightage(w, organization) <= weightage
-									&& getOrgWeightage(w, organization) >= getOrgWeightage(target, organization))
-							.collect(Collectors.toList());
-					weightages = weightages.stream()
-							.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) - 1l)))
-							.peek(w -> {
-								if (w.getCourse().getCourseId() == courseId) {
-									setOrgWeightage(w, organization, weightage);
-								}
-							}).collect(Collectors.toList());
-				}
+				weightages = getUpdatedWeightages(weightages,target, organization, weightage,courseId);
+
 			}
 
 			weightageDao.saveAllWeightage(weightages);
 			return ResponseUtil.getOk("Updated Successfully");
 		}
+		
+		
 
+	}
+
+	private List<Weightage> getUpdatedWeightages(List<Weightage> weightages, Weightage target,
+			Organization organization, long weightage, long courseId) {
+		if (getOrgWeightage(target, organization) > weightage) {
+			weightages = weightages.stream()
+					.filter(w -> getOrgWeightage(w, organization) >= weightage
+							&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization))
+					.collect(Collectors.toList());
+			return weightages.stream()
+					.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l)))
+					.peek(w -> {
+						if (w.getCourse().getCourseId() == courseId) {
+							setOrgWeightage(w, organization, weightage);
+						}
+					}).collect(Collectors.toList());
+		} else if (getOrgWeightage(target, organization) < weightage) {
+			weightages = weightages.stream()
+					.filter(w -> getOrgWeightage(w, organization) <= weightage
+							&& getOrgWeightage(w, organization) >= getOrgWeightage(target, organization))
+					.collect(Collectors.toList());
+			return weightages.stream()
+					.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) - 1l)))
+					.peek(w -> {
+						if (w.getCourse().getCourseId() == courseId) {
+							setOrgWeightage(w, organization, weightage);
+						}
+					}).collect(Collectors.toList());
+		}
+		else {
+			return weightages;
+		}
 	}
 
 }

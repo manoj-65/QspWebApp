@@ -3,9 +3,13 @@ package com.alpha.qspiderrestapi.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.alpha.qspiderrestapi.entity.Weightage;
+
+import jakarta.transaction.Transactional;
 
 public interface WeightageRepository extends JpaRepository<Weightage, Long> {
 
@@ -22,5 +26,14 @@ public interface WeightageRepository extends JpaRepository<Weightage, Long> {
 	
 	@Query(value = "SELECT * FROM weightage WHERE course_sub_category_id = :subCategoryId ",nativeQuery = true)
 	List<Weightage> findCourseOfSubCategoryWeightages(Long subCategoryId);
+
+	@Transactional
+	@Query(value = "SELECT dynamic_check_and_update(:qspiders,:jspiders, :pyspiders, :bspiders, :fieldName, :categoryId)",nativeQuery = true)
+	void incrementWeightageValues(@Param(value = "qspiders") long qspiders,
+								  @Param(value = "jspiders") long jspiders,
+								  @Param(value = "pyspiders") long pyspiders,
+								  @Param(value = "bspiders") long bspiders,
+								  @Param(value = "fieldName") String fieldName,
+								  @Param(value = "categoryId") long categoryId);
 
 }

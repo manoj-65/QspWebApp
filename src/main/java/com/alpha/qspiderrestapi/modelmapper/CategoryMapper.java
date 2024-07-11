@@ -39,7 +39,7 @@ public class CategoryMapper {
 				.alternativeIcon(category.getCategoryAlternativeIcon())
 				.title(category.getCategoryTitle())
 				.subCourse(subCategoryMapper.mapToSubCategoryResponseList(category.getSubCategories(),hostname,category.getCategoryId()))
-				.courseResponse(CourseMapper.mapToCourseResponseList(weightageUtil.getSortedCourseOfCategory(category.getCourses(), hostname, category.getCategoryId())))
+				.courseResponse(CourseMapper.mapToCourseResponseList(weightageUtil.getSortedCourseOfCategory(category.getCourses(), hostname, category.getCategoryId()),category.getCategoryId()))
 				.build();
 	}
 

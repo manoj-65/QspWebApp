@@ -27,7 +27,7 @@ public class CourseMapper {
 	 * @param course The Course entity to be converted.
 	 * @return A CourseResponse DTO containing the mapped data.
 	 */
-	public static CourseResponse mapToCourseResponse(Course course) {
+	public static CourseResponse mapToCourseResponse(Course course,long categoryId) {
 		return CourseResponse.builder().courseResponseId(course.getCourseId()).icon(course.getCourseIcon())
 				.image_url(course.getCourseImage()).title(course.getCourseName())
 				.description(course.getCourseDescription()).homePageCourseImage(course.getHomePageCourseImage())
@@ -44,11 +44,11 @@ public class CourseMapper {
 	 * @param courses The list of Course entities to be converted.
 	 * @return A list of CourseResponse DTOs containing the mapped data.
 	 */
-	public static List<CourseResponse> mapToCourseResponseList(List<Course> courses) {
+	public static List<CourseResponse> mapToCourseResponseList(List<Course> courses,long categoryId) {
 
 		List<CourseResponse> responseList = new ArrayList<CourseResponse>();
 
-		courses.forEach(response -> responseList.add(mapToCourseResponse(response)));
+		courses.forEach(response -> responseList.add(mapToCourseResponse(response,categoryId)));
 		return responseList;
 
 	}

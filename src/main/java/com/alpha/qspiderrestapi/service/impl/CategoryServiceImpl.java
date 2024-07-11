@@ -229,7 +229,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 	private List<CourseResponse> mapToCourse(List<Course> courses, Mode mode) {
 		return courses.stream().filter(course -> course.getMode().contains(mode))
-				.map(course -> CourseMapper.mapToCourseResponse(course)).collect(Collectors.toList());
+				.map(course -> CourseMapper.mapToCourseResponse(course,0l)).collect(Collectors.toList());
 	}
 
 }

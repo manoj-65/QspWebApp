@@ -54,6 +54,12 @@ public class WeightageDaoImpl implements WeightageDao {
 	public List<Weightage> findCourseOfSubCategoryWeightages(Long subCategoryId) {
 		return weightageRepository.findCourseOfSubCategoryWeightages(subCategoryId);
 	}
+
+	@Override
+	public void incrementWeightageValues(long qspiders, long jspiders, long pyspiders, long bspiders, String fieldName,
+			long categoryId) {
+		weightageRepository.incrementWeightageValues(qspiders,jspiders,pyspiders,bspiders,fieldName,categoryId);
+	}
 	
 	
 
