@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.BranchByIdDto;
+import com.alpha.qspiderrestapi.dto.BranchRequestDto;
 import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 
@@ -27,4 +28,7 @@ public interface BranchService {
 	ResponseEntity<ApiResponse<List<Branch>>> findAll();
 
 	ResponseEntity<ApiResponse<String>> updateBranchLocation(long branchId, String location);
+
+	ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(String branch, MultipartFile branchImage,
+			List<MultipartFile> branchGallery);
 }
