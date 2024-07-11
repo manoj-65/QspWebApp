@@ -70,20 +70,17 @@ public class WeightageController {
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
-	
+
 	@PatchMapping("/subCategories")
 	public ResponseEntity<ApiResponse<String>> updateSubCategoryWeightage(@PathVariable String version,
-																   @RequestParam long categoryId,
-																   @RequestParam long subCategoryId,
-																   @RequestParam Organization organization,
-																   @RequestParam long weightage){
+			@RequestParam long categoryId, @RequestParam long subCategoryId, @RequestParam Organization organization,
+			@RequestParam long weightage) {
 		if (version.equalsIgnoreCase("V1"))
-			return weightageService.updateSubCategoryWeightage(categoryId,subCategoryId,organization,weightage);
+			return weightageService.updateSubCategoryWeightage(categoryId, subCategoryId, organization, weightage);
 
-		throw new UnauthorizedVersionException("Unauthorized Version");		
+		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
-	
-	
+
 	@DeleteMapping("/removeSubCategoryWeightage")
 	public ResponseEntity<ApiResponse<String>> deleteSubCategoryWeightage(@PathVariable String version,
 			@RequestParam Long subCategoryId) {
@@ -95,24 +92,30 @@ public class WeightageController {
 
 	@PatchMapping("/updateCategoryWeightage")
 	public ResponseEntity<ApiResponse<String>> updateCategoryWeightage(@PathVariable String version,
-			@RequestParam Long categoryId, @RequestParam Long weightage) {
+			@RequestParam Long categoryId, @RequestParam Long weightage, Organization organisation) {
 		if (version.equalsIgnoreCase("V1"))
-			return weightageService.updateCategoryWeightage(categoryId, weightage);
+			return weightageService.updateCategoryWeightage(categoryId, weightage, organisation);
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
-	
+
 	@PatchMapping("/courses")
 	public ResponseEntity<ApiResponse<String>> updateCourseWeightage(@PathVariable String version,
-																   @RequestParam long categoryId,
-																   @RequestParam(required = false) Long subCategoryId,
-																   @RequestParam long courseId,
-																   @RequestParam Organization organization,
-																   @RequestParam long weightage){
+			@RequestParam long categoryId, @RequestParam(required = false) Long subCategoryId,
+			@RequestParam long courseId, @RequestParam Organization organization, @RequestParam long weightage) {
 		if (version.equalsIgnoreCase("V1"))
-			return weightageService.updateCourseWeightage(categoryId,subCategoryId,courseId,organization,weightage);
+			return weightageService.updateCourseWeightage(categoryId, subCategoryId, courseId, organization, weightage);
 
-		throw new UnauthorizedVersionException("Unauthorized Version");		
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	}
+
+	@PostMapping("/categoryWeightage")
+	public ResponseEntity<ApiResponse<Weightage>> saveCategoryWeightageAndIncrement(@PathVariable String version,
+			@RequestParam long categoryId, @RequestBody WeightageDto dto) {
+		if (version.equalsIgnoreCase("V1"))
+			return weightageService.saveCategoryWeightageAndIncrement(categoryId, dto);
+
+		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 
 }

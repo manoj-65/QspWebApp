@@ -1,5 +1,8 @@
 package com.alpha.qspiderrestapi.service.impl;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -21,6 +24,7 @@ import com.alpha.qspiderrestapi.dto.BranchByIdDto;
 import com.alpha.qspiderrestapi.dto.BranchById_BatchDto;
 import com.alpha.qspiderrestapi.dto.BranchById_CourseDto;
 import com.alpha.qspiderrestapi.dto.BranchDto;
+import com.alpha.qspiderrestapi.dto.BranchRequestDto;
 import com.alpha.qspiderrestapi.dto.CityDto;
 import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.dto.CourseDto;
@@ -34,6 +38,8 @@ import com.alpha.qspiderrestapi.service.BranchService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 import com.alpha.qspiderrestapi.util.ValidatePhoneNumber;
 import com.alpha.qspiderrestapi.util.WeightageUtil;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -59,12 +65,16 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private ValidatePhoneNumber validatePhoneNumber;
-	
+
 	@Autowired
 	private WeightageUtil weightageUtil;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch) {
+
 		log.info("Saving branch: {}", branch);
 		branch.setBranchTitle(branch.getDisplayName() + "-" + branch.getBranchType());
 		for (String contact : branch.getContacts()) {
@@ -72,8 +82,10 @@ public class BranchServiceImpl implements BranchService {
 				throw new InvalidPhoneNumberException("Invalid contact : " + contact);
 			}
 		}
+
 		branch.setBranchFaqs(
 				branch.getBranchFaqs().stream().peek((faqs) -> faqs.setBranch(branch)).collect(Collectors.toList()));
+
 		log.info("Branch saved successfully: {}", branch);
 		Branch savedBranch = branchDao.saveBranch(branch);
 		cityDao.updateCityBranchCount();
@@ -81,7 +93,6 @@ public class BranchServiceImpl implements BranchService {
 	}
 
 	@Override
-
 	public ResponseEntity<ApiResponse<String>> uploadImagesToGallery(List<MultipartFile> files, long branchId) {
 		log.info("Entered uploadImageToGallery");
 		String folder = "BRANCH/";
@@ -118,6 +129,7 @@ public class BranchServiceImpl implements BranchService {
 				optionalBranch.get().setBranchImage(iconUrl);
 				branchDao.saveBranch(optionalBranch.get());
 				return ResponseUtil.getCreated(iconUrl);
+//				return iconUrl;
 			}
 			log.error("Icon cant be uploaded due to admin restriction");
 			throw new NullPointerException("Icon can't be Upload Due the Admin restriction");
@@ -128,7 +140,7 @@ public class BranchServiceImpl implements BranchService {
 
 	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll(String domainName) {
 		List<CityCourseBranchView> view = viewDao.fetchAll();
-		
+
 		// Group by country -> city -> courseId
 		Map<String, Map<String, Map<Long, List<CityCourseBranchView>>>> groupedData = view.stream()
 				.collect(Collectors.groupingBy(CityCourseBranchView::getCountry, Collectors.groupingBy(
@@ -249,6 +261,44 @@ public class BranchServiceImpl implements BranchService {
 		}
 		throw new IdNotFoundException("Branch with the Id: " + branchId);
 
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(String branchObject, MultipartFile branchImage,
+			List<MultipartFile> branchGallery) {
+
+		BranchRequestDto branchDto = null;
+		try {
+			objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true);
+			Reader read = new StringReader(branchObject);
+			branchDto = objectMapper.readValue(read, BranchRequestDto.class);
+			System.err.println(branchDto);
+
+		} catch (IOException e) {
+			System.err.println(e);
+		}
+		Branch branch = new Branch();
+
+		log.info("Saving branch: {}", branchDto);
+		branch.setDisplayName(branchDto.getDisplayName());
+		branch.setBranchType(branchDto.getBranchType());
+		branch.setBranchTitle(branchDto.getDisplayName() + "-" + branchDto.getBranchType());
+		for (String contact : branchDto.getContacts()) {
+			if (!validatePhoneNumber.isValidPhoneNumber(contact)) {
+				throw new InvalidPhoneNumberException("Invalid contact : " + contact);
+			}
+			branch.setContacts(branchDto.getContacts());
+		}
+		branch.setBranchAddress(branchDto.getBranchAddress());
+		branch.setBranchFaqs(
+				branch.getBranchFaqs().stream().peek((faqs) -> faqs.setBranch(branch)).collect(Collectors.toList()));
+		Branch savedBranch = branchDao.saveBranch(branch);
+		uploadIcon(branchImage, branch.getBranchId());
+		uploadImagesToGallery(branchGallery, branch.getBranchId());
+
+		log.info("Branch saved successfully: {}", branch);
+		cityDao.updateCityBranchCount();
+		return ResponseUtil.getCreated(savedBranch);
 	}
 
 }

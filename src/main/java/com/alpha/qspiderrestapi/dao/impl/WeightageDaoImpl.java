@@ -30,7 +30,7 @@ public class WeightageDaoImpl implements WeightageDao {
 	public List<Weightage> saveAllWeightage(List<Weightage> weightages) {
 		return weightageRepository.saveAll(weightages);
 	}
-	
+
 	public void deleteWeightage(Weightage weightage) {
 		weightageRepository.delete(weightage);
 	}
@@ -46,6 +46,10 @@ public class WeightageDaoImpl implements WeightageDao {
 	}
 
 	@Override
+	public List<Weightage> getAllWeightages() {
+		return weightageRepository.fetchAllByCategoryId();
+	}
+
 	public List<Weightage> findCourseOfCategoryWeightages(long categoryId) {
 		return weightageRepository.findCourseOfCategoryWeightages(categoryId);
 	}
@@ -61,6 +65,4 @@ public class WeightageDaoImpl implements WeightageDao {
 		weightageRepository.incrementWeightageValues(qspiders,jspiders,pyspiders,bspiders,fieldName,categoryId);
 	}
 	
-	
-
 }

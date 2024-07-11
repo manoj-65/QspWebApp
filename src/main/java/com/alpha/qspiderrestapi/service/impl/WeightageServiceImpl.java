@@ -23,8 +23,11 @@ import com.alpha.qspiderrestapi.entity.Weightage;
 import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
+import com.alpha.qspiderrestapi.exception.InvalidOrganisationTypeException;
+import com.alpha.qspiderrestapi.modelmapper.WeightageMapper;
 import com.alpha.qspiderrestapi.service.WeightageService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
+import com.alpha.qspiderrestapi.util.WeightageUtil;
 
 @Service
 public class WeightageServiceImpl implements WeightageService {
@@ -44,6 +47,11 @@ public class WeightageServiceImpl implements WeightageService {
 	@Autowired
 	private WeightageDao weightageDao;
 
+	@Autowired
+	WeightageUtil weightageUtil;
+
+	@Autowired
+	WeightageMapper weightageMapper;
 //	@Autowired
 //	private EntityManager entityManager;
 
@@ -58,8 +66,9 @@ public class WeightageServiceImpl implements WeightageService {
 						.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).category(optCategory.get()).build();
 				optCategory.get().setWeightage(weightage);
 				weightage.setCategory(optCategory.get());
-				
-				weightageDao.incrementWeightageValues(dto.getQspiders(),dto.getJspiders(),dto.getPyspiders(),dto.getBspiders(),"category_id",categoryId);
+
+				weightageDao.incrementWeightageValues(dto.getQspiders(), dto.getJspiders(), dto.getPyspiders(),
+						dto.getBspiders(), "category_id", categoryId);
 
 				weightage = weightageDao.saveWeightage(weightage);
 
@@ -87,7 +96,8 @@ public class WeightageServiceImpl implements WeightageService {
 			Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
 					.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).subCategory(subCategory)
 					.subCategory_categoryId(categoryId).build();
-			weightageDao.incrementWeightageValues(dto.getQspiders(),dto.getJspiders(),dto.getPyspiders(),dto.getBspiders(),"sub_category_category_id",categoryId);
+			weightageDao.incrementWeightageValues(dto.getQspiders(), dto.getJspiders(), dto.getPyspiders(),
+					dto.getBspiders(), "sub_category_category_id", categoryId);
 			weightage = weightageDao.saveWeightage(weightage);
 			return ResponseUtil.getCreated(weightage);
 
@@ -118,7 +128,8 @@ public class WeightageServiceImpl implements WeightageService {
 					Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
 							.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).course(course)
 							.course_SubCategoryId(subCategoryId).build();
-					weightageDao.incrementWeightageValues(dto.getQspiders(),dto.getJspiders(),dto.getPyspiders(),dto.getBspiders(),"course_sub_category_id",subCategoryId);
+					weightageDao.incrementWeightageValues(dto.getQspiders(), dto.getJspiders(), dto.getPyspiders(),
+							dto.getBspiders(), "course_sub_category_id", subCategoryId);
 					weightage = weightageDao.saveWeightage(weightage);
 					return ResponseUtil.getCreated(weightage);
 				} else {
@@ -136,8 +147,9 @@ public class WeightageServiceImpl implements WeightageService {
 				Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
 						.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).course(course)
 						.course_categoryId(categoryId).build();
-			//increment old weightages to save new weightages
-				weightageDao.incrementWeightageValues(dto.getQspiders(),dto.getJspiders(),dto.getPyspiders(),dto.getBspiders(),"course_category_id",categoryId);
+				// increment old weightages to save new weightages
+				weightageDao.incrementWeightageValues(dto.getQspiders(), dto.getJspiders(), dto.getPyspiders(),
+						dto.getBspiders(), "course_category_id", categoryId);
 				weightage = weightageDao.saveWeightage(weightage);
 				return ResponseUtil.getCreated(weightage);
 			} else {
@@ -233,6 +245,7 @@ public class WeightageServiceImpl implements WeightageService {
 			Weightage target = weightages.stream().filter(w -> w.getSubCategory().getSubCategoryId() == subCategoryId)
 					.findFirst().get();
 			if (getOrgWeightage(target, organization) > weightage) {
+
 				weightages = weightages.stream()
 						.filter(w -> getOrgWeightage(w, organization) >= weightage
 								&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization))
@@ -293,13 +306,49 @@ public class WeightageServiceImpl implements WeightageService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<String>> updateCategoryWeightage(Long categoryId, Long weightage) {
+	public ResponseEntity<ApiResponse<String>> updateCategoryWeightage(Long categoryId, Long weightage,
+			Organization orgType) {
 
-//		if (categoryId != null) {
-//			Category category = categoryDao.fetchCategoryById(categoryId).get();
-//			
-//	}
-		return null;
+		Optional<Category> category = categoryDao.fetchCategoryById(categoryId);
+		if (category.isEmpty())
+			throw new IdNotFoundException("Category Id incorrect");
+
+		if (!weightageUtil.isValidOrganisation(orgType))
+			throw new InvalidOrganisationTypeException("Invalid Organisation Type");
+
+		Weightage categoryWeightage = category.get().getWeightage();
+		List<Weightage> allWeightages = weightageDao.getAllWeightages();
+
+		if (!(categoryWeightage != null))
+			throw new InvalidInfoException("No weightages found with the given category");
+
+		if (getOrgWeightage(categoryWeightage, orgType) > weightage) {
+			allWeightages = allWeightages.stream()
+					.filter(w -> getOrgWeightage(w, orgType) >= weightage
+							&& getOrgWeightage(w, orgType) <= getOrgWeightage(categoryWeightage, orgType))
+					.collect(Collectors.toList());
+
+			allWeightages = allWeightages.stream()
+					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) + 1l))).peek(w -> {
+						if (w.getCategory().getCategoryId() == categoryId) {
+							setOrgWeightage(w, orgType, weightage);
+						}
+					}).collect(Collectors.toList());
+		} else if (getOrgWeightage(categoryWeightage, orgType) < weightage) {
+			allWeightages = allWeightages.stream()
+					.filter(w -> getOrgWeightage(w, orgType) <= weightage
+							&& getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
+					.collect(Collectors.toList());
+			allWeightages = allWeightages.stream()
+					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) - 1l))).peek(w -> {
+						if (w.getCategory().getCategoryId() == categoryId) {
+							setOrgWeightage(w, orgType, weightage);
+						}
+					}).collect(Collectors.toList());
+		}
+
+		weightageDao.saveAllWeightage(allWeightages);
+		return ResponseUtil.getOk("Updated Successfully");
 
 	}
 
@@ -311,9 +360,9 @@ public class WeightageServiceImpl implements WeightageService {
 			throw new IdNotFoundException("No category found with the id :" + categoryId);
 
 		if (subCategoryId != null) {
-			
-			if(!subcategoryDao.isSubCategoryPresent(subCategoryId))
-			throw new IdNotFoundException("No Sub-Category found with the id :"+subCategoryId);
+
+			if (!subcategoryDao.isSubCategoryPresent(subCategoryId))
+				throw new IdNotFoundException("No Sub-Category found with the id :" + subCategoryId);
 
 			if (!courseDao.isCourseExist(courseId))
 				throw new IdNotFoundException("No course found with the id :" + courseId);
@@ -325,15 +374,15 @@ public class WeightageServiceImpl implements WeightageService {
 			} else {
 				Weightage target = weightages.stream().filter(w -> w.getCourse().getCourseId() == courseId).findFirst()
 						.get();
-				
-				weightages = getUpdatedWeightages(weightages,target, organization, weightage,courseId);
-				
+
+				weightages = getUpdatedWeightages(weightages, target, organization, weightage, courseId);
+
 			}
 
 			weightageDao.saveAllWeightage(weightages);
 			return ResponseUtil.getOk("Updated Successfully");
 		} else {
-			
+
 			if (!courseDao.isCourseExist(courseId))
 				throw new IdNotFoundException("No course found with the id :" + courseId);
 
@@ -344,15 +393,13 @@ public class WeightageServiceImpl implements WeightageService {
 			} else {
 				Weightage target = weightages.stream().filter(w -> w.getCourse().getCourseId() == courseId).findFirst()
 						.get();
-				weightages = getUpdatedWeightages(weightages,target, organization, weightage,courseId);
+				weightages = getUpdatedWeightages(weightages, target, organization, weightage, courseId);
 
 			}
 
 			weightageDao.saveAllWeightage(weightages);
 			return ResponseUtil.getOk("Updated Successfully");
 		}
-		
-		
 
 	}
 
@@ -364,8 +411,7 @@ public class WeightageServiceImpl implements WeightageService {
 							&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization))
 					.collect(Collectors.toList());
 			return weightages.stream()
-					.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l)))
-					.peek(w -> {
+					.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l))).peek(w -> {
 						if (w.getCourse().getCourseId() == courseId) {
 							setOrgWeightage(w, organization, weightage);
 						}
@@ -376,16 +422,46 @@ public class WeightageServiceImpl implements WeightageService {
 							&& getOrgWeightage(w, organization) >= getOrgWeightage(target, organization))
 					.collect(Collectors.toList());
 			return weightages.stream()
-					.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) - 1l)))
-					.peek(w -> {
+					.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) - 1l))).peek(w -> {
 						if (w.getCourse().getCourseId() == courseId) {
 							setOrgWeightage(w, organization, weightage);
 						}
 					}).collect(Collectors.toList());
-		}
-		else {
+		} else {
 			return weightages;
 		}
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Weightage>> saveCategoryWeightageAndIncrement(long categoryId, WeightageDto dto) {
+
+		Optional<Category> category = categoryDao.fetchCategoryById(categoryId);
+		List<Weightage> allWeightages = weightageDao.getAllWeightages();
+		if (category.isPresent()) {
+			if (category.get().getWeightage() == null) {
+				Weightage weightage = weightageMapper.weightageDtoToWeightageMapper(dto, category.get());
+				System.err.println(weightage.getQspiders());
+
+				if ((Long) weightage.getQspiders() != null)
+					weightageUtil.checkAndUpdateQspWeightage(weightage, allWeightages);
+
+				if ((Long) weightage.getJspiders() != null)
+					weightageUtil.checkAndUpdateJspWeightage(weightage, allWeightages);
+
+				if ((Long) weightage.getBspiders() != null)
+					weightageUtil.checkAndUpdateBspWeightage(weightage, allWeightages);
+
+				if ((Long) weightage.getPyspiders() != null)
+					weightageUtil.checkAndUpdatePyspWeightage(weightage, allWeightages);
+
+				weightageDao.saveWeightage(weightage);
+				return ResponseUtil.getCreated(weightage);
+			} else {
+				throw new InvalidInfoException("The given category already has a weightage");
+			}
+		}
+		throw new IdNotFoundException("No category found with the id: " + categoryId);
+
 	}
 
 }
