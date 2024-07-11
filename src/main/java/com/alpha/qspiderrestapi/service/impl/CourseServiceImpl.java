@@ -84,6 +84,9 @@ public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private CourseUtil courseUtil;
+	
+	@Autowired
+	private CourseMapper courseMapper;
 
 	/**
 	 * Saves a new course associated with a specified category (implementation).
@@ -207,7 +210,7 @@ public class CourseServiceImpl implements CourseService {
 //		System.out.println(optional);
 		if (optional.isPresent()) {
 			Course course = optional.get();
-			CourseIdResponse courseResponse = CourseMapper.mapToCourseDto(course);
+			CourseIdResponse courseResponse = courseMapper.mapToCourseDto(course);
 //			System.err.println(branchDao.fetchAllCityBranchView());
 
 			List<CityBranchView> viewList = new ArrayList<CityBranchView>();

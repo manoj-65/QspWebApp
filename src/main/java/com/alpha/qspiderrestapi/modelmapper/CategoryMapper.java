@@ -22,6 +22,9 @@ public class CategoryMapper {
 	@Autowired
 	private SubCategoryMapper subCategoryMapper;
 	
+	@Autowired
+	private CourseMapper courseMapper;
+	
 	/**
 	 * Converts a Category entity to a CategoryResponse DTO.
 	 *
@@ -39,7 +42,7 @@ public class CategoryMapper {
 				.alternativeIcon(category.getCategoryAlternativeIcon())
 				.title(category.getCategoryTitle())
 				.subCourse(subCategoryMapper.mapToSubCategoryResponseList(category.getSubCategories(),hostname,category.getCategoryId()))
-				.courseResponse(CourseMapper.mapToCourseResponseList(weightageUtil.getSortedCourseOfCategory(category.getCourses(), hostname, category.getCategoryId()),category.getCategoryId()))
+				.courseResponse(courseMapper.mapToCourseResponseList(weightageUtil.getSortedCourseOfCategory(category.getCourses(), hostname, category.getCategoryId()),category.getCategoryId()))
 				.build();
 	}
 

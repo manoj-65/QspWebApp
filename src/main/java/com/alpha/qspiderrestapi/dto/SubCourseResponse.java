@@ -21,4 +21,5 @@ public class SubCourseResponse {
 	private String description;
 	private String homePageCourseImage;
 	private List<Mode> modes;
+	private WeightageDto weightageDto;
 }

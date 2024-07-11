@@ -1,8 +1,10 @@
 package com.alpha.qspiderrestapi.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class WeightageDto {
 
 	private long qspiders;
