@@ -3,6 +3,7 @@ package com.alpha.qspiderrestapi.modelmapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
@@ -17,6 +18,9 @@ import lombok.Data;
 @Component
 public class CourseMapper {
 
+	@Autowired
+	private WeightageMapper weightageMapper;
+	
 	/**
 	 * Converts a Course entity to a CourseResponse DTO.
 	 *
@@ -27,11 +31,13 @@ public class CourseMapper {
 	 * @param course The Course entity to be converted.
 	 * @return A CourseResponse DTO containing the mapped data.
 	 */
-	public static CourseResponse mapToCourseResponse(Course course) {
+	public CourseResponse mapToCourseResponse(Course course,long categoryId) {
 		return CourseResponse.builder().courseResponseId(course.getCourseId()).icon(course.getCourseIcon())
 				.image_url(course.getCourseImage()).title(course.getCourseName())
 				.description(course.getCourseDescription()).homePageCourseImage(course.getHomePageCourseImage())
-				.modes(course.getMode()).build();
+				.modes(course.getMode())
+				.weightageDto(weightageMapper.getDto(course.getWeightages(), categoryId, null))
+				.build();
 	}
 
 	/**
@@ -44,16 +50,16 @@ public class CourseMapper {
 	 * @param courses The list of Course entities to be converted.
 	 * @return A list of CourseResponse DTOs containing the mapped data.
 	 */
-	public static List<CourseResponse> mapToCourseResponseList(List<Course> courses) {
+	public List<CourseResponse> mapToCourseResponseList(List<Course> courses,long categoryId) {
 
 		List<CourseResponse> responseList = new ArrayList<CourseResponse>();
 
-		courses.forEach(response -> responseList.add(mapToCourseResponse(response)));
+		courses.forEach(response -> responseList.add(mapToCourseResponse(response,categoryId)));
 		return responseList;
 
 	}
 
-	public static CourseIdResponse mapToCourseDto(Course course) {
+	public CourseIdResponse mapToCourseDto(Course course) {
 
 		return CourseIdResponse.builder().courseId(course.getCourseId()).courseName(course.getCourseName())
 				.mode(course.getMode()).courseSummary(course.getCourseSummary()).courseAbout(course.getCourseAbout())

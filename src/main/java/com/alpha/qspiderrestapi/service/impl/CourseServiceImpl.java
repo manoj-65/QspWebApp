@@ -2,6 +2,7 @@
 package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import com.alpha.qspiderrestapi.dao.ViewAllHomePageDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.BranchDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
+import com.alpha.qspiderrestapi.dto.CourseRequestDto;
 import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.CityBranchView;
 import com.alpha.qspiderrestapi.entity.Course;
@@ -33,6 +35,7 @@ import com.alpha.qspiderrestapi.entity.ViewAllHomePage;
 import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
+import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.modelmapper.CourseMapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
 import com.alpha.qspiderrestapi.service.CourseService;
@@ -40,6 +43,8 @@ import com.alpha.qspiderrestapi.util.ChapterUtil;
 import com.alpha.qspiderrestapi.util.CourseUtil;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 import com.alpha.qspiderrestapi.util.ViewHomePageUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -79,6 +84,9 @@ public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private CourseUtil courseUtil;
+	
+	@Autowired
+	private CourseMapper courseMapper;
 
 	/**
 	 * Saves a new course associated with a specified category (implementation).
@@ -144,13 +152,16 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	private Course setCourseIntoFaq(Course course) {
-		List<Faq> faqs = course.getFaqs().stream().peek(faq -> faq.setCourse(course)).toList();
+		List<Faq> faqs = course.getFaqs().stream().peek(faq -> {
+			faq.setOrganizationType(course.getBranchType().get(0));
+			faq.setCourse(course);
+		}).toList();
 		course.setFaqs(faqs);
 		return course;
 	}
 
 	private Course saveCourse(Course course) {
-		if (!course.getSubjects().isEmpty()) {
+		if (course.getSubjects() != null && !course.getSubjects().isEmpty()) {
 			for (Subject subject : course.getSubjects()) {
 				subject.getCourses().add(course);
 				subject = chapterUtil.mapSubjectToChapters(subject);
@@ -199,7 +210,7 @@ public class CourseServiceImpl implements CourseService {
 //		System.out.println(optional);
 		if (optional.isPresent()) {
 			Course course = optional.get();
-			CourseIdResponse courseResponse = CourseMapper.mapToCourseDto(course);
+			CourseIdResponse courseResponse = courseMapper.mapToCourseDto(course);
 //			System.err.println(branchDao.fetchAllCityBranchView());
 
 			List<CityBranchView> viewList = new ArrayList<CityBranchView>();
@@ -395,7 +406,8 @@ public class CourseServiceImpl implements CourseService {
 			pageResponse.setBranches(branchTypeEntry.getValue());
 			response.add(pageResponse);
 
-		} 	
+		}
+
 
 		// Convert BranchDto objects to Branch objects (assuming conversion logic)
 //		for (BranchDto dto : branchDtos) {
@@ -423,4 +435,87 @@ public class CourseServiceImpl implements CourseService {
 
 		return ResponseUtil.getOk(response);
 	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(long categoryId, Long subCategoryId,
+			String courseRequest, MultipartFile icon, MultipartFile image, MultipartFile homePageImage) {
+
+		if (categoryDao.isCategoryPresent(categoryId)) {
+
+			if (subCategoryId != null) {
+				if (subCategoryDao.isSubCategoryPresent(subCategoryId)) {
+
+					Course course = mapAndSetUrlsToCourse(categoryId, subCategoryId, courseRequest, icon, image,
+							homePageImage);
+
+					subCategoryDao.assignCourseToSubCategory(subCategoryId, course.getCourseId());
+
+					return ResponseUtil.getCreated(course);
+				} else {
+					throw new IdNotFoundException("No SubCategory found with given Id: " + subCategoryId);
+				}
+			} else {
+				Course course = mapAndSetUrlsToCourse(categoryId, subCategoryId, courseRequest, icon, image,
+						homePageImage);
+
+				categoryDao.assignCourseToCategory(categoryId, course.getCourseId());
+
+				return ResponseUtil.getCreated(course);
+			}
+		} else {
+			throw new IdNotFoundException("No Category found with given Id: " + categoryId);
+		}
+	}
+
+	private Course mapAndSetUrlsToCourse(long categoryId, Long subCategoryId, String courseRequest, MultipartFile icon,
+			MultipartFile image, MultipartFile homePageImage) {
+
+		// string of json body to object
+		ObjectMapper objectMapper = new ObjectMapper();
+		CourseRequestDto value;
+		try {
+			value = objectMapper.readValue(courseRequest, CourseRequestDto.class);
+		} catch (JsonProcessingException e) {
+			throw new InvalidInfoException("The Json body format is incorrect");
+		}
+
+		// dto to course
+		Course course = Course.builder().courseName(value.getCourseName())
+				.courseDescription(value.getCourseDescription())
+				.branchType(new ArrayList<Organization>(Arrays.asList(value.getBranchType()))).mode(value.getMode())
+				.courseAbout(value.getCourseAbout()).courseSummary(value.getCourseSummary())
+				.courseHighlight(value.getCourseHighlight()).faqs(value.getFaqs()).build();
+
+		// upload icon and set icon url in course object
+		String folder = "COURSE/";
+		folder += course.getCourseName();
+		String iconUrl = awss3Service.uploadFile(icon, folder);
+
+		if (!iconUrl.isEmpty()) {
+			course.setCourseIcon(iconUrl);
+		} else {
+			throw new NullPointerException("Icon can't be uploaded due to admin restriction");
+		}
+
+		// upload course images and set respective urls in course object
+		String folder2 = "COURSE/";
+		folder2 += "IMAGE/" + course.getCourseName();
+
+		String imageUrl = awss3Service.uploadFile(image, folder2);
+
+		String homePageImageUrl = awss3Service.uploadFile(homePageImage, folder2);
+
+		if (!imageUrl.isEmpty()) {
+			course.setCourseImage(imageUrl);
+			course.setHomePageCourseImage(homePageImageUrl);
+		} else {
+			throw new NullPointerException("Icon can't be uploaded due to admin restriction");
+		}
+
+		course = setCourseIntoFaq(course);
+		course = saveCourse(course);
+		return course;
+
+	}
+
 }

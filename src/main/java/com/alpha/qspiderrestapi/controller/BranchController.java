@@ -27,6 +27,7 @@ import com.alpha.qspiderrestapi.service.BranchService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -42,7 +43,7 @@ public class BranchController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401") })
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch, @PathVariable String version) {
+	public ResponseEntity<ApiResponse<Branch>> saveBranch(@RequestBody Branch branch, @PathVariable String version) {
 		if (version.equals("v1"))
 			return branchService.saveBranch(branch);
 
