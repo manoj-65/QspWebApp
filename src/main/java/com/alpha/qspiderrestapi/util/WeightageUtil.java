@@ -139,20 +139,23 @@ public class WeightageUtil {
 	}
 
 	public List<Category> getSortedCategory(List<Category> categories, String hostname) {
-		categories.sort((a, b) -> (int) getCategoryWeightage(a, hostname) - (int) getCategoryWeightage(b, hostname));
-		return categories;
+		return categories.stream().filter(c->getCategoryWeightage(c,hostname)!=0l).sorted((a, b) -> (int) getCategoryWeightage(a, hostname) - (int) getCategoryWeightage(b, hostname)).collect(Collectors.toList());
 	}
 
 	public List<SubCategory> getSortedSubCategory(List<SubCategory> subCategories, String hostname, long categoryId) {
-		subCategories.sort((a, b) -> (int) getSubCategoryWeightage(a, hostname, categoryId)
-				- (int) getSubCategoryWeightage(b, hostname, categoryId));
-		return subCategories;
+		return subCategories.stream()
+				.filter(s->getSubCategoryWeightage(s, hostname, categoryId)!=0l)
+				.peek(s->System.err.println(getSubCategoryWeightage(s, hostname, categoryId)))
+				.sorted((a, b) -> (int) getSubCategoryWeightage(a, hostname, categoryId)- (int) getSubCategoryWeightage(b, hostname, categoryId))
+				.collect(Collectors.toList());
+		
 	}
 
 	public List<Course> getSortedCourseOfCategory(List<Course> courses, String hostname, long categoryId) {
-		courses.sort((a, b) -> (int) getCourseOfCategoryWeightage(a, hostname, categoryId)
-				- (int) getCourseOfCategoryWeightage(b, hostname, categoryId));
-		return courses;
+		  return courses.stream()
+						.filter(c->getCourseOfCategoryWeightage(c, hostname, categoryId)!=0l)
+						.sorted((a, b) -> (int) getCourseOfCategoryWeightage(a, hostname, categoryId)- (int) getCourseOfCategoryWeightage(b, hostname, categoryId))
+						.collect(Collectors.toList());
 	}
 
 	public List<CityDto> getSortedCity(List<CityDto> cities, String hostname) {
@@ -229,6 +232,55 @@ public class WeightageUtil {
 		weightages = allWeightages.stream().filter(w -> w.getPyspiders() >= weightage.getPyspiders())
 				.peek(w -> w.setPyspiders(w.getPyspiders() + 1L)).collect(Collectors.toList());
 		return weightages;
+	}
+
+	public List<Course> getSortedCourseOfSubCategory(List<Course> courses, String hostname, long subCategoryId) {
+		return courses.stream()
+				.filter(c->getCourseOfSubCategoryWeightage(c, hostname, subCategoryId)!=0l)
+				.sorted((a, b) -> (int) getCourseOfSubCategoryWeightage(a, hostname, subCategoryId)- (int) getCourseOfSubCategoryWeightage(b, hostname, subCategoryId))
+				.collect(Collectors.toList());
+	}
+
+	private long getCourseOfSubCategoryWeightage(Course course, String hostname, long subCategoryId) {
+		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
+			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
+				for (Weightage weightage : course.getWeightages()) {
+					if (weightage.getCourse_SubCategoryId() != null && weightage.getCourse_SubCategoryId() == subCategoryId) {
+						return weightage.getQspiders();
+					}
+				}
+			}
+			return Integer.MAX_VALUE;
+		} else if (jspDomainName.equals(hostname)) {
+			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
+				for (Weightage weightage : course.getWeightages()) {
+					if (weightage.getCourse_SubCategoryId() != null && weightage.getCourse_SubCategoryId() == subCategoryId) {
+						return weightage.getJspiders();
+					}
+				}
+			}
+			return Integer.MAX_VALUE;
+		} else if (pyspDomainName.equals(hostname)) {
+			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
+				for (Weightage weightage : course.getWeightages()) {
+					if (weightage.getCourse_SubCategoryId() != null && weightage.getCourse_SubCategoryId() == subCategoryId) {
+						return weightage.getPyspiders();
+					}
+				}
+			}
+			return Integer.MAX_VALUE;
+		} else if (bspDomainName.equals(hostname)) {
+			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
+				for (Weightage weightage : course.getWeightages()) {
+					if (weightage.getCourse_SubCategoryId() != null && weightage.getCourse_SubCategoryId() == subCategoryId) {
+						return weightage.getBspiders();
+					}
+				}
+			}
+			return Integer.MAX_VALUE;
+		} else {
+			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
+		}
 	}
 
 	public void checkAndUpdateWeightage(Weightage weightage, List<Weightage> allWeightages) {
