@@ -438,20 +438,7 @@ public class WeightageServiceImpl implements WeightageService {
 		if (category.isPresent()) {
 			if (category.get().getWeightage() == null) {
 				Weightage weightage = weightageMapper.weightageDtoToWeightageMapper(dto, category.get());
-				System.err.println(weightage.getQspiders());
-
-				if ((Long) weightage.getQspiders() != null)
-					weightageUtil.checkAndUpdateQspWeightage(weightage, allWeightages);
-
-				if ((Long) weightage.getJspiders() != null)
-					weightageUtil.checkAndUpdateJspWeightage(weightage, allWeightages);
-
-				if ((Long) weightage.getBspiders() != null)
-					weightageUtil.checkAndUpdateBspWeightage(weightage, allWeightages);
-
-				if ((Long) weightage.getPyspiders() != null)
-					weightageUtil.checkAndUpdatePyspWeightage(weightage, allWeightages);
-
+				weightageUtil.checkAndUpdateWeightage(weightage, allWeightages);
 				weightageDao.saveWeightage(weightage);
 				return ResponseUtil.getCreated(weightage);
 			} else {
@@ -459,7 +446,6 @@ public class WeightageServiceImpl implements WeightageService {
 			}
 		}
 		throw new IdNotFoundException("No category found with the id: " + categoryId);
-
 	}
 
 }
