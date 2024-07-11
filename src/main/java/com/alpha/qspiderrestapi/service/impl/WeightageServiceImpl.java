@@ -24,6 +24,7 @@ import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.exception.InvalidOrganisationTypeException;
+import com.alpha.qspiderrestapi.modelmapper.WeightageMapper;
 import com.alpha.qspiderrestapi.service.WeightageService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 import com.alpha.qspiderrestapi.util.WeightageUtil;
@@ -48,6 +49,9 @@ public class WeightageServiceImpl implements WeightageService {
 
 	@Autowired
 	WeightageUtil weightageUtil;
+
+	@Autowired
+	WeightageMapper weightageMapper;
 //	@Autowired
 //	private EntityManager entityManager;
 
@@ -345,9 +349,9 @@ public class WeightageServiceImpl implements WeightageService {
 			throw new IdNotFoundException("No category found with the id :" + categoryId);
 
 		if (subCategoryId != null) {
-			
-			if(!subcategoryDao.isSubCategoryPresent(subCategoryId))
-			throw new IdNotFoundException("No Sub-Category found with the id :"+subCategoryId);
+
+			if (!subcategoryDao.isSubCategoryPresent(subCategoryId))
+				throw new IdNotFoundException("No Sub-Category found with the id :" + subCategoryId);
 
 			if (!courseDao.isCourseExist(courseId))
 				throw new IdNotFoundException("No course found with the id :" + courseId);
@@ -389,7 +393,7 @@ public class WeightageServiceImpl implements WeightageService {
 			weightageDao.saveAllWeightage(weightages);
 			return ResponseUtil.getOk("Updated Successfully");
 		} else {
-			
+
 			if (!courseDao.isCourseExist(courseId))
 				throw new IdNotFoundException("No course found with the id :" + courseId);
 
@@ -430,6 +434,38 @@ public class WeightageServiceImpl implements WeightageService {
 			weightageDao.saveAllWeightage(weightages);
 			return ResponseUtil.getOk("Updated Successfully");
 		}
+
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Weightage>> saveCategoryWeightageAndIncrement(long categoryId, WeightageDto dto) {
+
+		Optional<Category> category = categoryDao.fetchCategoryById(categoryId);
+		List<Weightage> allWeightages = weightageDao.getAllWeightages();
+		if (category.isPresent()) {
+			if (category.get().getWeightage() == null) {
+				Weightage weightage = weightageMapper.weightageDtoToWeightageMapper(dto, category.get());
+				System.err.println(weightage.getQspiders());
+
+				if ((Long) weightage.getQspiders() != null)
+					weightageUtil.checkAndUpdateQspWeightage(weightage, allWeightages);
+
+				if ((Long) weightage.getJspiders() != null)
+					weightageUtil.checkAndUpdateJspWeightage(weightage, allWeightages);
+
+				if ((Long) weightage.getBspiders() != null)
+					weightageUtil.checkAndUpdateBspWeightage(weightage, allWeightages);
+
+				if ((Long) weightage.getPyspiders() != null)
+					weightageUtil.checkAndUpdatePyspWeightage(weightage, allWeightages);
+
+				weightageDao.saveWeightage(weightage);
+				return ResponseUtil.getCreated(weightage);
+			} else {
+				throw new InvalidInfoException("The given category already has a weightage");
+			}
+		}
+		throw new IdNotFoundException("No category found with the id: " + categoryId);
 
 	}
 

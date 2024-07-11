@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,9 +41,8 @@ public class BranchController {
 	@ApiResponses(value = {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401") })
-	@PostMapping
-	public ResponseEntity<ApiResponse<Branch>> saveBranch(@RequestBody Branch branch, @PathVariable String version) {
-
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch, @PathVariable String version) {
 		if (version.equals("v1"))
 			return branchService.saveBranch(branch);
 
@@ -80,7 +79,8 @@ public class BranchController {
 	}
 
 	@GetMapping("/getAll")
-	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll(@PathVariable String version,@RequestHeader("Origin") String domainName) {
+	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll(@PathVariable String version,
+			@RequestHeader("Origin") String domainName) {
 		if (version.equals("v1"))
 			return branchService.fetchAll(domainName);
 
@@ -103,11 +103,12 @@ public class BranchController {
 
 		throw new UnauthorizedVersionException();
 	}
-	
+
 	@PatchMapping("/modifyLocationUrl")
-	public ResponseEntity<ApiResponse<String>> updateBranchLocation(@PathVariable String version,@RequestParam long branchId,@RequestParam String locationUrl) {
+	public ResponseEntity<ApiResponse<String>> updateBranchLocation(@PathVariable String version,
+			@RequestParam long branchId, @RequestParam String locationUrl) {
 		if (version.equals("v1"))
-			return branchService.updateBranchLocation(branchId,locationUrl);
+			return branchService.updateBranchLocation(branchId, locationUrl);
 
 		throw new UnauthorizedVersionException();
 	}
@@ -117,6 +118,17 @@ public class BranchController {
 		if (version.equals("v1"))
 			return branchService.findAll();
 		throw new UnauthorizedVersionException("Given Version Build is Not Runing");
+	}
+
+	@PostMapping(value = "/uploadFileAndData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(@RequestPart("branch") String branch,
+			@RequestParam("branchImage") MultipartFile branchImage,
+			@RequestParam("branchGallery") List<MultipartFile> branchGallery, @PathVariable String version) {
+		if (version.equals("v1"))
+			return branchService.saveBranchAlongWithFile(branch, branchImage, branchGallery);
+
+		throw new UnauthorizedVersionException();
+
 	}
 
 }
