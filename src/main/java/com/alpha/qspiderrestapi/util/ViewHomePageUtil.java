@@ -23,13 +23,13 @@ public class ViewHomePageUtil {
 
 	public Organization checkOrganizationType(String hostName) {
 
-		if (qspDomainName.equals(hostName) || qspDomainName.contains("http://localhost")) {
+		if (qspDomainName.equals(hostName) || hostName.contains("http://localhost")) {
 			return Organization.QSP;
-		} else if (jspDomainName.equals(hostName) || jspDomainName.contains("http://localhost")) {
+		} else if (jspDomainName.equals(hostName) || hostName.contains("http://localhost")) {
 			return Organization.JSP;
-		} else if (pyspDomainName.equals(hostName) || pyspDomainName.contains("http://localhost")) {
+		} else if (pyspDomainName.equals(hostName) || hostName.contains("http://localhost")) {
 			return Organization.PYSP;
-		} else if (bspDomainName.equals(hostName) || bspDomainName.contains("http://localhost")) {
+		} else if (bspDomainName.equals(hostName) || hostName.contains("http://localhost")) {
 			return Organization.BSP;
 		}
 		throw new DomainMismatchException("Domain name is not matching any Organisation Type");

@@ -14,6 +14,7 @@ import com.alpha.qspiderrestapi.dto.FaqDto;
 import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.enums.FaqType;
 import com.alpha.qspiderrestapi.entity.enums.Organization;
+import com.alpha.qspiderrestapi.exception.FaqNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidOrganisationTypeException;
 import com.alpha.qspiderrestapi.service.FaqService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
@@ -48,11 +49,11 @@ public class FaqServiceImpl implements FaqService {
 	public ResponseEntity<ApiResponse<List<Faq>>> fetchAllFaqs(Organization organization) {
 
 		List<Faq> faQs = faqDao.fetchAllFaqs(organization);
-		if (faQs != null && !faQs.isEmpty()) {
-
-			// if ((!organization.equals(null)) && (!(organization.isBlank()))) {
-			// if (organization.equals(qspDomainName))
-			return ResponseUtil.getOk(faQs);
+		if (faQs != null) {
+			if (!faQs.isEmpty()) {
+				return ResponseUtil.getOk(faQs);
+			}
+			throw new FaqNotFoundException("No Faqs found for this organisation");
 		}
 
 		throw new InvalidOrganisationTypeException("Organisation type not found!!");
