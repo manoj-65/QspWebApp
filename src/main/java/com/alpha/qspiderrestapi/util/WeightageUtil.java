@@ -193,100 +193,65 @@ public class WeightageUtil {
 
 	public boolean isValidOrganisation(Organization orgType) {
 		for (Organization org : Organization.values()) {
-			if (org.name().equals(orgType))
+			if (org.name().equals(orgType.toString()))
 				return true;
 		}
 		return false;
 	}
 
-	public void checkAndUpdateQspWeightage(Weightage weightage, List<Weightage> allWeightages) {
-
-//		Weightage newWeightage = allWeightages.stream().filter(w -> w.getQspiders() == weightage.getQspiders()).limit(1)
-//				.collect(Collectors.toList()).get(0);
-//		System.err.println(allWeightages);
-		System.err.println(weightage.getQspiders());
-//		for (Weightage w : allWeightages) {
-//			if (w.getQspiders() == weightage.getQspiders()) {
-//				System.err.println("true");
-//				newWeightageList.add(w);
-//			}
-//		}
+	public List<Weightage> checkAndUpdateQspWeightage(Weightage weightage, List<Weightage> allWeightages) {
 
 		List<Weightage> weightages = null;
-
-		if (weightage == null)
-			weightageDao.saveWeightage(weightage);
-		else {
-			weightages = allWeightages.stream().filter(w -> w.getQspiders() > weightage.getQspiders())
-					.peek(w -> w.setQspiders(w.getQspiders() + 1L)).collect(Collectors.toList());
-		}
-		weightageDao.saveAllWeightage(weightages);
+		weightages = allWeightages.stream().filter(w -> w.getQspiders() >= weightage.getQspiders())
+				.peek(w -> w.setQspiders(w.getQspiders() + 1L)).collect(Collectors.toList());
+		return weightages;
 	}
 
-	public void checkAndUpdateJspWeightage(Weightage weightage, List<Weightage> allWeightages) {
+	public List<Weightage> checkAndUpdateJspWeightage(Weightage weightage, List<Weightage> allWeightages) {
 
-//		Weightage newWeightage = allWeightages.stream().filter(w -> w.getJspiders() == weightage.getJspiders()).limit(1)
-//				.collect(Collectors.toList()).get(0);
-		List<Weightage> newWeightageList = new ArrayList();
 		List<Weightage> weightages = null;
-//		for (Weightage w : allWeightages) {
-//			if (w.getJspiders() == weightage.getJspiders()) {
-//				newWeightageList.add(w);
-//			}
-//		}
-
-		if (weightage == null)
-			weightageDao.saveWeightage(weightage);
-		else {
-			weightages = allWeightages.stream().filter(w -> w.getJspiders() > weightage.getJspiders())
-					.peek(w -> w.setJspiders(w.getJspiders() + 1L)).collect(Collectors.toList());
-		}
-		weightageDao.saveAllWeightage(weightages);
+		weightages = allWeightages.stream().filter(w -> w.getJspiders() >= weightage.getJspiders())
+				.peek(w -> w.setJspiders(w.getJspiders() + 1L)).collect(Collectors.toList());
+		return weightages;
 	}
 
-	public void checkAndUpdateBspWeightage(Weightage weightage, List<Weightage> allWeightages) {
+	public List<Weightage> checkAndUpdateBspWeightage(Weightage weightage, List<Weightage> allWeightages) {
 
-//		Weightage newWeightage = allWeightages.stream().filter(w -> w.getBspiders() == weightage.getBspiders()).limit(1)
-//				.collect(Collectors.toList()).get(0);
-		List<Weightage> newWeightageList = new ArrayList();
 		List<Weightage> weightages = null;
-//		for (Weightage w : allWeightages) {
-//			if (w.getBspiders() == weightage.getBspiders()) {
-//				newWeightageList.add(w);
-//			}
-//		}
-//		Weightage newWeightage = newWeightageList.get(0);
-
-		if (weightage == null)
-			weightageDao.saveWeightage(weightage);
-		else {
-			weightages = allWeightages.stream().filter(w -> w.getBspiders() > weightage.getBspiders())
-					.peek(w -> w.setBspiders(w.getBspiders() + 1L)).collect(Collectors.toList());
-		}
-		weightageDao.saveAllWeightage(weightages);
+		weightages = allWeightages.stream().filter(w -> w.getBspiders() >= weightage.getBspiders())
+				.peek(w -> w.setBspiders(w.getBspiders() + 1L)).collect(Collectors.toList());
+		return weightages;
 	}
 
-	public void checkAndUpdatePyspWeightage(Weightage weightage, List<Weightage> allWeightages) {
+	public List<Weightage> checkAndUpdatePyspWeightage(Weightage weightage, List<Weightage> allWeightages) {
 
-//		Weightage newWeightage = allWeightages.stream().filter(w -> w.getPyspiders() == weightage.getPyspiders())
-//				.limit(1).collect(Collectors.toList()).get(0);
-		List<Weightage> newWeightageList = new ArrayList();
 		List<Weightage> weightages = null;
-//		for (Weightage w : allWeightages) {
-//			if (w.getPyspiders() == weightage.getPyspiders()) {
-//				newWeightageList.add(w);
-//			}
-//		}
-//		Weightage newWeightage = newWeightageList.get(0);
-
-		if (weightage == null)
-			weightageDao.saveWeightage(weightage);
-		else {
-			weightages = allWeightages.stream().filter(w -> w.getPyspiders() > weightage.getPyspiders())
-					.peek(w -> w.setPyspiders(w.getPyspiders() + 1L)).collect(Collectors.toList());
-		}
-
-		weightageDao.saveAllWeightage(weightages);
+		weightages = allWeightages.stream().filter(w -> w.getPyspiders() >= weightage.getPyspiders())
+				.peek(w -> w.setPyspiders(w.getPyspiders() + 1L)).collect(Collectors.toList());
+		return weightages;
 	}
 
+	public void checkAndUpdateWeightage(Weightage weightage, List<Weightage> allWeightages) {
+
+		List<Weightage> weightages = new ArrayList<Weightage>();
+
+		if (weightage.getQspiders() == 0 || weightage.getPyspiders() == 0 || weightage.getBspiders() == 0
+				|| weightage.getJspiders() == 0)
+			weightageDao.saveWeightage(weightage);
+		else {
+			if ((Long) weightage.getQspiders() != null)
+				weightages = checkAndUpdateQspWeightage(weightage, allWeightages);
+
+			if ((Long) weightage.getJspiders() != null)
+				weightages = checkAndUpdateJspWeightage(weightage, allWeightages);
+
+			if ((Long) weightage.getBspiders() != null)
+				weightages = checkAndUpdateBspWeightage(weightage, allWeightages);
+
+			if ((Long) weightage.getPyspiders() != null)
+				weightages = checkAndUpdatePyspWeightage(weightage, allWeightages);
+
+			weightageDao.saveAllWeightage(weightages);
+		}
+	}
 }

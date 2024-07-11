@@ -111,10 +111,14 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 			InvalidOrganisationTypeException exception) {
 		return ResponseUtil.getBadRequest(exception.getMessage());
 	}
-	
+
 	@ExceptionHandler(DomainMismatchException.class)
-	public ResponseEntity<ApiResponse<String>> handleDomainMismatchException(
-			DomainMismatchException exception) {
+	public ResponseEntity<ApiResponse<String>> handleDomainMismatchException(DomainMismatchException exception) {
+		return ResponseUtil.getInternalServerError(exception.getMessage());
+	}
+
+	@ExceptionHandler(FaqNotFoundException.class)
+	public ResponseEntity<ApiResponse<String>> handleFaqNotFoundException(FaqNotFoundException exception) {
 		return ResponseUtil.getInternalServerError(exception.getMessage());
 	}
 
