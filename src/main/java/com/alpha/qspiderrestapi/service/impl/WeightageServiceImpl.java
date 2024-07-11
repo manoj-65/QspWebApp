@@ -52,8 +52,6 @@ public class WeightageServiceImpl implements WeightageService {
 
 	@Autowired
 	WeightageMapper weightageMapper;
-//	@Autowired
-//	private EntityManager entityManager;
 
 	@Override
 	public ResponseEntity<ApiResponse<Weightage>> saveCategoryWeightage(long categoryId, WeightageDto dto) {
@@ -121,8 +119,8 @@ public class WeightageServiceImpl implements WeightageService {
 
 			if (category.getSubCategories().contains(subCategory)) {
 				if (subCategory.getCourses().contains(course)) {
-					if (subCategory.getWeightage().stream()
-							.anyMatch(w -> w.getCourse_SubCategoryId() == subCategoryId)) {
+					if (course.getWeightages().stream()
+							.anyMatch(w ->w.getCourse_SubCategoryId() != null && w.getCourse_SubCategoryId() == subCategoryId)) {
 						throw new InvalidInfoException("The given course and sub-category pair already has a weihtage");
 					}
 					Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
