@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -182,6 +183,22 @@ public class CourseController {
 			@PathVariable String version, @RequestHeader("Origin") String hostName) {
 		if (version.equals("v1"))
 			return courseService.fetchViewForHomepage(hostName);
+
+		throw new UnauthorizedVersionException();
+	}
+	
+	@PostMapping(value = "/saveCourse", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(
+			@PathVariable String version,
+			@RequestParam long categoryId,
+			@RequestParam(required = false) Long subCategoryId, 
+			@RequestParam MultipartFile icon,
+			@RequestParam MultipartFile image,
+			@RequestParam MultipartFile homePageImage,
+			@RequestPart String course) {
+
+		if (version.equals("v1"))
+			return courseService.saveCourseAlongWithImages(categoryId, subCategoryId, course,icon,image,homePageImage);
 
 		throw new UnauthorizedVersionException();
 	}

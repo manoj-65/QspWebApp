@@ -21,6 +21,10 @@ public class SubCategoryMapper {
 
 	@Autowired
 	private WeightageUtil weightageUtil;
+	
+	@Autowired
+	private SubCourseMapper subCourseMapper;
+	
 	/**
 	 * Converts a SubCategory entity to a SubCategoryResponse DTO.
 	 *
@@ -34,7 +38,7 @@ public class SubCategoryMapper {
 	public SubCategoryResponse mapToSubCategoryResponse(SubCategory subCategory) {
 		return SubCategoryResponse.builder().subCourseId(subCategory.getSubCategoryId())
 				.icon(subCategory.getSubCategoryIcon()).title(subCategory.getSubCategoryTitle())
-				.subCourseResponse(SubCourseMapper.mapToSubCourseResponseList(subCategory.getCourses()))
+				.subCourseResponse(subCourseMapper.mapToSubCourseResponseList(subCategory.getCourses(),subCategory.getSubCategoryId()))
 				.build();
 	}
 

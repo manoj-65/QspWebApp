@@ -1,5 +1,8 @@
 package com.alpha.qspiderrestapi.modelmapper;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 import com.alpha.qspiderrestapi.dto.WeightageDto;
@@ -21,4 +24,33 @@ public class WeightageMapper {
 
 		return weightage;
 	}
+
+	public WeightageDto getDto(List<Weightage> weightages, long categoryId, Long subCategoryId) {
+		Weightage weightage = null;
+		if (subCategoryId != null) {
+			Optional<Weightage> opt = weightages.stream().filter(w -> w.getCourse_SubCategoryId()!=null && w.getCourse_SubCategoryId() == subCategoryId.longValue())
+					.findFirst();
+			if (opt.isPresent()) {
+				weightage = opt.get();
+				return WeightageDto.builder().qspiders(weightage.getQspiders()).jspiders(weightage.getJspiders())
+						.pyspiders(weightage.getPyspiders()).bspiders(weightage.getBspiders()).build();
+			}
+			else
+				return null;
+		} else {
+			
+			Optional<Weightage> opt = weightages.stream()
+					.filter(w -> w.getCourse_categoryId()!=null && w.getCourse_categoryId() == categoryId)
+					.findFirst();
+			if (opt.isPresent()) {
+				weightage = opt.get();
+				return WeightageDto.builder().qspiders(weightage.getQspiders()).jspiders(weightage.getJspiders())
+						.pyspiders(weightage.getPyspiders()).bspiders(weightage.getBspiders()).build();
+			}
+			else
+				return null;
+		}
+
+	}
+
 }

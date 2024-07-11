@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
@@ -17,6 +18,9 @@ import com.alpha.qspiderrestapi.modelmapper.CourseMapper;
 @Component
 public class CategoryUtil {
 
+	@Autowired
+	private CourseMapper courseMapper;
+	
 //	public List<CategoryDashboardResponse> mapToCategoryDashboardResponse(List<Category> categories) {
 //		List<CategoryDashboardResponse> list = new ArrayList<CategoryDashboardResponse>();
 //		for (Category category : categories) {
@@ -56,7 +60,7 @@ public class CategoryUtil {
 //		response.setOffline(offline);
 //		response.setOnline(online);
 //		response.setExperiential(experiencial);
-//		response.setSelfpaced(selfpaced);
+//		response.setSelfpaced(selfpaced);s
 //		return response;
 //	}
 
@@ -64,7 +68,7 @@ public class CategoryUtil {
 		courses = courses.stream().filter(course -> course.getMode().contains(mode)).collect(Collectors.toList());
 		List<CourseResponse> responses = new ArrayList<>();
 		for (Course course : courses) {
-			responses.add(CourseMapper.mapToCourseResponse(course));
+			responses.add(courseMapper.mapToCourseResponse(course,0l));
 		}
 		return responses;
 	}

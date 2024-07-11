@@ -51,7 +51,7 @@ public class CustomAuthenticationManager {
 			"/api/{version}/branches/uploadImages", "/api/{version}/branches/uploadIcon",
 			"/api/{version}/branches/findAll", "/api/{version}/branches/modifyLocationUrl", "/api/{version}/faqs",
 			"api/{version}/weightage/categories", "api/{version}/weightage/subCategories",
-			"api/{version}/weightage/courses", "api/{version}/weightage/city",
+			"api/{version}/weightage/courses", "api/{version}/weightage/city","/api/{version}/courses/saveCourse" ,
 			"/api/{version}/weightage/updateCategoryWeightage", "api/{version}/weightage/categoryWeightage" };
 
 	@Bean

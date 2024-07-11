@@ -28,4 +28,7 @@ public interface CourseService {
 
 	ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> fetchViewForHomepage(String hostName);
 
+	ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(long categoryId, Long subCategoryId, String course,
+			MultipartFile icon, MultipartFile image, MultipartFile homePageImage);
+
 }

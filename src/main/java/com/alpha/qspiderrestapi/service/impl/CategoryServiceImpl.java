@@ -45,6 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
 	
 	@Autowired
 	private CategoryDao categoryDao;
+	
 	@Autowired
 	private CourseDao courseDao;
 
@@ -59,6 +60,9 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Autowired
 	private CategoryMapper categoryMapper;
+	
+	@Autowired
+	private CourseMapper courseMapper;
 	
 	@Value(value = "organization.qsp")
 	private String qspDomainName;
@@ -229,7 +233,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 	private List<CourseResponse> mapToCourse(List<Course> courses, Mode mode) {
 		return courses.stream().filter(course -> course.getMode().contains(mode))
-				.map(course -> CourseMapper.mapToCourseResponse(course)).collect(Collectors.toList());
+				.map(course -> courseMapper.mapToCourseResponse(course,0l)).collect(Collectors.toList());
 	}
 
 }
