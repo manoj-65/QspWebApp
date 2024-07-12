@@ -32,7 +32,7 @@ public interface WeightageService {
 			Organization organization);
 
 	ResponseEntity<ApiResponse<String>> updateCourseWeightage(long categoryId, Long subCategoryId, long courseId,
-			Organization organization, long weightage);
+			WeightageDto weightageDto);
 
 	ResponseEntity<ApiResponse<Weightage>> saveCategoryWeightageAndIncrement(long categoryId, WeightageDto dto);
 
