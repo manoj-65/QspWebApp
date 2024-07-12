@@ -1,5 +1,7 @@
 package com.alpha.qspiderrestapi.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -352,11 +354,13 @@ public class WeightageServiceImpl implements WeightageService {
 
 	@Override
 	public ResponseEntity<ApiResponse<String>> updateCourseWeightage(long categoryId, Long subCategoryId, long courseId,
-			Organization organization, long weightage) {
+			WeightageDto weightageDto) {
 
 		if (!categoryDao.isCategoryPresent(categoryId))
 			throw new IdNotFoundException("No category found with the id :" + categoryId);
 
+		List<Weightage> finalWeightage = new ArrayList<Weightage>();
+		
 		if (subCategoryId != null) {
 
 			if (!subcategoryDao.isSubCategoryPresent(subCategoryId))
@@ -372,8 +376,11 @@ public class WeightageServiceImpl implements WeightageService {
 			} else {
 				Weightage target = weightages.stream().filter(w -> w.getCourse().getCourseId() == courseId).findFirst()
 						.get();
-
-				weightages = getUpdatedWeightages(weightages, target, organization, weightage, courseId);
+				
+				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.QSP, weightageDto.getQspiders(), courseId));
+				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.JSP, weightageDto.getJspiders(), courseId));
+				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.PYSP, weightageDto.getPyspiders(), courseId));
+				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.BSP, weightageDto.getBspiders(), courseId));
 
 			}
 
@@ -391,11 +398,15 @@ public class WeightageServiceImpl implements WeightageService {
 			} else {
 				Weightage target = weightages.stream().filter(w -> w.getCourse().getCourseId() == courseId).findFirst()
 						.get();
-				weightages = getUpdatedWeightages(weightages, target, organization, weightage, courseId);
-
+		
+			finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.QSP, weightageDto.getQspiders(), courseId));
+			finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.JSP, weightageDto.getJspiders(), courseId));
+			finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.PYSP, weightageDto.getPyspiders(), courseId));
+			finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.BSP, weightageDto.getBspiders(), courseId));
+			
 			}
 
-			weightageDao.saveAllWeightage(weightages);
+			weightageDao.saveAllWeightage(finalWeightage);
 			return ResponseUtil.getOk("Updated Successfully");
 		}
 

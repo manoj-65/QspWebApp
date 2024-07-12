@@ -1,5 +1,10 @@
 package com.alpha.qspiderrestapi.entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -54,5 +59,10 @@ public class Weightage {
 	@JoinColumn(name = "cityId")
 	@JsonIgnore
 	private City city;
+	
+	@CreationTimestamp
+	private LocalDateTime createdDateAndTime;
+	@UpdateTimestamp
+	private LocalDateTime updatedDateAndTime;
 
 }
