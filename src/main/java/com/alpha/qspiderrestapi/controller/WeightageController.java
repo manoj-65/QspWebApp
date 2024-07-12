@@ -95,7 +95,7 @@ public class WeightageController {
 			@RequestParam Long categoryId, @RequestParam Long weightage, Organization organisation) {
 		if (version.equalsIgnoreCase("V1"))
 			return weightageService.updateCategoryWeightage(categoryId, weightage, organisation);
-
+  
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 

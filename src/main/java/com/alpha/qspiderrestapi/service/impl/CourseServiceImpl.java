@@ -84,7 +84,7 @@ public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private CourseUtil courseUtil;
-	
+
 	@Autowired
 	private CourseMapper courseMapper;
 
@@ -408,7 +408,6 @@ public class CourseServiceImpl implements CourseService {
 
 		}
 
-
 		// Convert BranchDto objects to Branch objects (assuming conversion logic)
 //		for (BranchDto dto : branchDtos) {
 //			branches.add(dto);
@@ -516,6 +515,37 @@ public class CourseServiceImpl implements CourseService {
 		course = saveCourse(course);
 		return course;
 
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(long categoryId, Long subCategoryId,
+			String courseRequest, MultipartFile icon, MultipartFile image, MultipartFile homePageImage) {
+
+		if (categoryDao.isCategoryPresent(categoryId)) {
+
+			if (subCategoryId != null) {
+				if (subCategoryDao.isSubCategoryPresent(subCategoryId)) {
+
+					Course courseObj = mapAndSetUrlsToCourse(categoryId, subCategoryId, courseRequest, icon, image,
+							homePageImage);
+
+					subCategoryDao.assignCourseToSubCategory(subCategoryId, courseObj.getCourseId());
+
+					return ResponseUtil.getCreated(courseObj);
+				} else {
+					throw new IdNotFoundException("No SubCategory found with given Id: " + subCategoryId);
+				}
+			} else {
+				Course courseObj = mapAndSetUrlsToCourse(categoryId, subCategoryId, courseRequest, icon, image,
+						homePageImage);
+
+				categoryDao.assignCourseToCategory(categoryId, courseObj.getCourseId());
+
+				return ResponseUtil.getCreated(courseObj);
+			}
+		} else {
+			throw new IdNotFoundException("No Category found with given Id: " + categoryId);
+		}
 	}
 
 }

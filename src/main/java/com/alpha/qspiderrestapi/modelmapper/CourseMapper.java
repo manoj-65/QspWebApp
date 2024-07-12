@@ -20,7 +20,7 @@ public class CourseMapper {
 
 	@Autowired
 	private WeightageMapper weightageMapper;
-	
+
 	/**
 	 * Converts a Course entity to a CourseResponse DTO.
 	 *
@@ -31,12 +31,11 @@ public class CourseMapper {
 	 * @param course The Course entity to be converted.
 	 * @return A CourseResponse DTO containing the mapped data.
 	 */
-	public CourseResponse mapToCourseResponse(Course course,long categoryId) {
+	public CourseResponse mapToCourseResponse(Course course, long categoryId) {
 		return CourseResponse.builder().courseResponseId(course.getCourseId()).icon(course.getCourseIcon())
 				.image_url(course.getCourseImage()).title(course.getCourseName())
 				.description(course.getCourseDescription()).homePageCourseImage(course.getHomePageCourseImage())
-				.modes(course.getMode())
-				.weightageDto(weightageMapper.getDto(course.getWeightages(), categoryId, null))
+				.modes(course.getMode()).weightageDto(weightageMapper.getDto(course.getWeightages(), categoryId, null))
 				.build();
 	}
 
@@ -50,11 +49,11 @@ public class CourseMapper {
 	 * @param courses The list of Course entities to be converted.
 	 * @return A list of CourseResponse DTOs containing the mapped data.
 	 */
-	public List<CourseResponse> mapToCourseResponseList(List<Course> courses,long categoryId) {
+	public List<CourseResponse> mapToCourseResponseList(List<Course> courses, long categoryId) {
 
 		List<CourseResponse> responseList = new ArrayList<CourseResponse>();
 
-		courses.forEach(response -> responseList.add(mapToCourseResponse(response,categoryId)));
+		courses.forEach(response -> responseList.add(mapToCourseResponse(response, categoryId)));
 		return responseList;
 
 	}
@@ -62,7 +61,8 @@ public class CourseMapper {
 	public CourseIdResponse mapToCourseDto(Course course) {
 
 		return CourseIdResponse.builder().courseId(course.getCourseId()).courseName(course.getCourseName())
-				.mode(course.getMode()).courseSummary(course.getCourseSummary()).courseAbout(course.getCourseAbout())
+				.mode(course.getMode()).courseDescription(course.getCourseDescription())
+				.courseSummary(course.getCourseSummary()).courseAbout(course.getCourseAbout())
 				.courseHighlight(course.getCourseHighlight()).faqs(course.getFaqs())
 				.courseImage(course.getCourseImage()).branchType(course.getBranchType())
 				.courseImage(course.getCourseImage()).subjects(course.getSubjects()).build();

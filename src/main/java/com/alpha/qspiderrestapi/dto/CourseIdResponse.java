@@ -19,6 +19,7 @@ public class CourseIdResponse {
 	private long courseId;
 	private String courseName;
 	private List<Mode> mode;
+	private String courseDescription;
 	private String courseSummary;
 	private String courseAbout;
 	private String courseHighlight;
