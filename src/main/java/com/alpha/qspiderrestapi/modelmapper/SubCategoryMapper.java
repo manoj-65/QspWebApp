@@ -33,12 +33,14 @@ public class SubCategoryMapper {
 	 * sub-category, excluding potentially sensitive data.
 	 * 
 	 * @param subCategory The SubCategory entity to be converted.
+	 * @param subCategoryId 
+	 * @param hostname 
 	 * @return A SubCategoryResponse DTO containing the mapped data.
 	 */
-	public SubCategoryResponse mapToSubCategoryResponse(SubCategory subCategory) {
+	public SubCategoryResponse mapToSubCategoryResponse(SubCategory subCategory, String hostname) {
 		return SubCategoryResponse.builder().subCourseId(subCategory.getSubCategoryId())
 				.icon(subCategory.getSubCategoryIcon()).title(subCategory.getSubCategoryTitle())
-				.subCourseResponse(subCourseMapper.mapToSubCourseResponseList(subCategory.getCourses(),subCategory.getSubCategoryId()))
+				.subCourseResponse(subCourseMapper.mapToSubCourseResponseList(weightageUtil.getSortedCourseOfSubCategory(subCategory.getCourses(), hostname, subCategory.getSubCategoryId()),subCategory.getSubCategoryId()))
 				.build();
 	}
 
@@ -55,10 +57,10 @@ public class SubCategoryMapper {
 	 * @return A list of SubCategoryResponse DTOs containing the mapped data.
 	 */
 	public List<SubCategoryResponse> mapToSubCategoryResponseList(List<SubCategory> subCategories,String hostname,long categoryId) {
-		weightageUtil.getSortedSubCategory(subCategories, hostname, categoryId);
+		subCategories = weightageUtil.getSortedSubCategory(subCategories, hostname, categoryId);
 		List<SubCategoryResponse> responseList = new ArrayList<SubCategoryResponse>();
 
-		subCategories.forEach(response -> responseList.add(mapToSubCategoryResponse(response)));
+		subCategories.forEach(response -> responseList.add(mapToSubCategoryResponse(response,hostname)));
 
 		return responseList;
 

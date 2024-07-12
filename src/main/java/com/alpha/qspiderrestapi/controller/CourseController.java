@@ -200,7 +200,7 @@ public class CourseController {
 		throw new UnauthorizedVersionException();
 	}
 	
-	@PostMapping(value = "/updateCourse", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PatchMapping(value = "/updateCourse", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(@PathVariable String version,
 			@RequestParam long categoryId, @RequestParam(required = false) Long subCategoryId,
 			@RequestParam MultipartFile icon, @RequestParam MultipartFile image,
