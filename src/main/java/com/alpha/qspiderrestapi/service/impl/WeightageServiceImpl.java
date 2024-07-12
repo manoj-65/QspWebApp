@@ -52,6 +52,7 @@ public class WeightageServiceImpl implements WeightageService {
 
 	@Autowired
 	WeightageMapper weightageMapper;
+
 //	@Autowired
 //	private EntityManager entityManager;
 
@@ -334,10 +335,22 @@ public class WeightageServiceImpl implements WeightageService {
 							setOrgWeightage(w, orgType, weightage);
 						}
 					}).collect(Collectors.toList());
-		} else if (getOrgWeightage(categoryWeightage, orgType) < weightage) {
+		}
+
+		else if (getOrgWeightage(categoryWeightage, orgType) < weightage) {
 			allWeightages = allWeightages.stream()
 					.filter(w -> getOrgWeightage(w, orgType) <= weightage
 							&& getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
+					.collect(Collectors.toList());
+			allWeightages = allWeightages.stream()
+					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) - 1l))).peek(w -> {
+						if (w.getCategory().getCategoryId() == categoryId) {
+							setOrgWeightage(w, orgType, weightage);
+						}
+					}).collect(Collectors.toList());
+		} else if (weightage == 0) {
+			allWeightages = allWeightages.stream()
+					.filter(w -> getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
 					.collect(Collectors.toList());
 			allWeightages = allWeightages.stream()
 					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) - 1l))).peek(w -> {
