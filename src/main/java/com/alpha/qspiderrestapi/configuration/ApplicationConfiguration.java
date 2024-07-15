@@ -22,7 +22,7 @@ public class ApplicationConfiguration {
 		production.setDescription("Production environment");
 		
 		Server dev = new Server();
-		dev.setUrl("http://106.51.76.167:8080");
+		dev.setUrl("http://106.51.76.167:8050");
 		dev.setDescription("Developement environment");
 
 		Contact contact = new Contact();
@@ -42,7 +42,7 @@ public class ApplicationConfiguration {
 				.termsOfService("termsOfServiceUrl").license(mitLicense);
 
 
-		return new OpenAPI().info(info).servers(List.of(production,dev));
+		return new OpenAPI().info(info).servers(List.of(dev,production));
 	}
 
 	
