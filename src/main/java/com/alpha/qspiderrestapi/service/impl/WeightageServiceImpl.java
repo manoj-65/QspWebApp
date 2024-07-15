@@ -324,7 +324,34 @@ public class WeightageServiceImpl implements WeightageService {
 		if (!(categoryWeightage != null))
 			throw new InvalidInfoException("No weightages found with the given category");
 
-		if (getOrgWeightage(categoryWeightage, orgType) > weightage) {
+		if (weightage > allWeightages.size())
+			throw new InvalidInfoException("Weightage size limit exceeded");
+
+		if (weightage == 0) {
+			allWeightages = allWeightages.stream()
+					.filter(w -> getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
+					.collect(Collectors.toList());
+			allWeightages = allWeightages.stream()
+					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) - 1l))).peek(w -> {
+						if (w.getCategory().getCategoryId() == categoryId) {
+							setOrgWeightage(w, orgType, weightage);
+						}
+					}).collect(Collectors.toList());
+		}
+
+		else if (getOrgWeightage(categoryWeightage, orgType) == 0) {
+			allWeightages = allWeightages.stream()
+					.filter(w -> getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
+					.collect(Collectors.toList());
+			allWeightages = allWeightages.stream()
+					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) + 1l))).peek(w -> {
+						if (w.getCategory().getCategoryId() == categoryId) {
+							setOrgWeightage(w, orgType, weightage);
+						}
+					}).collect(Collectors.toList());
+		}
+
+		else if (getOrgWeightage(categoryWeightage, orgType) > weightage) {
 			allWeightages = allWeightages.stream()
 					.filter(w -> getOrgWeightage(w, orgType) >= weightage
 							&& getOrgWeightage(w, orgType) <= getOrgWeightage(categoryWeightage, orgType))
@@ -342,16 +369,6 @@ public class WeightageServiceImpl implements WeightageService {
 			allWeightages = allWeightages.stream()
 					.filter(w -> getOrgWeightage(w, orgType) <= weightage
 							&& getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
-					.collect(Collectors.toList());
-			allWeightages = allWeightages.stream()
-					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) - 1l))).peek(w -> {
-						if (w.getCategory().getCategoryId() == categoryId) {
-							setOrgWeightage(w, orgType, weightage);
-						}
-					}).collect(Collectors.toList());
-		} else if (weightage == 0) {
-			allWeightages = allWeightages.stream()
-					.filter(w -> getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
 					.collect(Collectors.toList());
 			allWeightages = allWeightages.stream()
 					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) - 1l))).peek(w -> {
