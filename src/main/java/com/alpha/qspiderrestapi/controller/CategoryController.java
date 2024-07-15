@@ -88,7 +88,7 @@ public class CategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Ok", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
-	@GetMapping("/getall")
+	@GetMapping("/getAllCategories")
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(@PathVariable String version,
 			@RequestHeader("Origin") String domainName) {
 		System.err.println(domainName);

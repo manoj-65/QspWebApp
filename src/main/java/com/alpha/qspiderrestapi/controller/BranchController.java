@@ -79,7 +79,7 @@ public class BranchController {
 		throw new UnauthorizedVersionException();
 	}
 
-	@GetMapping("/getAll")
+	@GetMapping("/getAllBranches")
 	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll(@PathVariable String version,
 			@RequestHeader("Origin") String domainName) {
 		if (version.equals("v1"))

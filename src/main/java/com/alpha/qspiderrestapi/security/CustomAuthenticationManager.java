@@ -34,8 +34,8 @@ public class CustomAuthenticationManager {
 
 	private static final String[] PUBLIC_URLS = { "/swagger-apis/**", "/swagger-ui/**", "/v3/api-docs/**",
 			"/swagger-ui.html", "/swagger-ui/index.html", "/api/{version}/users/login",
-			"/api/{version}/users/getProfile", "/api/v1/categories/formresponse", "/api/{version}/categories/getall",
-			"/api/{version}/categories/getbyid", "/api/{version}/subjects/course", "/api/{version}/branches/getAll",
+			"/api/{version}/users/getProfile", "/api/v1/categories/formresponse", "/api/{version}/categories/getAllCategories",
+			"/api/{version}/categories/getbyid", "/api/{version}/subjects/course", "/api/{version}/branches/getAllBranches",
 			"/api/{version}/feedback", "/api/{version}/cities", "/api/{version}/courses/getbyid",
 			"/api/{version}/branches/getbyid", "/api/{version}/courses/viewAll", "/api/{version}/enquiry",
 			"/api/{version}/batches", "/api/{version}/categories/findAllCategories", "/api/{version}/faqs",
