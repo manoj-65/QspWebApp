@@ -32,9 +32,9 @@ public class CourseMapper {
 	 * @return A CourseResponse DTO containing the mapped data.
 	 */
 	public CourseResponse mapToCourseResponse(Course course, long categoryId) {
-		return CourseResponse.builder().courseResponseId(course.getCourseId()).icon(course.getCourseIcon())
-				.image_url(course.getCourseImage()).title(course.getCourseName())
-				.description(course.getCourseDescription()).homePageCourseImage(course.getHomePageCourseImage())
+		return CourseResponse.builder().courseId(course.getCourseId()).icon(course.getCourseIcon())
+				.courseImage(course.getCourseImage()).courseName(course.getCourseName())
+				.courseDescription(course.getCourseDescription()).homePageCourseImage(course.getHomePageCourseImage())
 				.modes(course.getMode()).weightageDto(weightageMapper.getDto(course.getWeightages(), categoryId, null))
 				.build();
 	}
