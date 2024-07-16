@@ -175,9 +175,9 @@ public class CategoryController {
 
 	@GetMapping("/findAllCategories")
 	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(
-			@PathVariable String version) {
+			@PathVariable String version,@RequestHeader("Origin") String domainName) {
 		if (version.equals("v1"))
-			return categoryService.findSortedCategories();
+			return categoryService.findSortedCategories(domainName);
 
 		throw new UnauthorizedVersionException();
 	}

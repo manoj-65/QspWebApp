@@ -29,6 +29,6 @@ public interface CategoryService {
 
 //	ResponseEntity<ApiResponse<List<CategoryDashboardResponse>>> findSortedCategories();
 
-	ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories();
+	ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(String domainName);
 
 }
