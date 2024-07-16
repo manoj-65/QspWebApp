@@ -207,10 +207,13 @@ public class CategoryServiceImpl implements CategoryService {
 			if (!category.getSubCategories().isEmpty()) {
 				List<Course> subCategoryCourses = new ArrayList<Course>();
 				List<SubCategory> sortedSubCategory = weightageUtil.getSortedSubCategory(category.getSubCategories(), domainName, category.getCategoryId());
+				sortedSubCategory.forEach(s->System.err.println(s.getSubCategoryTitle()));
 				for (SubCategory subCategory : sortedSubCategory) {
 					List<Course> sortedCourseOfSubCategory = weightageUtil.getSortedCourseOfSubCategory(subCategory.getCourses(), domainName, subCategory.getSubCategoryId());
 					subCategoryCourses.addAll(sortedCourseOfSubCategory);
 				}
+				subCategoryCourses.stream().distinct();
+				subCategoryCourses.forEach(s->System.err.println(s.getCourseName()));
 				category.setCourses(subCategoryCourses);
 			}
 		}
