@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -207,14 +208,14 @@ public class CategoryServiceImpl implements CategoryService {
 			if (!category.getSubCategories().isEmpty()) {
 				List<Course> subCategoryCourses = new ArrayList<Course>();
 				List<SubCategory> sortedSubCategory = weightageUtil.getSortedSubCategory(category.getSubCategories(), domainName, category.getCategoryId());
-				sortedSubCategory.forEach(s->System.err.println(s.getSubCategoryTitle()));
+//				sortedSubCategory.forEach(s->System.err.println(s.getSubCategoryTitle()));
 				for (SubCategory subCategory : sortedSubCategory) {
 					List<Course> sortedCourseOfSubCategory = weightageUtil.getSortedCourseOfSubCategory(subCategory.getCourses(), domainName, subCategory.getSubCategoryId());
 					subCategoryCourses.addAll(sortedCourseOfSubCategory);
 				}
-				subCategoryCourses.stream().distinct();
-				subCategoryCourses.forEach(s->System.err.println(s.getCourseName()));
-				category.setCourses(subCategoryCourses);
+				 List<Course> distinctCourses = subCategoryCourses.stream().distinct().collect(Collectors.toList());
+//				 distinctCourses.forEach(s->System.err.println(s.getCourseId()));
+				category.setCourses(distinctCourses);
 			}
 		}
 		Map<Mode, List<CategoryDashboardResponse>> result = new HashMap<Mode, List<CategoryDashboardResponse>>();
