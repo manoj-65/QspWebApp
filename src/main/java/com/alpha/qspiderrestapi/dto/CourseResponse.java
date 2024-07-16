@@ -16,11 +16,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CourseResponse {
 
-	private long courseId;
+	private long courseResponseId;
 	private String icon;
-	private String courseName;
-	private String courseImage;
-	private String courseDescription;
+	private String title;
+	private String image_url;
+	private String description;
 	private String homePageCourseImage;
 	private List<Mode> modes;
 	private WeightageDto weightageDto;
