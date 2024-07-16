@@ -203,17 +203,17 @@ public class CategoryServiceImpl implements CategoryService {
 	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(String domainName) {
 		List<Category> categories = categoryDao.fetchAllCategories();
 		categories = weightageUtil.getSortedCategory(categories, domainName);
-		categories.forEach(c->System.err.println(c.getCategoryTitle()));
 		for (Category category : categories) {
 			if (!category.getSubCategories().isEmpty()) {
 				List<Course> subCategoryCourses = new ArrayList<Course>();
-				for (SubCategory subCategory : category.getSubCategories()) {
-					subCategoryCourses.addAll(subCategory.getCourses());
+				List<SubCategory> sortedSubCategory = weightageUtil.getSortedSubCategory(category.getSubCategories(), domainName, category.getCategoryId());
+				for (SubCategory subCategory : sortedSubCategory) {
+					List<Course> sortedCourseOfSubCategory = weightageUtil.getSortedCourseOfSubCategory(subCategory.getCourses(), domainName, subCategory.getSubCategoryId());
+					subCategoryCourses.addAll(sortedCourseOfSubCategory);
 				}
 				category.setCourses(subCategoryCourses);
 			}
 		}
-		categories.forEach(c->System.err.println(c.getCategoryTitle()));
 		Map<Mode, List<CategoryDashboardResponse>> result = new HashMap<Mode, List<CategoryDashboardResponse>>();
 
 		for (Mode mode : Mode.values()) {
@@ -224,7 +224,6 @@ public class CategoryServiceImpl implements CategoryService {
 
 			result.put(mode, filteredCategory);
 		}
-//		result.values().forEach(v->v.forEach(c->System.err.println(c.getCategoryName())));
 		return ResponseUtil.getOk(result);
 	}
 
