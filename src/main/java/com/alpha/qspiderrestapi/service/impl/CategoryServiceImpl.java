@@ -172,7 +172,7 @@ public class CategoryServiceImpl implements CategoryService {
 					throw new IdNotFoundException("Course With the Given Id: " + id + " Not Found");
 				}
 				categoryDao.assignCourseToCategory(categoryId, id);
-			});
+			}); 
 			return ResponseUtil.getOk(categoryDao.fetchCategoryById(categoryId).get());
 		} else
 			log.error("Category not found with ID: {}", categoryId);
