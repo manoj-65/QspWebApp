@@ -171,6 +171,8 @@ public class WeightageServiceImpl implements WeightageService {
 					.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).city(city).build();
 			city.setWeightage(weightage);
 			weightage.setCity(city);
+			
+			weightageUtil.checkAndUpdateWeightage(weightage, allCityWeightage);
 			weightage = weightageDao.saveWeightage(weightage);
 			return ResponseUtil.getCreated(weightage);
 		}
@@ -472,7 +474,7 @@ public class WeightageServiceImpl implements WeightageService {
 				.max((w1, w2) -> (int) getOrgWeightage(w1, organization) - (int) getOrgWeightage(w2, organization));
 
 		if (weightage > weightages.size() || weightage > (getOrgWeightage(max.get(), organization) + 1l)) {
-			throw new InvalidInfoException("Given weightage exceeds weightage limit");
+			throw new InvalidInfoException("In given info, weightage exceeds weightage limit in Organization type: "+organization);
 		}
 		if (weightage == 0l && getOrgWeightage(target, organization) != 0l) {
 			weightages = weightages.stream()
@@ -485,12 +487,6 @@ public class WeightageServiceImpl implements WeightageService {
 						}
 					}).collect(Collectors.toList());
 
-//			return weightages.stream()
-//					.peek(w -> {
-//						if (w.getCourse().getCourseId() == courseId) {
-//							setOrgWeightage(w, organization, weightage);
-//						}
-//					}).collect(Collectors.toList());
 		} else if (getOrgWeightage(target, organization) == 0l && weightage != 0l) {
 			if (weightage == (getOrgWeightage(max.get(), organization) + 1l)) {
 				return weightages.stream().peek(w -> {
@@ -515,7 +511,7 @@ public class WeightageServiceImpl implements WeightageService {
 		} else if (getOrgWeightage(target, organization) > weightage) {
 			weightages = weightages.stream()
 					.filter(w -> getOrgWeightage(w, organization) >= weightage
-							&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization))
+							&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization) && getOrgWeightage(w, organization)!=0l)
 					.collect(Collectors.toList());
 			return weightages.stream()
 					.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l))).peek(w -> {
@@ -524,9 +520,12 @@ public class WeightageServiceImpl implements WeightageService {
 						}
 					}).collect(Collectors.toList());
 		} else if (getOrgWeightage(target, organization) < weightage) {
+			if(weightage>(getOrgWeightage(max.get(), organization))){
+				throw new InvalidInfoException("In given info weightage exceeds weightage limit of Organization type: "+organization);
+			}
 			weightages = weightages.stream()
 					.filter(w -> getOrgWeightage(w, organization) <= weightage
-							&& getOrgWeightage(w, organization) >= getOrgWeightage(target, organization))
+							&& getOrgWeightage(w, organization) >= getOrgWeightage(target, organization) && getOrgWeightage(w, organization)!=0l)
 					.collect(Collectors.toList());
 			return weightages.stream()
 					.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) - 1l))).peek(w -> {
