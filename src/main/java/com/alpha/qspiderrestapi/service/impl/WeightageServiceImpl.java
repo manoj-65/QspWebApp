@@ -258,11 +258,8 @@ public class WeightageServiceImpl implements WeightageService {
 						.collect(Collectors.toList());
 				weightages = weightages.stream()
 						.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l)))
-						.peek(w -> {
-							if (w.getSubCategory().getSubCategoryId() == subCategoryId) {
-								setOrgWeightage(w, organization, weightage);
-							}
-						}).collect(Collectors.toList());
+						.collect(Collectors.toList());
+				setOrgWeightage(target, organization, weightage);
 			} else if (getOrgWeightage(target, organization) < weightage) {
 				weightages = weightages.stream()
 						.filter(w -> getOrgWeightage(w, organization) <= weightage
@@ -335,8 +332,7 @@ public class WeightageServiceImpl implements WeightageService {
 
 		if (weightage == 0) {
 			allWeightages = allWeightages.stream()
-					.filter(w -> getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType)
-							&& getOrgWeightage(w, orgType) < 0)
+					.filter(w -> getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
 					.collect(Collectors.toList());
 			allWeightages = allWeightages.stream()
 					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) - 1l))).peek(w -> {
@@ -357,15 +353,14 @@ public class WeightageServiceImpl implements WeightageService {
 //						}
 //					}).collect(Collectors.toList());
 
-			List<Weightage> updatedWeightages = allWeightages.stream()
+			allWeightages = allWeightages.stream()
 					.peek(w -> setOrgWeightage(w, orgType, getOrgWeightage(w, orgType) + 1L))
 					.collect(Collectors.toList());
-							
-			for (Weightage w : updatedWeightages) {
-				if (w.getCategory().getCategoryId() == categoryId) {
-					setOrgWeightage(w, orgType, weightage);
-				}
-			}
+
+//			for (Weightage w : allWeightages) {
+//				if (w.getCategory().getCategoryId() == categoryId) {
+//				}
+			setOrgWeightage(categoryWeightage, orgType, weightage);
 		}
 
 		else if (getOrgWeightage(categoryWeightage, orgType) > weightage && weightage <= maxSize) {
@@ -393,6 +388,8 @@ public class WeightageServiceImpl implements WeightageService {
 							setOrgWeightage(w, orgType, weightage);
 						}
 					}).collect(Collectors.toList());
+		} else {
+			throw new InvalidInfoException("Weightage size limit exceeded");
 		}
 
 		weightageDao.saveAllWeightage(allWeightages);
