@@ -65,4 +65,9 @@ public class WeightageDaoImpl implements WeightageDao {
 		weightageRepository.incrementWeightageValues(qspiders,jspiders,pyspiders,bspiders,fieldName,categoryId);
 	}
 	
+	@Override
+	public List<Weightage> findAllCityWeightage() {
+		return weightageRepository.findByCityIsNotNull();
+	}
+	
 }

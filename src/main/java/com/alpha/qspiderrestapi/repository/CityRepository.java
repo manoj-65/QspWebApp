@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.alpha.qspiderrestapi.entity.City;
+import com.alpha.qspiderrestapi.entity.Weightage;
 
 import jakarta.transaction.Transactional;
 
@@ -20,4 +21,5 @@ public interface CityRepository extends JpaRepository<City, Long> {
 	void updateCityBranchCount();
 	
 	Optional<City> findCityByCityName(String cityName);
+
 }

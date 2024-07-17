@@ -38,5 +38,7 @@ public interface WeightageRepository extends JpaRepository<Weightage, Long> {
 								  @Param(value = "bspiders") long bspiders,
 								  @Param(value = "fieldName") String fieldName,
 								  @Param(value = "categoryId") long categoryId);
+	
+	List<Weightage> findByCityIsNotNull();
 
 }

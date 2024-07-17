@@ -165,6 +165,8 @@ public class WeightageServiceImpl implements WeightageService {
 		City city = cityDao.findCityByCityName(cityName)
 				.orElseThrow(() -> new IdNotFoundException("No city found with the given city name"));
 		if (city.getWeightage() == null) {
+			List<Weightage> allCityWeightage = weightageDao.findAllCityWeightage();
+
 			Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
 					.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).city(city).build();
 			city.setWeightage(weightage);
