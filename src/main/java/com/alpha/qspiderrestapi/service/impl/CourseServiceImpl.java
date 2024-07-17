@@ -562,6 +562,7 @@ public class CourseServiceImpl implements CourseService {
 		course.setCourseAbout(dto.getCourseAbout());
 		course.setCourseSummary(dto.getCourseSummary());
 		course.setCourseHighlight(dto.getCourseHighlight());
+		dto.getFaqs().forEach(f->f.setCourse(course));
 		course.setFaqs(dto.getFaqs());
 		course.setBranchType(dto.getBranchType());
 

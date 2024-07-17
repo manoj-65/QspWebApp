@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -200,40 +201,45 @@ public class CategoryServiceImpl implements CategoryService {
 //	}
 
 	@Override
-	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories() {
+	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(String domainName) {
 		List<Category> categories = categoryDao.fetchAllCategories();
+		categories = weightageUtil.getSortedCategory(categories, domainName);
 		for (Category category : categories) {
 			if (!category.getSubCategories().isEmpty()) {
 				List<Course> subCategoryCourses = new ArrayList<Course>();
-				for (SubCategory subCategory : category.getSubCategories()) {
-					subCategoryCourses.addAll(subCategory.getCourses());
+				List<SubCategory> sortedSubCategory = weightageUtil.getSortedSubCategory(category.getSubCategories(), domainName, category.getCategoryId());
+//				sortedSubCategory.forEach(s->System.err.println(s.getSubCategoryTitle()));
+				for (SubCategory subCategory : sortedSubCategory) {
+					List<Course> sortedCourseOfSubCategory = weightageUtil.getSortedCourseOfSubCategory(subCategory.getCourses(), domainName, subCategory.getSubCategoryId());
+					subCategoryCourses.addAll(sortedCourseOfSubCategory);
 				}
-				category.setCourses(subCategoryCourses);
+				 List<Course> distinctCourses = subCategoryCourses.stream().distinct().collect(Collectors.toList());
+//				 distinctCourses.forEach(s->System.err.println(s.getCourseId()));
+				category.setCourses(distinctCourses);
 			}
 		}
-
 		Map<Mode, List<CategoryDashboardResponse>> result = new HashMap<Mode, List<CategoryDashboardResponse>>();
 
 		for (Mode mode : Mode.values()) {
 
 			List<CategoryDashboardResponse> filteredCategory = categories.stream().filter(
 					category -> category.getCourses().stream().anyMatch(course -> course.getMode().contains(mode)))
-					.map(category -> mapToCategoryDashboardResponse(category, mode)).collect(Collectors.toList());
+					.map(category -> mapToCategoryDashboardResponse(category, mode,domainName)).collect(Collectors.toList());
 
 			result.put(mode, filteredCategory);
 		}
 		return ResponseUtil.getOk(result);
 	}
 
-	public CategoryDashboardResponse mapToCategoryDashboardResponse(Category category, Mode mode) {
+	public CategoryDashboardResponse mapToCategoryDashboardResponse(Category category, Mode mode,String domainName) {
 		return CategoryDashboardResponse.builder().categoryName(category.getCategoryTitle())
 				.categoryId(category.getCategoryId()).categoryAlternativeIcon(category.getCategoryAlternativeIcon())
-				.categoryIcon(category.getCategoryIcon()).courses(mapToCourse(category.getCourses(), mode)).build();
+				.categoryIcon(category.getCategoryIcon()).courses(mapToCourse(weightageUtil.getSortedCourseOfCategory(category.getCourses(), domainName, category.getCategoryId()), mode,category.getCategoryId())).build();
 	}
 
-	private List<CourseResponse> mapToCourse(List<Course> courses, Mode mode) {
+	private List<CourseResponse> mapToCourse(List<Course> courses, Mode mode,long categoryId) {
 		return courses.stream().filter(course -> course.getMode().contains(mode))
-				.map(course -> courseMapper.mapToCourseResponse(course,0l)).collect(Collectors.toList());
+				.map(course -> courseMapper.mapToCourseResponse(course,categoryId)).collect(Collectors.toList());
 	}
 
 }
