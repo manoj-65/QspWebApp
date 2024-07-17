@@ -160,7 +160,7 @@ public class CourseController {
 			return courseService.uploadIcon(file, courseId);
 		throw new UnauthorizedVersionException();
 	}
-
+ 
 	@DeleteMapping
 	public ResponseEntity<ApiResponse<String>> removeCourseById(@PathVariable String version,
 			@RequestParam long courseId) {

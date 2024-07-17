@@ -27,4 +27,5 @@ public interface WeightageDao {
 
 	void incrementWeightageValues(long qspiders, long jspiders, long pyspiders, long bspiders, String string,
 			long categoryId);
+
 }
