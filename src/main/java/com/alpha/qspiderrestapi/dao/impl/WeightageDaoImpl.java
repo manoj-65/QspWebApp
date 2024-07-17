@@ -62,7 +62,7 @@ public class WeightageDaoImpl implements WeightageDao {
 	@Override
 	public void incrementWeightageValues(long qspiders, long jspiders, long pyspiders, long bspiders, String fieldName,
 			long categoryId) {
-		weightageRepository.incrementWeightageValues(qspiders,jspiders,pyspiders,bspiders,fieldName,categoryId);
+		weightageRepository.incrementWeightageValues(qspiders, jspiders, pyspiders, bspiders, fieldName, categoryId);
 	}
-	
+
 }

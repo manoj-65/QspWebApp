@@ -324,12 +324,15 @@ public class WeightageServiceImpl implements WeightageService {
 		if (!(categoryWeightage != null))
 			throw new InvalidInfoException("No weightages found with the given category");
 
+		long maxSize = weightageUtil.findMaxSize(allWeightages, orgType);
+
 		if (weightage > allWeightages.size())
 			throw new InvalidInfoException("Weightage size limit exceeded");
 
 		if (weightage == 0) {
 			allWeightages = allWeightages.stream()
-					.filter(w -> getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
+					.filter(w -> getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType)
+							&& getOrgWeightage(w, orgType) < 0)
 					.collect(Collectors.toList());
 			allWeightages = allWeightages.stream()
 					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) - 1l))).peek(w -> {
@@ -340,18 +343,28 @@ public class WeightageServiceImpl implements WeightageService {
 		}
 
 		else if (getOrgWeightage(categoryWeightage, orgType) == 0) {
-			allWeightages = allWeightages.stream()
-					.filter(w -> getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
+			allWeightages = allWeightages.stream().filter(w -> getOrgWeightage(w, orgType) >= weightage)
 					.collect(Collectors.toList());
-			allWeightages = allWeightages.stream()
-					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) + 1l))).peek(w -> {
-						if (w.getCategory().getCategoryId() == categoryId) {
-							setOrgWeightage(w, orgType, weightage);
-						}
-					}).collect(Collectors.toList());
+
+//			allWeightages = allWeightages.stream()
+//					.peek(w -> setOrgWeightage(w, orgType, (getOrgWeightage(w, orgType) + 1l))).peek(w -> {
+//						if (w.getCategory().getCategoryId() == categoryId) {
+//							setOrgWeightage(w, orgType, weightage);
+//						}
+//					}).collect(Collectors.toList());
+
+			List<Weightage> updatedWeightages = allWeightages.stream()
+					.peek(w -> setOrgWeightage(w, orgType, getOrgWeightage(w, orgType) + 1L))
+					.collect(Collectors.toList());
+							
+			for (Weightage w : updatedWeightages) {
+				if (w.getCategory().getCategoryId() == categoryId) {
+					setOrgWeightage(w, orgType, weightage);
+				}
+			}
 		}
 
-		else if (getOrgWeightage(categoryWeightage, orgType) > weightage) {
+		else if (getOrgWeightage(categoryWeightage, orgType) > weightage && weightage <= maxSize) {
 			allWeightages = allWeightages.stream()
 					.filter(w -> getOrgWeightage(w, orgType) >= weightage
 							&& getOrgWeightage(w, orgType) <= getOrgWeightage(categoryWeightage, orgType))
@@ -365,7 +378,7 @@ public class WeightageServiceImpl implements WeightageService {
 					}).collect(Collectors.toList());
 		}
 
-		else if (getOrgWeightage(categoryWeightage, orgType) < weightage) {
+		else if (getOrgWeightage(categoryWeightage, orgType) < weightage && weightage <= maxSize) {
 			allWeightages = allWeightages.stream()
 					.filter(w -> getOrgWeightage(w, orgType) <= weightage
 							&& getOrgWeightage(w, orgType) >= getOrgWeightage(categoryWeightage, orgType))
@@ -453,7 +466,51 @@ public class WeightageServiceImpl implements WeightageService {
 
 	private List<Weightage> getUpdatedWeightages(List<Weightage> weightages, Weightage target,
 			Organization organization, long weightage, long courseId) {
-		if (getOrgWeightage(target, organization) > weightage) {
+		Optional<Weightage> max = weightages.stream()
+				.max((w1, w2) -> (int) getOrgWeightage(w1, organization) - (int) getOrgWeightage(w2, organization));
+
+		if (weightage > weightages.size() || weightage > (getOrgWeightage(max.get(), organization) + 1l)) {
+			throw new InvalidInfoException("Given weightage exceeds weightage limit");
+		}
+		if (weightage == 0l && getOrgWeightage(target, organization) != 0l) {
+			weightages = weightages.stream()
+					.filter(w -> getOrgWeightage(w, organization) >= getOrgWeightage(target, organization))
+					.collect(Collectors.toList());
+			return weightages.stream()
+					.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) - 1l))).peek(w -> {
+						if (w.getCourse().getCourseId() == courseId) {
+							setOrgWeightage(w, organization, weightage);
+						}
+					}).collect(Collectors.toList());
+
+//			return weightages.stream()
+//					.peek(w -> {
+//						if (w.getCourse().getCourseId() == courseId) {
+//							setOrgWeightage(w, organization, weightage);
+//						}
+//					}).collect(Collectors.toList());
+		} else if (getOrgWeightage(target, organization) == 0l && weightage != 0l) {
+			if (weightage == (getOrgWeightage(max.get(), organization) + 1l)) {
+				return weightages.stream().peek(w -> {
+					if (w.getCourse().getCourseId() == courseId) {
+						setOrgWeightage(w, organization, weightage);
+					}
+				}).collect(Collectors.toList());
+			} else {
+				weightages = weightages.stream().peek(w -> {
+					if (w.getCourse().getCourseId() == courseId) {
+						setOrgWeightage(w, organization, weightage);
+					}
+				}).filter(w -> getOrgWeightage(w, organization) >= weightage).collect(Collectors.toList());
+				return weightages.stream()
+						.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l)))
+						.peek(w -> {
+							if (w.getCourse().getCourseId() == courseId) {
+								setOrgWeightage(w, organization, weightage);
+							}
+						}).collect(Collectors.toList());
+			}
+		} else if (getOrgWeightage(target, organization) > weightage) {
 			weightages = weightages.stream()
 					.filter(w -> getOrgWeightage(w, organization) >= weightage
 							&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization))

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -159,7 +160,7 @@ public class CourseController {
 			return courseService.uploadIcon(file, courseId);
 		throw new UnauthorizedVersionException();
 	}
-
+ 
 	@DeleteMapping
 	public ResponseEntity<ApiResponse<String>> removeCourseById(@PathVariable String version,
 			@RequestParam long courseId) {
@@ -209,6 +210,14 @@ public class CourseController {
 		if (version.equals("v1"))
 			return courseService.updateCourseAlongWithImages(categoryId, subCategoryId, course, icon, image,
 					homePageImage);
+
+		throw new UnauthorizedVersionException();
+	}
+	
+	@PutMapping(value = "/updateCourseContent")
+	public ResponseEntity<ApiResponse<Course>> updateCourseContent(@PathVariable String version,@RequestBody CourseIdResponse courseIdResponse) {
+		if (version.equals("v1"))
+			return courseService.updateCourseContent(courseIdResponse);
 
 		throw new UnauthorizedVersionException();
 	}

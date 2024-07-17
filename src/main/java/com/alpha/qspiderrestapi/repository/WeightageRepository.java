@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.alpha.qspiderrestapi.entity.Weightage;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 
 import jakarta.transaction.Transactional;
 
@@ -38,5 +39,6 @@ public interface WeightageRepository extends JpaRepository<Weightage, Long> {
 								  @Param(value = "bspiders") long bspiders,
 								  @Param(value = "fieldName") String fieldName,
 								  @Param(value = "categoryId") long categoryId);
+
 
 }
