@@ -208,13 +208,11 @@ public class CategoryServiceImpl implements CategoryService {
 			if (!category.getSubCategories().isEmpty()) {
 				List<Course> subCategoryCourses = new ArrayList<Course>();
 				List<SubCategory> sortedSubCategory = weightageUtil.getSortedSubCategory(category.getSubCategories(), domainName, category.getCategoryId());
-//				sortedSubCategory.forEach(s->System.err.println(s.getSubCategoryTitle()));
 				for (SubCategory subCategory : sortedSubCategory) {
 					List<Course> sortedCourseOfSubCategory = weightageUtil.getSortedCourseOfSubCategory(subCategory.getCourses(), domainName, subCategory.getSubCategoryId());
 					subCategoryCourses.addAll(sortedCourseOfSubCategory);
 				}
 				 List<Course> distinctCourses = subCategoryCourses.stream().distinct().collect(Collectors.toList());
-//				 distinctCourses.forEach(s->System.err.println(s.getCourseId()));
 				category.setCourses(distinctCourses);
 			}
 		}
@@ -240,6 +238,16 @@ public class CategoryServiceImpl implements CategoryService {
 	private List<CourseResponse> mapToCourse(List<Course> courses, Mode mode,long categoryId) {
 		return courses.stream().filter(course -> course.getMode().contains(mode))
 				.map(course -> courseMapper.mapToCourseResponse(course,categoryId)).collect(Collectors.toList());
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(String domainName) {
+		List<CategoryResponse> categories = fetchAllCategories(domainName).getBody().getData();
+//		 categories = categories.stream().filter(
+//				category -> category.getCourseResponse().stream().anyMatch(course -> course.getModes().contains(Mode.ONLINECLASSES))).collect(Collectors.toList()));
+//		 categories.stream().peek(category->category.getSubCourse().stream().filter(
+//				category -> category.getCourseResponse().stream().anyMatch(course -> course.getModes().contains(Mode.ONLINECLASSES))))
+		return null;
 	}
 
 }
