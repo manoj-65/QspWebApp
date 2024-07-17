@@ -160,17 +160,25 @@ public class WeightageUtil {
 
 	public List<CityDto> getSortedCity(List<CityDto> cities, String hostname) {
 		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
-			cities.sort((a, b) -> (int) a.getQspiders() - (int) b.getQspiders());
-			return cities;
+			return cities.stream()
+					  .filter(c->c.getQspiders()!=0l)
+					  .sorted((a, b) -> (int) a.getQspiders() - (int) b.getQspiders())
+					  .collect(Collectors.toList());
 		} else if (jspDomainName.equals(hostname)) {
-			cities.sort((a, b) -> (int) a.getJspiders() - (int) b.getJspiders());
-			return cities;
+			return cities.stream()
+					  .filter(c->c.getJspiders()!=0l)
+					  .sorted((a, b) -> (int) a.getJspiders() - (int) b.getJspiders())
+					  .collect(Collectors.toList());
 		} else if (pyspDomainName.equals(hostname)) {
-			cities.sort((a, b) -> (int) a.getPyspiders() - (int) b.getPyspiders());
-			return cities;
+			return cities.stream()
+					  .filter(c->c.getPyspiders()!=0l)
+					  .sorted((a, b) -> (int) a.getPyspiders() - (int) b.getPyspiders())
+					  .collect(Collectors.toList());
 		} else if (bspDomainName.equals(hostname)) {
-			cities.sort((a, b) -> (int) a.getBspiders() - (int) b.getBspiders());
-			return cities;
+			return cities.stream()
+					  .filter(c->c.getBspiders()!=0l)
+					  .sorted((a, b) -> (int) a.getBspiders() - (int) b.getBspiders())
+					  .collect(Collectors.toList());
 		} else {
 			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
 		}
@@ -178,17 +186,29 @@ public class WeightageUtil {
 
 	public List<CourseDto> getSortedCourseDto(List<CourseDto> courses, String hostname) {
 		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
-			courses.sort((a, b) -> (int) a.getCQspiders() - (int) b.getCQspiders());
-			return courses;
+			return courses.stream()
+						  .filter(c->c.getCQspiders()!=0l)
+						  .sorted((a, b) -> (int) a.getCQspiders() - (int) b.getCQspiders())
+						  .collect(Collectors.toList());
+
 		} else if (jspDomainName.equals(hostname)) {
-			courses.sort((a, b) -> (int) a.getCJspiders() - (int) b.getCJspiders());
-			return courses;
+			return courses.stream()
+					  .filter(c->c.getCJspiders()!=0l)
+					  .sorted((a, b) -> (int) a.getCJspiders() - (int) b.getCJspiders())
+					  .collect(Collectors.toList());
+			
 		} else if (pyspDomainName.equals(hostname)) {
-			courses.sort((a, b) -> (int) a.getCPyspiders() - (int) b.getCPyspiders());
-			return courses;
+			return courses.stream()
+					  .filter(c->c.getCPyspiders()!=0l)
+					  .sorted((a, b) -> (int) a.getCPyspiders() - (int) b.getCPyspiders())
+					  .collect(Collectors.toList());
+			
 		} else if (bspDomainName.equals(hostname)) {
-			courses.sort((a, b) -> (int) a.getCBspiders() - (int) b.getCBspiders());
-			return courses;
+			return courses.stream()
+					  .filter(c->c.getCBspiders()!=0l)
+					  .sorted((a, b) -> (int) a.getCBspiders() - (int) b.getCBspiders())
+					  .collect(Collectors.toList());
+			
 		} else {
 			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
 		}

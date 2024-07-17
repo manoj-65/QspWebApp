@@ -198,14 +198,14 @@ public class BranchServiceImpl implements BranchService {
 				});
 
 				// Sort courses by domain weightage
-				weightageUtil.getSortedCourseDto(courses, domainName);
-				city.setCourses(courses);
+				List<CourseDto> sortedCourseDto = weightageUtil.getSortedCourseDto(courses, domainName);
+				city.setCourses(sortedCourseDto);
 				cities.add(city);
 			});
 
 			// Sort cities by domain weightage
-			weightageUtil.getSortedCity(cities, domainName);
-			country.setCities(cities);
+			List<CityDto> sortedCity = weightageUtil.getSortedCity(cities, domainName);
+			country.setCities(sortedCity);
 			countries.add(country);
 		});
 
