@@ -550,10 +550,10 @@ public class CourseServiceImpl implements CourseService {
 
 	@Override
 	public ResponseEntity<ApiResponse<Course>> updateCourseContent(CourseIdResponse dto) {
-		
+
 		Course course = courseDao.fetchCourseById(dto.getCourseId())
 				.orElseThrow(() -> new IdNotFoundException("Course With the Given Id Not Found"));
-		if(dto.getBranchType().size()!=1) {
+		if (dto.getBranchType().size() != 1) {
 			throw new InvalidInfoException("Organization type entry not valid");
 		}
 		course.setCourseName(dto.getCourseName());
@@ -565,7 +565,7 @@ public class CourseServiceImpl implements CourseService {
 		dto.getFaqs().forEach(f->f.setCourse(course));
 		course.setFaqs(dto.getFaqs());
 		course.setBranchType(dto.getBranchType());
-		
+
 		return ResponseUtil.getOk(courseDao.saveCourse(course));
 	}
 
