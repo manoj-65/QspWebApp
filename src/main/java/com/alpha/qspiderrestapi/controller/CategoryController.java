@@ -181,5 +181,15 @@ public class CategoryController {
 
 		throw new UnauthorizedVersionException();
 	}
+	
+	@GetMapping("/onlineCourses")
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(@PathVariable String version,
+			@RequestHeader("Origin") String domainName) {
+		if (version.equalsIgnoreCase("V1")) {
+			return categoryService.fetchAllOnlineCourses(domainName);
+		}
+
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	}
 
 }

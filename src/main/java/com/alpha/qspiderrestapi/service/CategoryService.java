@@ -31,4 +31,6 @@ public interface CategoryService {
 
 	ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(String domainName);
 
+	ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(String domainName);
+
 }
