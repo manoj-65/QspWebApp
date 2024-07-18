@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -181,7 +182,7 @@ public class CategoryController {
 
 		throw new UnauthorizedVersionException();
 	}
-	
+
 	@GetMapping("/onlineCourses")
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(@PathVariable String version,
 			@RequestHeader("Origin") String domainName) {
@@ -192,7 +193,7 @@ public class CategoryController {
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 
-	@PatchMapping("/removeCourseFromCategory")
+	@DeleteMapping("/removeCourseFromCategory")
 	public ResponseEntity<ApiResponse<String>> removeCourseFromCategory(@PathVariable String version,
 			@RequestParam Long categoryId, @RequestBody List<Long> courseIds) {
 		if (version.equals("v1"))
