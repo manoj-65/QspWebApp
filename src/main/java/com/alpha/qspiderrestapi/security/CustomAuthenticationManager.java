@@ -37,10 +37,11 @@ public class CustomAuthenticationManager {
 			"/api/{version}/users/getProfile", "/api/v1/categories/formresponse",
 			"/api/{version}/categories/getAllCategories", "/api/{version}/categories/getbyid",
 			"/api/{version}/subjects/course", "/api/{version}/branches/getAllBranches", "/api/{version}/feedback",
-			"/api/{version}/cities", "/api/{version}/courses/getbyid", "/api/{version}/branches/getbyid",
+			"/api/{version}/courses/getbyid", "/api/{version}/branches/getbyid",
 			"/api/{version}/courses/viewAll", "/api/{version}/enquiry", "/api/{version}/batches",
 			"/api/{version}/categories/findAllCategories", "/api/{version}/faqs",
-			"api/{version}/weightage/removeCategoryWeightage", "/api/{version}/weightage/removeSubCategoryWeightage", };
+			"api/{version}/weightage/removeCategoryWeightage", "/api/{version}/weightage/removeSubCategoryWeightage",
+			"/api/{version}/categories/onlineCourses" };
 
 	private static final String[] ADMIN_URLS = { "/api/{version}/users/saveUser", "/api/{version}/categories",
 			"/api/{version}/subcategories", "/api/{version}/categories/uploadIcon",
@@ -54,7 +55,7 @@ public class CustomAuthenticationManager {
 			"api/{version}/weightage/categories", "api/{version}/weightage/subCategories",
 			"api/{version}/weightage/courses", "api/{version}/weightage/city", "/api/{version}/courses/saveCourse",
 			"/api/{version}/weightage/updateCategoryWeightage", "api/{version}/weightage/categoryWeightage",
-			"/api/{version}/courses/updateCourseContent", "/api/{version}/categories/removeCourseFromCategory" };
+			"/api/{version}/courses/updateCourseContent", "/api/{version}/categories/removeCourseFromCategory","/api/{version}/cities" };
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
