@@ -257,7 +257,7 @@ public class CategoryServiceImpl implements CategoryService {
 					throw new InvalidInfoException("Given courseId: " + id + " not mapped to any category");
 			});
 			categoryDao.removeCourseFromCategory(courseIds, categoryId);
-			return ResponseUtil.getOk("Course with given Ids are removed");
+			return ResponseUtil.getNoContent("Course with given Ids are removed");
 		} else
 			log.error("Category not found with ID: {}", categoryId);
 		throw new IdNotFoundException("Category With the Given Id Not Found");

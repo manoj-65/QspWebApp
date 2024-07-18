@@ -562,11 +562,30 @@ public class CourseServiceImpl implements CourseService {
 		course.setCourseAbout(dto.getCourseAbout());
 		course.setCourseSummary(dto.getCourseSummary());
 		course.setCourseHighlight(dto.getCourseHighlight());
-		dto.getFaqs().forEach(f->f.setCourse(course));
+		dto.getFaqs().forEach(f -> f.setCourse(course));
 		course.setFaqs(dto.getFaqs());
 		course.setBranchType(dto.getBranchType());
 
 		return ResponseUtil.getOk(courseDao.saveCourse(course));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> removeSubjectsFromCourse(Long courseId, List<Long> subjectIds) {
+		if (courseDao.isCoursePresent(courseId)) {
+			subjectIds.stream().forEach(subjectId -> {
+				if (!subjectDao.isSubjectPresent(subjectId))
+					throw new IdNotFoundException("Subject With the Given Id  " + subjectId + " Not Found");
+
+				if (!courseDao.isSubjectIdPresent(courseId, subjectId))
+					throw new DuplicateDataInsertionException(
+							"Given subjectId " + subjectId + " not mapped to any course");
+			});
+
+			courseDao.removeSubjectsFromCourse(courseId, subjectIds);
+			return ResponseUtil.getNoContent("Removed the given subject Ids from the particular course");
+		}
+
+		throw new IdNotFoundException("Course With the Given Id Not Found");
 	}
 
 }
