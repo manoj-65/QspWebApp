@@ -25,7 +25,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	 */
 	@Query(value = "Select c.categoryId From Category c Where c.categoryId = :categoryId")
 	Long findByCategoryId(@Param("categoryId") long categoryId);
-	
+
 	@Transactional
 	@Modifying
 	@Query(value = "INSERT INTO category_course(category_id, course_id) VALUES (:categoryId,:courseId)", nativeQuery = true)
@@ -33,7 +33,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 	@Query(value = "Select category_id From category_course Where category_id = :categoryId AND course_id = :courseId", nativeQuery = true)
 	Long findByCourseId(@Param("categoryId") long categoryId, @Param("courseId") long courseId);
-	
+
 	List<Category> findAllByOrderByCategoryIdAsc();
+
+	@Transactional
+	@Modifying
+	@Query(value = "delete from category_course where course_id = :courseId and category_id = :categoryId", nativeQuery = true)
+	int removeCourseById(@Param("courseId") long courseId, @Param("categoryId") long categoryId);
 
 }

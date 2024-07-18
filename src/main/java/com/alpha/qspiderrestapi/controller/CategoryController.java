@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -119,9 +120,9 @@ public class CategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@GetMapping("/getbyid")
 	public ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(@RequestParam long categoryId,
-			@PathVariable String version,@RequestHeader("Host") String domainName) {
+			@PathVariable String version, @RequestHeader("Host") String domainName) {
 		if (version.equals("v1"))
-			return categoryService.fetchCategoryById(categoryId,domainName);
+			return categoryService.fetchCategoryById(categoryId, domainName);
 
 		throw new UnauthorizedVersionException();
 	}
@@ -175,13 +176,13 @@ public class CategoryController {
 
 	@GetMapping("/findAllCategories")
 	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(
-			@PathVariable String version,@RequestHeader("Origin") String domainName) {
+			@PathVariable String version, @RequestHeader("Origin") String domainName) {
 		if (version.equals("v1"))
 			return categoryService.findSortedCategories(domainName);
 
 		throw new UnauthorizedVersionException();
 	}
-	
+
 	@GetMapping("/onlineCourses")
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(@PathVariable String version,
 			@RequestHeader("Origin") String domainName) {
@@ -190,6 +191,15 @@ public class CategoryController {
 		}
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
+	}
+
+	@DeleteMapping("/removeCourseFromCategory")
+	public ResponseEntity<ApiResponse<String>> removeCourseFromCategory(@PathVariable String version,
+			@RequestParam Long categoryId, @RequestBody List<Long> courseIds) {
+		if (version.equals("v1"))
+			return categoryService.removeCourseFromCategory(categoryId, courseIds);
+
+		throw new UnauthorizedVersionException();
 	}
 
 }

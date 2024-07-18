@@ -34,11 +34,12 @@ public class CustomAuthenticationManager {
 
 	private static final String[] PUBLIC_URLS = { "/swagger-apis/**", "/swagger-ui/**", "/v3/api-docs/**",
 			"/swagger-ui.html", "/swagger-ui/index.html", "/api/{version}/users/login",
-			"/api/{version}/users/getProfile", "/api/v1/categories/formresponse", "/api/{version}/categories/getAllCategories",
-			"/api/{version}/categories/getbyid", "/api/{version}/subjects/course", "/api/{version}/branches/getAllBranches",
-			"/api/{version}/feedback", "/api/{version}/cities", "/api/{version}/courses/getbyid",
-			"/api/{version}/branches/getbyid", "/api/{version}/courses/viewAll", "/api/{version}/enquiry",
-			"/api/{version}/batches", "/api/{version}/categories/findAllCategories", "/api/{version}/faqs",
+			"/api/{version}/users/getProfile", "/api/v1/categories/formresponse",
+			"/api/{version}/categories/getAllCategories", "/api/{version}/categories/getbyid",
+			"/api/{version}/subjects/course", "/api/{version}/branches/getAllBranches", "/api/{version}/feedback",
+			"/api/{version}/cities", "/api/{version}/courses/getbyid", "/api/{version}/branches/getbyid",
+			"/api/{version}/courses/viewAll", "/api/{version}/enquiry", "/api/{version}/batches",
+			"/api/{version}/categories/findAllCategories", "/api/{version}/faqs",
 			"api/{version}/weightage/removeCategoryWeightage", "/api/{version}/weightage/removeSubCategoryWeightage", };
 
 	private static final String[] ADMIN_URLS = { "/api/{version}/users/saveUser", "/api/{version}/categories",
@@ -51,8 +52,9 @@ public class CustomAuthenticationManager {
 			"/api/{version}/branches/uploadImages", "/api/{version}/branches/uploadIcon",
 			"/api/{version}/branches/findAll", "/api/{version}/branches/modifyLocationUrl", "/api/{version}/faqs",
 			"api/{version}/weightage/categories", "api/{version}/weightage/subCategories",
-			"api/{version}/weightage/courses", "api/{version}/weightage/city","/api/{version}/courses/saveCourse" ,
-			"/api/{version}/weightage/updateCategoryWeightage", "api/{version}/weightage/categoryWeightage" ,"/api/{version}/courses/updateCourseContent"};
+			"api/{version}/weightage/courses", "api/{version}/weightage/city", "/api/{version}/courses/saveCourse",
+			"/api/{version}/weightage/updateCategoryWeightage", "api/{version}/weightage/categoryWeightage",
+			"/api/{version}/courses/updateCourseContent", "/api/{version}/categories/removeCourseFromCategory" };
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
