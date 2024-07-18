@@ -21,6 +21,8 @@ import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
 import com.alpha.qspiderrestapi.dto.CategoryFormResponse;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
 import com.alpha.qspiderrestapi.dto.CourseResponse;
+import com.alpha.qspiderrestapi.dto.SubCategoryResponse;
+import com.alpha.qspiderrestapi.dto.SubCourseResponse;
 import com.alpha.qspiderrestapi.entity.Category;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
@@ -268,16 +270,28 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(String domainName) {
 		List<CategoryResponse> categories = fetchAllCategories(domainName).getBody().getData();
-		
-		categories = categories.stream().filter(
-				c -> c.getCourseResponse().stream().anyMatch(course -> course.getModes().contains(Mode.ONLINECLASSES)))
-				.collect(Collectors.toList());
-	
-		for (CategoryResponse category : categories) {
-			List<CourseResponse> list = category.getCourseResponse().stream().filter(course -> course.getModes().contains(Mode.ONLINECLASSES)).toList();
-			category.setCourseResponse(list);
+		List<CategoryResponse> result = new ArrayList<CategoryResponse>();
+		for (CategoryResponse categoryResponse : categories) {
+			if (!categoryResponse.getSubCourse().isEmpty()) {
+				List<SubCategoryResponse> subCoursesResult = new ArrayList<SubCategoryResponse>();
+				List<SubCategoryResponse> subCourses = categoryResponse.getSubCourse();
+				for (SubCategoryResponse subCourse : subCourses) {
+					List<SubCourseResponse> collect = subCourse.getSubCourseResponse().stream().filter(c->c.getModes().contains(Mode.ONLINECLASSES)).collect(Collectors.toList());
+					subCourse.setSubCourseResponse(collect);
+					if(!subCourse.getSubCourseResponse().isEmpty()) {
+						subCoursesResult.add(subCourse);
+					}
+				}
+				categoryResponse.setSubCourse(subCoursesResult);
+			}
+			List<CourseResponse> collect = categoryResponse.getCourseResponse().stream().filter(c->c.getModes().contains(Mode.ONLINECLASSES)).collect(Collectors.toList());
+			categoryResponse.setCourseResponse(collect);
+			if(!categoryResponse.getCourseResponse().isEmpty() || !categoryResponse.getSubCourse().isEmpty()) {
+				result.add(categoryResponse);
+			}
 		}
-		return ResponseUtil.getOk(categories);
+
+		return ResponseUtil.getOk(result);
 	}
 
 }
