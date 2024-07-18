@@ -249,17 +249,14 @@ public class CategoryServiceImpl implements CategoryService {
 	public ResponseEntity<ApiResponse<String>> removeCourseFromCategory(Long categoryId, List<Long> courseIds) {
 
 		if (categoryDao.isCategoryPresent(categoryId)) {
+			// validation for mapping and availability
 			courseIds.stream().forEach(id -> {
-				if (courseDao.isCoursePresent(id)) {
-					if (categoryDao.isCourseIdPresent(categoryId, id)) {
-						categoryDao.removeCourseFromCategory(id, categoryId);
-					} else {
-						throw new InvalidInfoException("Given courseId: " + id + " not mapped to any category");
-					}
-				} else {
+				if (!courseDao.isCoursePresent(id))
 					throw new IdNotFoundException("Course With the Given Id: " + id + " Not Found");
-				}
+				if (!categoryDao.isCourseIdPresent(categoryId, id))
+					throw new InvalidInfoException("Given courseId: " + id + " not mapped to any category");
 			});
+			categoryDao.removeCourseFromCategory(courseIds, categoryId);
 			return ResponseUtil.getOk("Course with given Ids are removed");
 		} else
 			log.error("Category not found with ID: {}", categoryId);

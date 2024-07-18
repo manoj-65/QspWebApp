@@ -38,7 +38,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 	@Transactional
 	@Modifying
-	@Query(value = "delete from category_course where course_id = :courseId and category_id = :categoryId", nativeQuery = true)
-	int removeCourseById(@Param("courseId") long courseId, @Param("categoryId") long categoryId);
+	@Query(value = "delete from category_course where course_id IN (:courseIds) and category_id = :categoryId", nativeQuery = true)
+	int removeCourseById(@Param("courseIds") List<Long> courseIds, @Param("categoryId") long categoryId);
 
 }
