@@ -36,4 +36,6 @@ public interface CourseService {
 
 	ResponseEntity<ApiResponse<Course>> updateCourseContent(CourseIdResponse courseIdResponse);
 
+	ResponseEntity<ApiResponse<String>> removeSubjectsFromCourse(Long courseId, List<Long> subjectIds);
+
 }

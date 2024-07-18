@@ -18,4 +18,6 @@ public interface SubCategoryService {
 
 	ResponseEntity<ApiResponse<SubCategory>> assignCoursesToSubCategory(long subCategoryId, List<Long> courseIds);
 
+	ResponseEntity<ApiResponse<String>> removeCourseFromCategory(Long subCategoryId, List<Long> courseIds);
+
 }

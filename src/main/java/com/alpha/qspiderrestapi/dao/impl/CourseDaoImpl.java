@@ -57,7 +57,7 @@ public class CourseDaoImpl implements CourseDao {
 	public void deleteCourse(Course course) {
 		courseRepository.delete(course);
 	}
-	
+
 	@Override
 	public boolean isCourseExist(long courseId) {
 		return courseRepository.existsById(courseId);
@@ -65,12 +65,17 @@ public class CourseDaoImpl implements CourseDao {
 
 	@Override
 	public void removeCourseAndSubCategoryById(long courseId) {
-		 courseRepository.removeCourseAndSubCategoryById(courseId);
+		courseRepository.removeCourseAndSubCategoryById(courseId);
 	}
-	
+
 	@Override
 	public void removeCourseAndCategoryById(long courseId) {
-		 courseRepository.removeCourseAndCategoryById(courseId);
+		courseRepository.removeCourseAndCategoryById(courseId);
+	}
+
+	@Override
+	public void removeSubjectsFromCourse(Long courseId, List<Long> subjectIds) {
+		courseRepository.removeSubjectsFromCourse(subjectIds, courseId);
 	}
 
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +26,7 @@ import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
+import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.modelmapper.CategoryMapper;
 import com.alpha.qspiderrestapi.modelmapper.CourseMapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
@@ -243,6 +243,25 @@ public class CategoryServiceImpl implements CategoryService {
 	private List<CourseResponse> mapToCourse(List<Course> courses, Mode mode, long categoryId) {
 		return courses.stream().filter(course -> course.getMode().contains(mode))
 				.map(course -> courseMapper.mapToCourseResponse(course, categoryId)).collect(Collectors.toList());
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> removeCourseFromCategory(Long categoryId, List<Long> courseIds) {
+
+		if (categoryDao.isCategoryPresent(categoryId)) {
+			// validation for mapping and availability
+			courseIds.stream().forEach(id -> {
+				if (!courseDao.isCoursePresent(id))
+					throw new IdNotFoundException("Course With the Given Id: " + id + " Not Found");
+				if (!categoryDao.isCourseIdPresent(categoryId, id))
+					throw new InvalidInfoException("Given courseId: " + id + " not mapped to any category");
+			});
+			categoryDao.removeCourseFromCategory(courseIds, categoryId);
+			return ResponseUtil.getNoContent("Course with given Ids are removed");
+		} else
+			log.error("Category not found with ID: {}", categoryId);
+		throw new IdNotFoundException("Category With the Given Id Not Found");
+
 	}
 
 	@Override

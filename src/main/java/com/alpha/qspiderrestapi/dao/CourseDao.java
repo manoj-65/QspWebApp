@@ -29,4 +29,6 @@ public interface CourseDao {
 
 	void removeCourseAndCategoryById(long courseId);
 
+	void removeSubjectsFromCourse(Long courseId, List<Long> subjectIds);
+
 }

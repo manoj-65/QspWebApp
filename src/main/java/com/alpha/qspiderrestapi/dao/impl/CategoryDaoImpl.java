@@ -53,4 +53,9 @@ public class CategoryDaoImpl implements CategoryDao {
 		return true;
 	}
 
+	@Override
+	public void removeCourseFromCategory(List<Long> courseIds, Long categoryId) {
+		categoryRepository.removeCourseById(courseIds, categoryId);
+	}
+
 }

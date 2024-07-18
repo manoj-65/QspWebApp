@@ -160,7 +160,7 @@ public class CourseController {
 			return courseService.uploadIcon(file, courseId);
 		throw new UnauthorizedVersionException();
 	}
- 
+
 	@DeleteMapping
 	public ResponseEntity<ApiResponse<String>> removeCourseById(@PathVariable String version,
 			@RequestParam long courseId) {
@@ -200,7 +200,7 @@ public class CourseController {
 
 		throw new UnauthorizedVersionException();
 	}
-	
+
 	@PatchMapping(value = "/updateCourse", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(@PathVariable String version,
 			@RequestParam long categoryId, @RequestParam(required = false) Long subCategoryId,
@@ -213,11 +213,21 @@ public class CourseController {
 
 		throw new UnauthorizedVersionException();
 	}
-	
+
 	@PutMapping(value = "/updateCourseContent")
-	public ResponseEntity<ApiResponse<Course>> updateCourseContent(@PathVariable String version,@RequestBody CourseIdResponse courseIdResponse) {
+	public ResponseEntity<ApiResponse<Course>> updateCourseContent(@PathVariable String version,
+			@RequestBody CourseIdResponse courseIdResponse) {
 		if (version.equals("v1"))
 			return courseService.updateCourseContent(courseIdResponse);
+
+		throw new UnauthorizedVersionException();
+	}
+
+	@DeleteMapping("/removeSubjectsFromCourse")
+	public ResponseEntity<ApiResponse<String>> removeSubjectsFromCourse(@PathVariable String version,
+			@RequestParam Long courseId, @RequestBody List<Long> subjectIds) {
+		if (version.equals("v1"))
+			return courseService.removeSubjectsFromCourse(courseId, subjectIds);
 
 		throw new UnauthorizedVersionException();
 	}
