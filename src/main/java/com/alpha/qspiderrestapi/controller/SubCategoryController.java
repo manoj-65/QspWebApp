@@ -118,7 +118,7 @@ public class SubCategoryController {
 			return subCategoryService.uploadIcon(file, subCategoryId);
 		throw new UnauthorizedVersionException();
 	}
-
+ 
 	@DeleteMapping("/removeCourseFromSubCategory")
 	public ResponseEntity<ApiResponse<String>> removeCourseFromSubCategory(@PathVariable String version,
 			@RequestParam Long subCategoryId, @RequestBody List<Long> courseIds) {
