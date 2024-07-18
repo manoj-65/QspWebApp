@@ -21,4 +21,6 @@ public interface SubCategoryDao {
 
 	boolean isCourseIdPresent(long subCategoryId, long courseId);
 
+	void removeCourseFromSubCategory(Long subCategoryId, List<Long> courseIds);
+
 }

@@ -16,6 +16,7 @@ import com.alpha.qspiderrestapi.entity.Category;
 import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
+import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.service.SubCategoryService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 
@@ -159,7 +160,20 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	@Override
 	public ResponseEntity<ApiResponse<String>> removeCourseFromCategory(Long subCategoryId, List<Long> courseIds) {
 
-		return null;
+		if (subCategoryDao.isSubCategoryPresent(subCategoryId)) {
+			courseIds.forEach(courseId -> {
+				if (!courseDao.isCoursePresent(courseId))
+					throw new IdNotFoundException("Course With the Given Id = " + courseId + " Not Found");
+
+				if (!subCategoryDao.isCourseIdPresent(subCategoryId, courseId))
+					throw new InvalidInfoException("Given courseId " + courseId + " not mapped to given subCategory");
+			});
+			subCategoryDao.removeCourseFromSubCategory(subCategoryId, courseIds);
+			return ResponseUtil.getNoContent("Course with the given sub Category removed");
+		} else {
+			throw new IdNotFoundException("SubCategory With the Given Id Not Found");
+		}
+
 	}
 
 }
