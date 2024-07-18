@@ -1,4 +1,4 @@
-	package com.alpha.qspiderrestapi.controller;
+package com.alpha.qspiderrestapi.controller;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,13 +89,12 @@ public class SubCategoryController {
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 
-	
 	@Operation(description = "Assigns courses to a Sub-Category", summary = "Updates associated courses")
 	@ApiResponses(value = {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "OK", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
-			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400") })
 	@PatchMapping(value = "/assigncourses")
 	public ResponseEntity<ApiResponse<SubCategory>> assignCoursesToSubCategory(@PathVariable String version,
 			@RequestParam int subCategoryId, @RequestBody List<Long> courseIds) {
@@ -104,18 +104,27 @@ public class SubCategoryController {
 		throw new UnauthorizedVersionException("Unauthorized Version");
 
 	}
-	
+
 	@Operation(description = "Sub-Category icon url is added to a Sub-Category", summary = "Updates the Sub-Category icon")
 	@ApiResponses(value = {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
-			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400")})
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400") })
 	@PatchMapping(value = "/uploadIcon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> uploadIcon(@PathVariable String version,
 			@RequestParam("file") MultipartFile file, @RequestParam long subCategoryId) {
 		if (version.equals("v1"))
 			return subCategoryService.uploadIcon(file, subCategoryId);
+		throw new UnauthorizedVersionException();
+	}
+
+	@DeleteMapping("/removeCourseFromSubCategory")
+	public ResponseEntity<ApiResponse<String>> removeCourseFromSubCategory(@PathVariable String version,
+			@RequestParam Long subCategoryId, @RequestBody List<Long> courseIds) {
+		if (version.equals("v1"))
+			return subCategoryService.removeCourseFromCategory(subCategoryId, courseIds);
+
 		throw new UnauthorizedVersionException();
 	}
 }
