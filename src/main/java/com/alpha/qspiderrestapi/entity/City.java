@@ -25,7 +25,7 @@ public class City {
 	private String cityIconUrl;
 	private String cityImageUrl;
 	@Column(nullable = true)
-	private long branchCount;
+	private Long branchCount;
 	
 	@OneToOne(mappedBy = "city",cascade = CascadeType.ALL)
 	@JsonIgnore

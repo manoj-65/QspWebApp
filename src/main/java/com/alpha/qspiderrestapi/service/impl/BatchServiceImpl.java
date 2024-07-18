@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.alpha.qspiderrestapi.dao.BatchDao;
 import com.alpha.qspiderrestapi.dao.BranchDao;
+import com.alpha.qspiderrestapi.dao.CityDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.entity.Batch;
@@ -36,6 +37,9 @@ public class BatchServiceImpl implements BatchService {
 
 	@Autowired
 	private BatchDao batchDao;
+	
+	@Autowired
+	private CityDao cityDao;
 
 	@Override
 	public ResponseEntity<ApiResponse<Batch>> saveBatch(long branchId, long courseId, Batch batch) {
@@ -70,16 +74,18 @@ public class BatchServiceImpl implements BatchService {
 
 		batchDao.updateBatchStatus(BatchStatus.ONGOING, BatchStatus.BLOCKED);
 		batchDao.updateBatchStatus(BatchStatus.UPCOMING, BatchStatus.ONGOING);
+		cityDao.updateCityBranchCount();
 	}
 
 	@Override
 	@Scheduled(cron = "0 0 3 ? * MON,THU")
 	public void createBatch() {
-		List<String> branchTypes = Arrays.asList("JSP", "QSP", "PYSP"); // Example branch types
+		List<String> branchTypes = Arrays.asList("JSP", "QSP", "PYSP","BSP"); // Example branch types
 		Time startTime1 = Time.valueOf("10:00:00"); // Start time 10:00 AM
 		Time startTime2 = Time.valueOf("14:00:00"); // Start time 2:00 PM
 
 		batchDao.createBatches(branchTypes, startTime1, startTime2);
+		cityDao.updateCityBranchCount();
 	}
 
 	@Override

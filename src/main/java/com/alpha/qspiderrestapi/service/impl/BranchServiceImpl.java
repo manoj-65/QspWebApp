@@ -29,8 +29,10 @@ import com.alpha.qspiderrestapi.dto.CityDto;
 import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.dto.CourseDto;
 import com.alpha.qspiderrestapi.entity.Branch;
+import com.alpha.qspiderrestapi.entity.City;
 import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
+import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.exception.InvalidPhoneNumberException;
 import com.alpha.qspiderrestapi.modelmapper.BranchById_Mapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
@@ -74,6 +76,14 @@ public class BranchServiceImpl implements BranchService {
 
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch) {
+		Optional<City> city = cityDao.findCityByCityName(branch.getBranchAddress().getCity());
+		if(city.isPresent()) {
+			if(city.get().getWeightage()==null) {
+				throw new InvalidInfoException("Given city does'nt have a weightage, Branch cannot be added");
+			}
+		}else {
+			throw new IdNotFoundException("Given city info in the address not found in the database");
+		}
 		log.info("Saving branch: {}", branch);
 		branch.setBranchTitle(branch.getDisplayName() + "-" + branch.getBranchType());
 		for (String contact : branch.getContacts()) {
