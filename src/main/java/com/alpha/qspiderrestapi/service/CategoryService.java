@@ -19,9 +19,10 @@ public interface CategoryService {
 
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName);
 
-	ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId,String domainName);
+	ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId, String domainName);
 
-	ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile iconfile,MultipartFile alternativeIconfile, long categoryId);
+	ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile iconfile, MultipartFile alternativeIconfile,
+			long categoryId);
 
 	ResponseEntity<ApiResponse<Category>> assignCoursesToCategory(long categoryId, List<Long> courseIds);
 
@@ -32,5 +33,7 @@ public interface CategoryService {
 	ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(String domainName);
 
 	ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(String domainName);
+
+	ResponseEntity<ApiResponse<String>> removeCourseFromCategory(Long categoryId, List<Long> courseIds);
 
 }

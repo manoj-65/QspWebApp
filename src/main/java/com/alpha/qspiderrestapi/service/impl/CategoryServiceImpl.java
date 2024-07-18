@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +26,7 @@ import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
+import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.modelmapper.CategoryMapper;
 import com.alpha.qspiderrestapi.modelmapper.CourseMapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
@@ -42,11 +42,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
-	
-	
 	@Autowired
 	private CategoryDao categoryDao;
-	
+
 	@Autowired
 	private CourseDao courseDao;
 
@@ -55,16 +53,16 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Autowired
 	private CategoryUtil categoryUtil;
-	
+
 	@Autowired
 	private WeightageUtil weightageUtil;
 
 	@Autowired
 	private CategoryMapper categoryMapper;
-	
+
 	@Autowired
 	private CourseMapper courseMapper;
-	
+
 	@Value(value = "organization.qsp")
 	private String qspDomainName;
 
@@ -106,24 +104,24 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName) {
 
-		log.info("Entering fetchAllCategories=========="+domainName);
+		log.info("Entering fetchAllCategories==========" + domainName);
 		List<Category> categories = categoryDao.fetchAllCategories();
 		categories = weightageUtil.getSortedCategory(categories, domainName);
 		List<CategoryResponse> categoryResponse = new ArrayList<CategoryResponse>();
-		categories.forEach(category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category,domainName)));
+		categories.forEach(category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainName)));
 		log.info("Category list has been upadated and set");
 		return ResponseUtil.getOk(categoryResponse);
 	}
 
 	// fetches category based on the given id
 	@Override
-	public ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId,String domainName) {
+	public ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId, String domainName) {
 		Category category = categoryDao.fetchCategoryById(categoryId).orElseThrow(() -> {
 			log.error("Category not found with ID: {}", categoryId);
 			return new IdNotFoundException();
 		});
 		log.info("Category fetched successfully: {}", category);
-		return ResponseUtil.getOk(categoryMapper.mapToCategoryDto(category,domainName));
+		return ResponseUtil.getOk(categoryMapper.mapToCategoryDto(category, domainName));
 
 	}
 
@@ -172,7 +170,7 @@ public class CategoryServiceImpl implements CategoryService {
 					throw new IdNotFoundException("Course With the Given Id: " + id + " Not Found");
 				}
 				categoryDao.assignCourseToCategory(categoryId, id);
-			}); 
+			});
 			return ResponseUtil.getOk(categoryDao.fetchCategoryById(categoryId).get());
 		} else
 			log.error("Category not found with ID: {}", categoryId);
@@ -201,18 +199,21 @@ public class CategoryServiceImpl implements CategoryService {
 //	}
 
 	@Override
-	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(String domainName) {
+	public ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(
+			String domainName) {
 		List<Category> categories = categoryDao.fetchAllCategories();
 		categories = weightageUtil.getSortedCategory(categories, domainName);
 		for (Category category : categories) {
 			if (!category.getSubCategories().isEmpty()) {
 				List<Course> subCategoryCourses = new ArrayList<Course>();
-				List<SubCategory> sortedSubCategory = weightageUtil.getSortedSubCategory(category.getSubCategories(), domainName, category.getCategoryId());
+				List<SubCategory> sortedSubCategory = weightageUtil.getSortedSubCategory(category.getSubCategories(),
+						domainName, category.getCategoryId());
 				for (SubCategory subCategory : sortedSubCategory) {
-					List<Course> sortedCourseOfSubCategory = weightageUtil.getSortedCourseOfSubCategory(subCategory.getCourses(), domainName, subCategory.getSubCategoryId());
+					List<Course> sortedCourseOfSubCategory = weightageUtil.getSortedCourseOfSubCategory(
+							subCategory.getCourses(), domainName, subCategory.getSubCategoryId());
 					subCategoryCourses.addAll(sortedCourseOfSubCategory);
 				}
-				 List<Course> distinctCourses = subCategoryCourses.stream().distinct().collect(Collectors.toList());
+				List<Course> distinctCourses = subCategoryCourses.stream().distinct().collect(Collectors.toList());
 				category.setCourses(distinctCourses);
 			}
 		}
@@ -222,22 +223,48 @@ public class CategoryServiceImpl implements CategoryService {
 
 			List<CategoryDashboardResponse> filteredCategory = categories.stream().filter(
 					category -> category.getCourses().stream().anyMatch(course -> course.getMode().contains(mode)))
-					.map(category -> mapToCategoryDashboardResponse(category, mode,domainName)).collect(Collectors.toList());
+					.map(category -> mapToCategoryDashboardResponse(category, mode, domainName))
+					.collect(Collectors.toList());
 
 			result.put(mode, filteredCategory);
 		}
 		return ResponseUtil.getOk(result);
 	}
 
-	public CategoryDashboardResponse mapToCategoryDashboardResponse(Category category, Mode mode,String domainName) {
+	public CategoryDashboardResponse mapToCategoryDashboardResponse(Category category, Mode mode, String domainName) {
 		return CategoryDashboardResponse.builder().categoryName(category.getCategoryTitle())
 				.categoryId(category.getCategoryId()).categoryAlternativeIcon(category.getCategoryAlternativeIcon())
-				.categoryIcon(category.getCategoryIcon()).courses(mapToCourse(weightageUtil.getSortedCourseOfCategory(category.getCourses(), domainName, category.getCategoryId()), mode,category.getCategoryId())).build();
+				.categoryIcon(category.getCategoryIcon())
+				.courses(mapToCourse(weightageUtil.getSortedCourseOfCategory(category.getCourses(), domainName,
+						category.getCategoryId()), mode, category.getCategoryId()))
+				.build();
 	}
 
-	private List<CourseResponse> mapToCourse(List<Course> courses, Mode mode,long categoryId) {
+	private List<CourseResponse> mapToCourse(List<Course> courses, Mode mode, long categoryId) {
 		return courses.stream().filter(course -> course.getMode().contains(mode))
-				.map(course -> courseMapper.mapToCourseResponse(course,categoryId)).collect(Collectors.toList());
+				.map(course -> courseMapper.mapToCourseResponse(course, categoryId)).collect(Collectors.toList());
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> removeCourseFromCategory(Long categoryId, List<Long> courseIds) {
+
+		if (categoryDao.isCategoryPresent(categoryId)) {
+			courseIds.stream().forEach(id -> {
+				if (courseDao.isCoursePresent(id)) {
+					if (categoryDao.isCourseIdPresent(categoryId, id)) {
+						categoryDao.removeCourseFromCategory(id, categoryId);
+					} else {
+						throw new InvalidInfoException("Given courseId: " + id + " not mapped to any category");
+					}
+				} else {
+					throw new IdNotFoundException("Course With the Given Id: " + id + " Not Found");
+				}
+			});
+			return ResponseUtil.getOk("Course with given Ids are removed");
+		} else
+			log.error("Category not found with ID: {}", categoryId);
+		throw new IdNotFoundException("Category With the Given Id Not Found");
+
 	}
 
 	@Override
