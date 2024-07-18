@@ -3,6 +3,7 @@ package com.alpha.qspiderrestapi.service.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -266,9 +267,17 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(String domainName) {
-//		List<CategoryResponse> categories = fetchAllCategories(domainName).getBody().getData();
-//		 categories.stream().filter(c->c.getCourseResponse().stream().anyMatch(null))
-		return null;
+		List<CategoryResponse> categories = fetchAllCategories(domainName).getBody().getData();
+		
+		categories = categories.stream().filter(
+				c -> c.getCourseResponse().stream().anyMatch(course -> course.getModes().contains(Mode.ONLINECLASSES)))
+				.collect(Collectors.toList());
+	
+		for (CategoryResponse category : categories) {
+			List<CourseResponse> list = category.getCourseResponse().stream().filter(course -> course.getModes().contains(Mode.ONLINECLASSES)).toList();
+			category.setCourseResponse(list);
+		}
+		return ResponseUtil.getOk(categories);
 	}
 
 }
