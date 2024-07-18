@@ -31,7 +31,7 @@ public class CityServiceImpl implements CityService{
 			String cityName) {
 		String iconFolder = "CITY/ICON/";
 		String imageFolder = "CITY/IMAGE/";
-		City city = new City();;
+		City city = new City();
 		if(addressDao.isCityPresent(cityName)) {
 			iconFolder += cityName;
 			imageFolder += cityName;
