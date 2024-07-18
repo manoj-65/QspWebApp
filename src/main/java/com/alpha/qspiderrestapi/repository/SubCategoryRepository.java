@@ -1,5 +1,7 @@
 package com.alpha.qspiderrestapi.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -31,5 +33,11 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
 
 	@Query(value = "Select sub_category_id From sub_category_course Where course_id = :courseId AND sub_category_id = :subCategoryId", nativeQuery = true)
 	Long findBySubCategoryId(long subCategoryId, long courseId);
+
+	@Transactional
+	@Modifying
+	@Query(value = "Delete from sub_category_course where sub_category_id = :subCategoryId and course_id IN (:courseIds)", nativeQuery = true)
+	void removeCourseFromSubCategory(@Param("subCategoryId") Long subCategoryId,
+			@Param("courseIds") List<Long> courseIds);
 
 }

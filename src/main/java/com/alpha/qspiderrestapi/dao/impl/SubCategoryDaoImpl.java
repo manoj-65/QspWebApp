@@ -1,4 +1,4 @@
- package com.alpha.qspiderrestapi.dao.impl;
+package com.alpha.qspiderrestapi.dao.impl;
 
 import java.util.List;
 import java.util.Optional;
@@ -83,9 +83,14 @@ public class SubCategoryDaoImpl implements SubCategoryDao {
 
 	@Override
 	public boolean isCourseIdPresent(long subCategoryId, long courseId) {
-		if (subCategoryRepository.findBySubCategoryId(subCategoryId,courseId ) == null)
+		if (subCategoryRepository.findBySubCategoryId(subCategoryId, courseId) == null)
 			return false;
 		return true;
+	}
+
+	@Override
+	public void removeCourseFromSubCategory(Long subCategoryId, List<Long> courseIds) {
+		subCategoryRepository.removeCourseFromSubCategory(subCategoryId, courseIds); 
 	}
 
 }
