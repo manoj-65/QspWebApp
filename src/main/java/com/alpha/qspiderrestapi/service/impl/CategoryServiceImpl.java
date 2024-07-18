@@ -266,11 +266,8 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(String domainName) {
-		List<CategoryResponse> categories = fetchAllCategories(domainName).getBody().getData();
-//		 categories = categories.stream().filter(
-//				category -> category.getCourseResponse().stream().anyMatch(course -> course.getModes().contains(Mode.ONLINECLASSES))).collect(Collectors.toList()));
-//		 categories.stream().peek(category->category.getSubCourse().stream().filter(
-//				category -> category.getCourseResponse().stream().anyMatch(course -> course.getModes().contains(Mode.ONLINECLASSES))))
+//		List<CategoryResponse> categories = fetchAllCategories(domainName).getBody().getData();
+//		 categories.stream().filter(c->c.getCourseResponse().stream().anyMatch(null))
 		return null;
 	}
 
