@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,7 @@ import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.BranchDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestDto;
+import com.alpha.qspiderrestapi.dto.UpdateCourseRequestDto;
 import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.CityBranchView;
 import com.alpha.qspiderrestapi.entity.Course;
@@ -481,8 +483,7 @@ public class CourseServiceImpl implements CourseService {
 
 		// dto to course
 		Course course = Course.builder().courseName(value.getCourseName())
-				.courseDescription(value.getCourseDescription())
-				.branchType(value.getBranchType()).mode(value.getMode())
+				.courseDescription(value.getCourseDescription()).branchType(value.getBranchType()).mode(value.getMode())
 				.courseAbout(value.getCourseAbout()).courseSummary(value.getCourseSummary())
 				.courseHighlight(value.getCourseHighlight()).faqs(value.getFaqs()).build();
 
@@ -505,7 +506,7 @@ public class CourseServiceImpl implements CourseService {
 
 		String homePageImageUrl = awss3Service.uploadFile(homePageImage, folder2);
 
-		if (!imageUrl.isEmpty()) {
+		if (!imageUrl.isEmpty() && !homePageImageUrl.isEmpty()) {
 			course.setCourseImage(imageUrl);
 			course.setHomePageCourseImage(homePageImageUrl);
 		} else {
@@ -519,34 +520,77 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(long categoryId, Long subCategoryId,
-			String courseRequest, MultipartFile icon, MultipartFile image, MultipartFile homePageImage) {
+	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(String courseRequest, MultipartFile icon,
+			MultipartFile image, MultipartFile homePageImage) {
 
-		if (categoryDao.isCategoryPresent(categoryId)) {
-
-			if (subCategoryId != null) {
-				if (subCategoryDao.isSubCategoryPresent(subCategoryId)) {
-
-					Course courseObj = mapAndSetUrlsToCourse(categoryId, subCategoryId, courseRequest, icon, image,
-							homePageImage);
-
-					subCategoryDao.assignCourseToSubCategory(subCategoryId, courseObj.getCourseId());
-
-					return ResponseUtil.getCreated(courseObj);
-				} else {
-					throw new IdNotFoundException("No SubCategory found with given Id: " + subCategoryId);
-				}
-			} else {
-				Course courseObj = mapAndSetUrlsToCourse(categoryId, subCategoryId, courseRequest, icon, image,
-						homePageImage);
-
-				categoryDao.assignCourseToCategory(categoryId, courseObj.getCourseId());
-
-				return ResponseUtil.getCreated(courseObj);
-			}
-		} else {
-			throw new IdNotFoundException("No Category found with given Id: " + categoryId);
+		// string of json body to object
+		ObjectMapper objectMapper = new ObjectMapper();
+		UpdateCourseRequestDto value;
+		try {
+			value = objectMapper.readValue(courseRequest, UpdateCourseRequestDto.class);
+		} catch (JsonProcessingException e) {
+			System.err.println(e.getMessage());
+			throw new InvalidInfoException("The Json body format is incorrect");
 		}
+
+		Course course = courseDao.fetchCourseById(value.getCourseId())
+				.orElseThrow(() -> new IdNotFoundException("Course With the Given Id Not Found"));
+		
+		if(icon!=null) {
+			// upload icon and set icon url in course object
+			String folder = "COURSE/";
+			folder += course.getCourseName();
+			String iconUrl = awss3Service.uploadFile(icon, folder);
+
+			if (!iconUrl.isEmpty()) {
+				course.setCourseIcon(iconUrl);
+			} else {
+				throw new NullPointerException("Icon can't be uploaded due to admin restriction");
+			}
+		}
+		
+		if(image != null) {
+			// upload course images and set respective urls in course object
+			String folder2 = "COURSE/";
+			folder2 += "IMAGE/" + course.getCourseName();
+
+			String imageUrl = awss3Service.uploadFile(image, folder2);
+
+			if (!imageUrl.isEmpty()) {
+				course.setCourseImage(imageUrl);
+			} else {
+				throw new NullPointerException("Icon can't be uploaded due to admin restriction");
+			}
+		}
+		
+		if(homePageImage != null) {
+			// upload course images and set respective urls in course object
+			String folder2 = "COURSE/";
+			folder2 += "IMAGE/" + course.getCourseName();
+
+
+			String homePageImageUrl = awss3Service.uploadFile(homePageImage, folder2);
+
+			if (!homePageImageUrl.isEmpty()) {
+				course.setHomePageCourseImage(homePageImageUrl);
+			} else {
+				throw new NullPointerException("Icon can't be uploaded due to admin restriction");
+			}
+		}
+		
+		//updated course field is set to the course
+		
+		course.setCourseName(value.getCourseName());
+		course.setCourseDescription(value.getCourseDescription());
+		course.setBranchType(value.getBranchType());
+		course.setMode(value.getMode());
+		course.setCourseSummary(value.getCourseSummary());
+		course.setCourseAbout(value.getCourseAbout());
+		course.setCourseHighlight(value.getCourseHighlight());
+		value.getFaqs().forEach(f -> f.setCourse(course));
+		course.setFaqs(value.getFaqs());
+
+		return ResponseUtil.getOk(courseDao.saveCourse(course));
 	}
 
 	@Override

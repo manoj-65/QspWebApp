@@ -188,11 +188,11 @@ public class CourseController {
 		throw new UnauthorizedVersionException();
 	}
 
-	@PostMapping(value = "/saveCourse", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/saveCourse")
 	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(@PathVariable String version,
 			@RequestParam long categoryId, @RequestParam(required = false) Long subCategoryId,
-			@RequestParam MultipartFile icon, @RequestParam MultipartFile image,
-			@RequestParam MultipartFile homePageImage, @RequestPart String course) {
+			@RequestPart MultipartFile icon, @RequestPart MultipartFile image,
+			@RequestPart MultipartFile homePageImage, @RequestPart String course) {
 
 		if (version.equals("v1"))
 			return courseService.saveCourseAlongWithImages(categoryId, subCategoryId, course, icon, image,
@@ -201,14 +201,13 @@ public class CourseController {
 		throw new UnauthorizedVersionException();
 	}
 
-	@PatchMapping(value = "/updateCourse", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PutMapping(value = "/updateCourse")
 	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(@PathVariable String version,
-			@RequestParam long categoryId, @RequestParam(required = false) Long subCategoryId,
-			@RequestParam MultipartFile icon, @RequestParam MultipartFile image,
-			@RequestParam MultipartFile homePageImage, @RequestPart String course) {
+			@RequestPart(required = false) MultipartFile icon, @RequestPart(required = false) MultipartFile image,
+			@RequestPart(required = false) MultipartFile homePageImage, @RequestPart String course) {
 
 		if (version.equals("v1"))
-			return courseService.updateCourseAlongWithImages(categoryId, subCategoryId, course, icon, image,
+			return courseService.updateCourseAlongWithImages(course, icon, image,
 					homePageImage);
 
 		throw new UnauthorizedVersionException();
