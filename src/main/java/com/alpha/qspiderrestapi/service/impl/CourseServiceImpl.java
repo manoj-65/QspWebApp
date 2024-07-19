@@ -475,13 +475,14 @@ public class CourseServiceImpl implements CourseService {
 		try {
 			value = objectMapper.readValue(courseRequest, CourseRequestDto.class);
 		} catch (JsonProcessingException e) {
+			System.err.println(e.getMessage());
 			throw new InvalidInfoException("The Json body format is incorrect");
 		}
 
 		// dto to course
 		Course course = Course.builder().courseName(value.getCourseName())
 				.courseDescription(value.getCourseDescription())
-				.branchType(new ArrayList<Organization>(Arrays.asList(value.getBranchType()))).mode(value.getMode())
+				.branchType(value.getBranchType()).mode(value.getMode())
 				.courseAbout(value.getCourseAbout()).courseSummary(value.getCourseSummary())
 				.courseHighlight(value.getCourseHighlight()).faqs(value.getFaqs()).build();
 
