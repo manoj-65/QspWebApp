@@ -31,7 +31,7 @@ public interface CourseService {
 	ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(long categoryId, Long subCategoryId, String course,
 			MultipartFile icon, MultipartFile image, MultipartFile homePageImage);
 
-	ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(long categoryId, Long subCategoryId, String course,
+	ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(String course,
 			MultipartFile icon, MultipartFile image, MultipartFile homePageImage);
 
 	ResponseEntity<ApiResponse<Course>> updateCourseContent(CourseIdResponse courseIdResponse);
