@@ -3,8 +3,8 @@ package com.alpha.qspiderrestapi.service.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -266,32 +266,36 @@ public class CategoryServiceImpl implements CategoryService {
 		throw new IdNotFoundException("Category With the Given Id Not Found");
 
 	}
-
+	
 	@Override
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(String domainName) {
-		List<CategoryResponse> categories = fetchAllCategories(domainName).getBody().getData();
-		List<CategoryResponse> result = new ArrayList<CategoryResponse>();
-		for (CategoryResponse categoryResponse : categories) {
-			if (!categoryResponse.getSubCourse().isEmpty()) {
-				List<SubCategoryResponse> subCoursesResult = new ArrayList<SubCategoryResponse>();
-				List<SubCategoryResponse> subCourses = categoryResponse.getSubCourse();
-				for (SubCategoryResponse subCourse : subCourses) {
-					List<SubCourseResponse> collect = subCourse.getSubCourseResponse().stream().filter(c->c.getModes().contains(Mode.ONLINECLASSES)).collect(Collectors.toList());
-					subCourse.setSubCourseResponse(collect);
-					if(!subCourse.getSubCourseResponse().isEmpty()) {
-						subCoursesResult.add(subCourse);
-					}
-				}
-				categoryResponse.setSubCourse(subCoursesResult);
-			}
-			List<CourseResponse> collect = categoryResponse.getCourseResponse().stream().filter(c->c.getModes().contains(Mode.ONLINECLASSES)).collect(Collectors.toList());
-			categoryResponse.setCourseResponse(collect);
-			if(!categoryResponse.getCourseResponse().isEmpty() || !categoryResponse.getSubCourse().isEmpty()) {
-				result.add(categoryResponse);
-			}
-		}
+	    List<CategoryResponse> categories = fetchAllCategories(domainName).getBody().getData();
 
-		return ResponseUtil.getOk(result);
+	    List<CategoryResponse> result = categories.stream().map(categoryResponse -> {
+	        List<SubCategoryResponse> subCoursesResult = categoryResponse.getSubCourse().stream()
+	            .map(subCourse -> {
+	                List<SubCourseResponse> subCourseResponses = subCourse.getSubCourseResponse().stream()
+	                    .filter(c -> c.getModes().contains(Mode.ONLINECLASSES))
+	                    .collect(Collectors.toList());
+	                subCourse.setSubCourseResponse(subCourseResponses);
+	                return subCourseResponses.isEmpty() ? null : subCourse;
+	            })
+	            .filter(Objects::nonNull)
+	            .collect(Collectors.toList());
+
+	        categoryResponse.setSubCourse(subCoursesResult);
+
+	        List<CourseResponse> courseResponses = categoryResponse.getCourseResponse().stream()
+	            .filter(c -> c.getModes().contains(Mode.ONLINECLASSES))
+	            .collect(Collectors.toList());
+	        categoryResponse.setCourseResponse(courseResponses);
+
+	        return (courseResponses.isEmpty() && subCoursesResult.isEmpty()) ? null : categoryResponse;
+	    })
+	    .filter(Objects::nonNull)
+	    .collect(Collectors.toList());
+
+	    return ResponseUtil.getOk(result);
 	}
 
 }
