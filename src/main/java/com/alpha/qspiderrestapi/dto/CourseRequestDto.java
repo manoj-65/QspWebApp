@@ -13,7 +13,7 @@ public class CourseRequestDto {
 
 	private String courseName;
 	private String courseDescription;
-	private Organization branchType;
+	private List<Organization> branchType;
 	private List<Mode> mode;
 	private String courseSummary;
 	private String courseAbout;
