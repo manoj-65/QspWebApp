@@ -21,6 +21,9 @@ public class CourseMapper {
 	@Autowired
 	private WeightageMapper weightageMapper;
 
+	@Autowired
+	private SubjectMapper subjectMapper;
+
 	/**
 	 * Converts a Course entity to a CourseResponse DTO.
 	 *
@@ -65,7 +68,8 @@ public class CourseMapper {
 				.courseSummary(course.getCourseSummary()).courseAbout(course.getCourseAbout())
 				.courseHighlight(course.getCourseHighlight()).faqs(course.getFaqs())
 				.courseImage(course.getCourseImage()).branchType(course.getBranchType())
-				.courseImage(course.getCourseImage()).subjects(course.getSubjects()).build();
+				.courseImage(course.getCourseImage())
+				.subjects(subjectMapper.mapSubjectToSubjectDto(course.getSubjects())).build();
 
 	}
 
