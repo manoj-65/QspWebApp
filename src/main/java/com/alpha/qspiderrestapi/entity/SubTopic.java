@@ -34,7 +34,7 @@ public class SubTopic {
 	private String subTopicPreviewUrl;
 
 	private double subTopicPreviewDuration;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "topicId")
 	@JsonIgnore

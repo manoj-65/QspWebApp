@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 import com.alpha.qspiderrestapi.entity.Chapter;
 import com.alpha.qspiderrestapi.entity.Topic;
 
-import jakarta.transaction.Transactional;
-
 /**
  * Utility class for mapping Chapter to its Topics.
  * 
@@ -25,12 +23,12 @@ public class TopicUtil {
 	private SubTopicUtil subTopicUtil;
 
 	/**
-     * Maps a Chapter to its Topics, setting the Chapter reference in each Topic.
-     * Also maps each Topic to its SubTopics.
-     *
-     * @param chapter the Chapter entity to map.
-     * @return the mapped Chapter entity with its Topics.
-     */
+	 * Maps a Chapter to its Topics, setting the Chapter reference in each Topic.
+	 * Also maps each Topic to its SubTopics.
+	 *
+	 * @param chapter the Chapter entity to map.
+	 * @return the mapped Chapter entity with its Topics.
+	 */
 	public Chapter mapChapterToTopics(Chapter chapter) {
 
 		List<Topic> topicList = Optional.ofNullable(chapter.getTopics()).filter(topics -> !topics.isEmpty())
@@ -40,5 +38,15 @@ public class TopicUtil {
 				}).collect(Collectors.toList())).orElse(Collections.emptyList());
 		chapter.setTopics(topicList);
 		return chapter;
+	}
+
+	public long getModuleCountForTopics(List<Topic> topics) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public double getModuleDuration(List<Topic> topics) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

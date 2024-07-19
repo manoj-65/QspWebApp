@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.alpha.qspiderrestapi.entity.CityBranchView;
 import com.alpha.qspiderrestapi.entity.Faq;
-import com.alpha.qspiderrestapi.entity.Subject;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
 import com.alpha.qspiderrestapi.entity.enums.Organization;
 
@@ -28,5 +27,5 @@ public class CourseIdResponse {
 	private String courseImage;
 	private List<CityBranchView> branches;
 	private List<BatchDto> onlineBatches;
-	private List<Subject> subjects;
+	private List<SubjectDto> subjects;
 }
