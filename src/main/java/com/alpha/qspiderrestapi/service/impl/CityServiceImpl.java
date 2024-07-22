@@ -31,8 +31,8 @@ public class CityServiceImpl implements CityService{
 			String cityName) {
 		String iconFolder = "CITY/ICON/";
 		String imageFolder = "CITY/IMAGE/";
-		City city = new City();
-		if(addressDao.isCityPresent(cityName)) {
+		City city = cityDao.findCityByCityName(cityName).get();
+		if(city!=null) {
 			iconFolder += cityName;
 			imageFolder += cityName;
 			String iconUrl = awss3ServiceImpl.uploadFile(cityIcon, iconFolder);

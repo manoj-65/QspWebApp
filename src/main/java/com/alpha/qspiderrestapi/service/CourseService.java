@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
+import com.alpha.qspiderrestapi.dto.CourseRequestDto;
 import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.Course;
 
@@ -37,5 +38,7 @@ public interface CourseService {
 	ResponseEntity<ApiResponse<Course>> updateCourseContent(CourseIdResponse courseIdResponse);
 
 	ResponseEntity<ApiResponse<String>> removeSubjectsFromCourse(Long courseId, List<Long> subjectIds);
+
+	ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(CourseRequestDto courseRequestDto);
 
 }
