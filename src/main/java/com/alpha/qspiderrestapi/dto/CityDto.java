@@ -14,6 +14,6 @@ public class CityDto {
 	private long qspiders;
 	private long jspiders;
 	private long pyspiders;
-	private long bspiders;
+	private long prospiders;
 	private long branchCount;
 }

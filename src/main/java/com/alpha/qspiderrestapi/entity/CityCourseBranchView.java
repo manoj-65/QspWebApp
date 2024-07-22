@@ -41,10 +41,10 @@ public class CityCourseBranchView {
 	private long qspiders;
 	private long jspiders;
 	private long pyspiders;
-	private long bspiders;
+	private long prospiders;
 	private long cQspiders;
 	private long cJspiders;
 	private long cPyspiders;
-	private long cBspiders;
+	private long cProspiders;
 
 }
