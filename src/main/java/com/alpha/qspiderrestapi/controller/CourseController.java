@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
+import com.alpha.qspiderrestapi.dto.CourseRequestDto;
 import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
@@ -189,14 +191,10 @@ public class CourseController {
 	}
 
 	@PostMapping(value = "/saveCourse")
-	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(@PathVariable String version,
-			@RequestParam long categoryId, @RequestParam(required = false) Long subCategoryId,
-			@RequestPart MultipartFile icon, @RequestPart MultipartFile image,
-			@RequestPart MultipartFile homePageImage, @RequestPart String course) {
+	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(@PathVariable String version,@ModelAttribute CourseRequestDto courseRequestDto) {
 
 		if (version.equals("v1"))
-			return courseService.saveCourseAlongWithImages(categoryId, subCategoryId, course, icon, image,
-					homePageImage);
+			return courseService.saveCourseAlongWithImages(courseRequestDto);
 
 		throw new UnauthorizedVersionException();
 	}
