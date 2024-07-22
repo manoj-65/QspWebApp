@@ -274,7 +274,7 @@ public class BranchServiceImpl implements BranchService {
 
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(String branchObject, MultipartFile branchImage,
-			List<MultipartFile> branchGallery) {
+			MultipartFile branchHomePageImage, List<MultipartFile> branchGallery) {
 
 		BranchRequestDto branchDto = null;
 		try {
@@ -303,6 +303,7 @@ public class BranchServiceImpl implements BranchService {
 				branch.getBranchFaqs().stream().peek((faqs) -> faqs.setBranch(branch)).collect(Collectors.toList()));
 		Branch savedBranch = branchDao.saveBranch(branch);
 		uploadIcon(branchImage, branch.getBranchId());
+		
 		uploadImagesToGallery(branchGallery, branch.getBranchId());
 
 		log.info("Branch saved successfully: {}", branch);
