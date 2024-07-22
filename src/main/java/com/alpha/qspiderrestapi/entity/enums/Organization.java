@@ -1,5 +1,5 @@
 package com.alpha.qspiderrestapi.entity.enums;
 
 public enum Organization {
-	JSP,QSP,PYSP,BSP
+	JSP, QSP, PYSP, PROSP
 }

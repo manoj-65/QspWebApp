@@ -65,7 +65,8 @@ public class WeightageServiceImpl implements WeightageService {
 			if (optCategory.get().getWeightage() == null) {
 
 				Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
-						.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).category(optCategory.get()).build();
+						.pyspiders(dto.getPyspiders()).prospiders(dto.getBspiders()).category(optCategory.get())
+						.build();
 				optCategory.get().setWeightage(weightage);
 				weightage.setCategory(optCategory.get());
 
@@ -96,7 +97,7 @@ public class WeightageServiceImpl implements WeightageService {
 				throw new InvalidInfoException("The given category and sub-category pair already has a weihtage");
 			}
 			Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
-					.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).subCategory(subCategory)
+					.pyspiders(dto.getPyspiders()).prospiders(dto.getBspiders()).subCategory(subCategory)
 					.subCategory_categoryId(categoryId).build();
 			weightageDao.incrementWeightageValues(dto.getQspiders(), dto.getJspiders(), dto.getPyspiders(),
 					dto.getBspiders(), "sub_category_category_id", categoryId);
@@ -128,7 +129,7 @@ public class WeightageServiceImpl implements WeightageService {
 						throw new InvalidInfoException("The given course and sub-category pair already has a weihtage");
 					}
 					Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
-							.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).course(course)
+							.pyspiders(dto.getPyspiders()).prospiders(dto.getBspiders()).course(course)
 							.course_SubCategoryId(subCategoryId).build();
 					weightageDao.incrementWeightageValues(dto.getQspiders(), dto.getJspiders(), dto.getPyspiders(),
 							dto.getBspiders(), "course_sub_category_id", subCategoryId);
@@ -147,7 +148,7 @@ public class WeightageServiceImpl implements WeightageService {
 					throw new InvalidInfoException("In given category and course pair already has a weihtage");
 				}
 				Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
-						.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).course(course)
+						.pyspiders(dto.getPyspiders()).prospiders(dto.getBspiders()).course(course)
 						.course_categoryId(categoryId).build();
 				// increment old weightages to save new weightages
 				weightageDao.incrementWeightageValues(dto.getQspiders(), dto.getJspiders(), dto.getPyspiders(),
@@ -168,10 +169,10 @@ public class WeightageServiceImpl implements WeightageService {
 			List<Weightage> allCityWeightage = weightageDao.findAllCityWeightage();
 
 			Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
-					.pyspiders(dto.getPyspiders()).bspiders(dto.getBspiders()).city(city).build();
+					.pyspiders(dto.getPyspiders()).prospiders(dto.getBspiders()).city(city).build();
 			city.setWeightage(weightage);
 			weightage.setCity(city);
-			
+
 			weightageUtil.checkAndUpdateWeightage(weightage, allCityWeightage);
 			weightage = weightageDao.saveWeightage(weightage);
 			return ResponseUtil.getCreated(weightage);
@@ -287,8 +288,8 @@ public class WeightageServiceImpl implements WeightageService {
 			return weightage.getJspiders();
 		} else if (organization.equals(Organization.PYSP)) {
 			return weightage.getPyspiders();
-		} else if (organization.equals(Organization.BSP)) {
-			return weightage.getBspiders();
+		} else if (organization.equals(Organization.PROSP)) {
+			return weightage.getProspiders();
 		} else {
 			throw new InvalidInfoException("Organization not found");
 		}
@@ -301,8 +302,8 @@ public class WeightageServiceImpl implements WeightageService {
 			weightage.setJspiders(setWeightage);
 		} else if (organization.equals(Organization.PYSP)) {
 			weightage.setPyspiders(setWeightage);
-		} else if (organization.equals(Organization.BSP)) {
-			weightage.setBspiders(setWeightage);
+		} else if (organization.equals(Organization.PROSP)) {
+			weightage.setProspiders(setWeightage);
 		} else {
 			throw new InvalidInfoException("Organization not found");
 		}
@@ -428,7 +429,7 @@ public class WeightageServiceImpl implements WeightageService {
 						weightageDto.getJspiders(), courseId));
 				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.PYSP,
 						weightageDto.getPyspiders(), courseId));
-				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.BSP,
+				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.PROSP,
 						weightageDto.getBspiders(), courseId));
 
 			}
@@ -454,7 +455,7 @@ public class WeightageServiceImpl implements WeightageService {
 						weightageDto.getJspiders(), courseId));
 				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.PYSP,
 						weightageDto.getPyspiders(), courseId));
-				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.BSP,
+				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.PROSP,
 						weightageDto.getBspiders(), courseId));
 
 			}
@@ -471,7 +472,8 @@ public class WeightageServiceImpl implements WeightageService {
 				.max((w1, w2) -> (int) getOrgWeightage(w1, organization) - (int) getOrgWeightage(w2, organization));
 
 		if (weightage > weightages.size() || weightage > (getOrgWeightage(max.get(), organization) + 1l)) {
-			throw new InvalidInfoException("In given info, weightage exceeds weightage limit in Organization type: "+organization);
+			throw new InvalidInfoException(
+					"In given info, weightage exceeds weightage limit in Organization type: " + organization);
 		}
 		if (weightage == 0l && getOrgWeightage(target, organization) != 0l) {
 			weightages = weightages.stream()
@@ -508,7 +510,8 @@ public class WeightageServiceImpl implements WeightageService {
 		} else if (getOrgWeightage(target, organization) > weightage) {
 			weightages = weightages.stream()
 					.filter(w -> getOrgWeightage(w, organization) >= weightage
-							&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization) && getOrgWeightage(w, organization)!=0l)
+							&& getOrgWeightage(w, organization) <= getOrgWeightage(target, organization)
+							&& getOrgWeightage(w, organization) != 0l)
 					.collect(Collectors.toList());
 			return weightages.stream()
 					.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) + 1l))).peek(w -> {
@@ -517,12 +520,14 @@ public class WeightageServiceImpl implements WeightageService {
 						}
 					}).collect(Collectors.toList());
 		} else if (getOrgWeightage(target, organization) < weightage) {
-			if(weightage>(getOrgWeightage(max.get(), organization))){
-				throw new InvalidInfoException("In given info weightage exceeds weightage limit of Organization type: "+organization);
+			if (weightage > (getOrgWeightage(max.get(), organization))) {
+				throw new InvalidInfoException(
+						"In given info weightage exceeds weightage limit of Organization type: " + organization);
 			}
 			weightages = weightages.stream()
 					.filter(w -> getOrgWeightage(w, organization) <= weightage
-							&& getOrgWeightage(w, organization) >= getOrgWeightage(target, organization) && getOrgWeightage(w, organization)!=0l)
+							&& getOrgWeightage(w, organization) >= getOrgWeightage(target, organization)
+							&& getOrgWeightage(w, organization) != 0l)
 					.collect(Collectors.toList());
 			return weightages.stream()
 					.peek(w -> setOrgWeightage(w, organization, (getOrgWeightage(w, organization) - 1l))).peek(w -> {

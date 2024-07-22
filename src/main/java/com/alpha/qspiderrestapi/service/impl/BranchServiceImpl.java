@@ -77,11 +77,11 @@ public class BranchServiceImpl implements BranchService {
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch) {
 		Optional<City> city = cityDao.findCityByCityName(branch.getBranchAddress().getCity());
-		if(city.isPresent()) {
-			if(city.get().getWeightage()==null) {
+		if (city.isPresent()) {
+			if (city.get().getWeightage() == null) {
 				throw new InvalidInfoException("Given city does'nt have a weightage, Branch cannot be added");
 			}
-		}else {
+		} else {
 			throw new IdNotFoundException("Given city info in the address not found in the database");
 		}
 		log.info("Saving branch: {}", branch);
@@ -172,7 +172,7 @@ public class BranchServiceImpl implements BranchService {
 				city.setQspiders(anyBranch.getQspiders());
 				city.setJspiders(anyBranch.getJspiders());
 				city.setPyspiders(anyBranch.getPyspiders());
-				city.setBspiders(anyBranch.getBspiders());
+				city.setProspiders(anyBranch.getCProspiders());
 				city.setBranchCount(anyBranch.getBranchCount());
 				List<CourseDto> courses = new ArrayList<>();
 
@@ -185,7 +185,7 @@ public class BranchServiceImpl implements BranchService {
 					course.setCQspiders(branchesList.get(0).getCQspiders());
 					course.setCJspiders(branchesList.get(0).getCJspiders());
 					course.setCPyspiders(branchesList.get(0).getCPyspiders());
-					course.setCBspiders(branchesList.get(0).getCBspiders());
+					course.setCProspiders(branchesList.get(0).getCProspiders());
 					List<BranchDto> branches = branchesList.stream().distinct().map(branchView -> {
 						BranchDto branch = new BranchDto();
 						branch.setBranchId(branchView.getBranchId());

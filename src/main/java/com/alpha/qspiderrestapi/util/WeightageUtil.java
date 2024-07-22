@@ -31,7 +31,7 @@ public class WeightageUtil {
 	private String pyspDomainName;
 
 	@Value("${organization.bsp}")
-	private String bspDomainName;
+	private String prospDomainName;
 
 	@Autowired
 	private WeightageDao weightageDao;
@@ -43,8 +43,8 @@ public class WeightageUtil {
 			return (category.getWeightage() != null) ? (category.getWeightage().getJspiders()) : Integer.MAX_VALUE;
 		} else if (pyspDomainName.equals(hostname)) {
 			return (category.getWeightage() != null) ? (category.getWeightage().getPyspiders()) : Integer.MAX_VALUE;
-		} else if (bspDomainName.equals(hostname)) {
-			return (category.getWeightage() != null) ? (category.getWeightage().getBspiders()) : Integer.MAX_VALUE;
+		} else if (prospDomainName.equals(hostname)) {
+			return (category.getWeightage() != null) ? (category.getWeightage().getProspiders()) : Integer.MAX_VALUE;
 		} else {
 			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
 		}
@@ -81,12 +81,12 @@ public class WeightageUtil {
 				}
 			}
 			return Integer.MAX_VALUE;
-		} else if (bspDomainName.equals(hostname)) {
+		} else if (prospDomainName.equals(hostname)) {
 			if (subCategory.getWeightage() != null && !subCategory.getWeightage().isEmpty()) {
 				for (Weightage weightage : subCategory.getWeightage()) {
 					if (weightage.getSubCategory_categoryId() != null
 							&& weightage.getSubCategory_categoryId() == categoryId) {
-						return weightage.getBspiders();
+						return weightage.getProspiders();
 					}
 				}
 			}
@@ -124,11 +124,11 @@ public class WeightageUtil {
 				}
 			}
 			return Integer.MAX_VALUE;
-		} else if (bspDomainName.equals(hostname)) {
+		} else if (prospDomainName.equals(hostname)) {
 			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
 				for (Weightage weightage : course.getWeightages()) {
 					if (weightage.getCourse_categoryId() != null && weightage.getCourse_categoryId() == categoryId) {
-						return weightage.getBspiders();
+						return weightage.getProspiders();
 					}
 				}
 			}
@@ -162,25 +162,17 @@ public class WeightageUtil {
 
 	public List<CityDto> getSortedCity(List<CityDto> cities, String hostname) {
 		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
-			return cities.stream()
-					  .filter(c->c.getQspiders()!=0l)
-					  .sorted((a, b) -> (int) a.getQspiders() - (int) b.getQspiders())
-					  .collect(Collectors.toList());
+			return cities.stream().filter(c -> c.getQspiders() != 0l)
+					.sorted((a, b) -> (int) a.getQspiders() - (int) b.getQspiders()).collect(Collectors.toList());
 		} else if (jspDomainName.equals(hostname)) {
-			return cities.stream()
-					  .filter(c->c.getJspiders()!=0l)
-					  .sorted((a, b) -> (int) a.getJspiders() - (int) b.getJspiders())
-					  .collect(Collectors.toList());
+			return cities.stream().filter(c -> c.getJspiders() != 0l)
+					.sorted((a, b) -> (int) a.getJspiders() - (int) b.getJspiders()).collect(Collectors.toList());
 		} else if (pyspDomainName.equals(hostname)) {
-			return cities.stream()
-					  .filter(c->c.getPyspiders()!=0l)
-					  .sorted((a, b) -> (int) a.getPyspiders() - (int) b.getPyspiders())
-					  .collect(Collectors.toList());
-		} else if (bspDomainName.equals(hostname)) {
-			return cities.stream()
-					  .filter(c->c.getBspiders()!=0l)
-					  .sorted((a, b) -> (int) a.getBspiders() - (int) b.getBspiders())
-					  .collect(Collectors.toList());
+			return cities.stream().filter(c -> c.getPyspiders() != 0l)
+					.sorted((a, b) -> (int) a.getPyspiders() - (int) b.getPyspiders()).collect(Collectors.toList());
+		} else if (prospDomainName.equals(hostname)) {
+			return cities.stream().filter(c -> c.getProspiders() != 0l)
+					.sorted((a, b) -> (int) a.getProspiders() - (int) b.getProspiders()).collect(Collectors.toList());
 		} else {
 			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
 		}
@@ -188,29 +180,21 @@ public class WeightageUtil {
 
 	public List<CourseDto> getSortedCourseDto(List<CourseDto> courses, String hostname) {
 		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
-			return courses.stream()
-						  .filter(c->c.getCQspiders()!=0l)
-						  .sorted((a, b) -> (int) a.getCQspiders() - (int) b.getCQspiders())
-						  .collect(Collectors.toList());
+			return courses.stream().filter(c -> c.getCQspiders() != 0l)
+					.sorted((a, b) -> (int) a.getCQspiders() - (int) b.getCQspiders()).collect(Collectors.toList());
 
 		} else if (jspDomainName.equals(hostname)) {
-			return courses.stream()
-					  .filter(c->c.getCJspiders()!=0l)
-					  .sorted((a, b) -> (int) a.getCJspiders() - (int) b.getCJspiders())
-					  .collect(Collectors.toList());
-			
+			return courses.stream().filter(c -> c.getCJspiders() != 0l)
+					.sorted((a, b) -> (int) a.getCJspiders() - (int) b.getCJspiders()).collect(Collectors.toList());
+
 		} else if (pyspDomainName.equals(hostname)) {
-			return courses.stream()
-					  .filter(c->c.getCPyspiders()!=0l)
-					  .sorted((a, b) -> (int) a.getCPyspiders() - (int) b.getCPyspiders())
-					  .collect(Collectors.toList());
-			
-		} else if (bspDomainName.equals(hostname)) {
-			return courses.stream()
-					  .filter(c->c.getCBspiders()!=0l)
-					  .sorted((a, b) -> (int) a.getCBspiders() - (int) b.getCBspiders())
-					  .collect(Collectors.toList());
-			
+			return courses.stream().filter(c -> c.getCPyspiders() != 0l)
+					.sorted((a, b) -> (int) a.getCPyspiders() - (int) b.getCPyspiders()).collect(Collectors.toList());
+
+		} else if (prospDomainName.equals(hostname)) {
+			return courses.stream().filter(c -> c.getCProspiders() != 0l)
+					.sorted((a, b) -> (int) a.getCProspiders() - (int) b.getCProspiders()).collect(Collectors.toList());
+
 		} else {
 			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
 		}
@@ -243,8 +227,8 @@ public class WeightageUtil {
 	public List<Weightage> checkAndUpdateBspWeightage(Weightage weightage, List<Weightage> allWeightages) {
 
 		List<Weightage> weightages = null;
-		weightages = allWeightages.stream().filter(w -> w.getBspiders() >= weightage.getBspiders())
-				.peek(w -> w.setBspiders(w.getBspiders() + 1L)).collect(Collectors.toList());
+		weightages = allWeightages.stream().filter(w -> w.getProspiders() >= weightage.getProspiders())
+				.peek(w -> w.setProspiders(w.getProspiders() + 1L)).collect(Collectors.toList());
 		return weightages;
 	}
 
@@ -294,12 +278,12 @@ public class WeightageUtil {
 				}
 			}
 			return Integer.MAX_VALUE;
-		} else if (bspDomainName.equals(hostname)) {
+		} else if (prospDomainName.equals(hostname)) {
 			if (course.getWeightages() != null && !course.getWeightages().isEmpty()) {
 				for (Weightage weightage : course.getWeightages()) {
 					if (weightage.getCourse_SubCategoryId() != null
 							&& weightage.getCourse_SubCategoryId() == subCategoryId) {
-						return weightage.getBspiders();
+						return weightage.getProspiders();
 					}
 				}
 			}
@@ -319,7 +303,7 @@ public class WeightageUtil {
 		if (weightage.getPyspiders() != 0)
 			weightages = checkAndUpdateJspWeightage(weightage, allWeightages);
 
-		if (weightage.getBspiders() != 0)
+		if (weightage.getProspiders() != 0)
 			weightages = checkAndUpdateBspWeightage(weightage, allWeightages);
 
 		if (weightage.getJspiders() != 0)
@@ -346,9 +330,9 @@ public class WeightageUtil {
 			maxSize = allWeightages.stream().max((w1, w2) -> (int) w1.getPyspiders() - (int) w2.getPyspiders()).get()
 					.getPyspiders();
 		}
-		if (orgType == Organization.BSP) {
-			maxSize = allWeightages.stream().max((w1, w2) -> (int) w1.getBspiders() - (int) w2.getBspiders()).get()
-					.getBspiders();
+		if (orgType == Organization.PROSP) {
+			maxSize = allWeightages.stream().max((w1, w2) -> (int) w1.getProspiders() - (int) w2.getProspiders()).get()
+					.getProspiders();
 		}
 
 		return maxSize;
