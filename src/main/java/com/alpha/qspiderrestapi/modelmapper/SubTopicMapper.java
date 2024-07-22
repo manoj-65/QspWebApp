@@ -22,7 +22,5 @@ public class SubTopicMapper {
 
 		});
 		return subTopicDtoList;
-
 	}
-
 }
