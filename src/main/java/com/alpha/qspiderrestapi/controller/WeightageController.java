@@ -95,7 +95,7 @@ public class WeightageController {
 			@RequestParam Long categoryId, @RequestParam Long weightage, Organization organisation) {
 		if (version.equalsIgnoreCase("V1"))
 			return weightageService.updateCategoryWeightage(categoryId, weightage, organisation);
-  
+
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 
@@ -114,6 +114,15 @@ public class WeightageController {
 			@RequestParam long categoryId, @RequestBody WeightageDto dto) {
 		if (version.equalsIgnoreCase("V1"))
 			return weightageService.saveCategoryWeightageAndIncrement(categoryId, dto);
+
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	}
+
+	@PostMapping("/country")
+	public ResponseEntity<ApiResponse<Weightage>> saveCountryWeightage(@PathVariable String version,
+			@RequestParam String countryName, @RequestBody WeightageDto dto) {
+		if (version.equalsIgnoreCase("V1"))
+			return weightageService.saveCountryWeightage(countryName, dto);
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}

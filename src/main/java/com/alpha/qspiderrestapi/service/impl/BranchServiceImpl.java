@@ -161,6 +161,11 @@ public class BranchServiceImpl implements BranchService {
 		groupedData.forEach((countryName, citiesMap) -> {
 			CountryDto country = new CountryDto();
 			country.setCountryName(countryName);
+			CityCourseBranchView countryView = citiesMap.values().iterator().next().get(0).get(0);
+			country.setCtQspiders(0);
+			country.setCtJspiders(0);
+			country.setCtPyspiders(0);
+			country.setCtProspiders(0);
 			List<CityDto> cities = new ArrayList<>();
 
 			citiesMap.forEach((cityName, coursesMap) -> {
@@ -219,7 +224,8 @@ public class BranchServiceImpl implements BranchService {
 		});
 
 		// Sort countries by country name
-		countries.sort(Comparator.comparing(CountryDto::getCountryName));
+		weightageUtil.getSortedCountry(countries, domainName);
+//		countries.sort(Comparator.comparing(CountryDto::getCountryName));
 		return ResponseUtil.getOk(countries);
 	}
 
@@ -303,7 +309,7 @@ public class BranchServiceImpl implements BranchService {
 				branch.getBranchFaqs().stream().peek((faqs) -> faqs.setBranch(branch)).collect(Collectors.toList()));
 		Branch savedBranch = branchDao.saveBranch(branch);
 		uploadIcon(branchImage, branch.getBranchId());
-		
+
 		uploadImagesToGallery(branchGallery, branch.getBranchId());
 
 		log.info("Branch saved successfully: {}", branch);

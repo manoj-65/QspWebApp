@@ -60,6 +60,11 @@ public class Weightage {
 	@JsonIgnore
 	private City city;
 
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "countryId")
+	@JsonIgnore
+	private Country country;
+
 	@CreationTimestamp
 	private LocalDateTime createdDateAndTime;
 	@UpdateTimestamp

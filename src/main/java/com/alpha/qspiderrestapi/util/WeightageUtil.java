@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.alpha.qspiderrestapi.dao.WeightageDao;
 import com.alpha.qspiderrestapi.dto.CityDto;
+import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.dto.CourseDto;
 import com.alpha.qspiderrestapi.entity.Category;
 import com.alpha.qspiderrestapi.entity.Course;
@@ -336,5 +337,24 @@ public class WeightageUtil {
 		}
 
 		return maxSize;
+	}
+
+	public List<CountryDto> getSortedCountry(List<CountryDto> countries, String hostname) {
+		if (qspDomainName.equals(hostname) || hostname.contains("http://localhost")) {
+			return countries.stream().filter(c -> c.getCtQspiders() != 0l)
+					.sorted((a, b) -> (int) a.getCtQspiders() - (int) b.getCtQspiders()).collect(Collectors.toList());
+		} else if (jspDomainName.equals(hostname)) {
+			return countries.stream().filter(c -> c.getCtJspiders() != 0l)
+					.sorted((a, b) -> (int) a.getCtJspiders() - (int) b.getCtJspiders()).collect(Collectors.toList());
+		} else if (pyspDomainName.equals(hostname)) {
+			return countries.stream().filter(c -> c.getCtPyspiders() != 0l)
+					.sorted((a, b) -> (int) a.getCtPyspiders() - (int) b.getCtPyspiders()).collect(Collectors.toList());
+		} else if (prospDomainName.equals(hostname)) {
+			return countries.stream().filter(c -> c.getCtProspiders() != 0l)
+					.sorted((a, b) -> (int) a.getCtProspiders() - (int) b.getCtProspiders())
+					.collect(Collectors.toList());
+		} else {
+			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
+		}
 	}
 }
