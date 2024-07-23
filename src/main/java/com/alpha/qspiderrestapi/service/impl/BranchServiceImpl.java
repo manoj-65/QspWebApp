@@ -162,12 +162,17 @@ public class BranchServiceImpl implements BranchService {
 		groupedData.forEach((countryName, citiesMap) -> {
 			CountryDto country = new CountryDto();
 			country.setCountryName(countryName);
-			
-//			CityCourseBranchView countryView = citiesMap.values().iterator().next().get(0).get(0);
-//			country.setCtQspiders((Long) countryView.getCtQspiders() == null ? 0l : countryView.getCtQspiders());
-//			country.setCtJspiders(((Long) countryView.getCtJspiders() == null) ? 0l : countryView.getCtJspiders());
-//			country.setCtPyspiders((Long) countryView.getCtPyspiders() == null ? 0l : countryView.getCtPyspiders());
-//			country.setCtProspiders((Long) countryView.getCtProspiders() == null ? 0l : countryView.getCtProspiders());
+			System.err.println(citiesMap.values().iterator());
+			CityCourseBranchView countryView = citiesMap.values().iterator().next().values().iterator().next().get(0);
+
+			country.setCtQspiders(
+					(Long) countryView.getCtQspiders() == null ? Integer.MAX_VALUE : countryView.getCtQspiders());
+			country.setCtJspiders(
+					((Long) countryView.getCtJspiders() == null) ? Integer.MAX_VALUE : countryView.getCtJspiders());
+			country.setCtPyspiders(
+					(Long) countryView.getCtPyspiders() == null ? Integer.MAX_VALUE : countryView.getCtPyspiders());
+			country.setCtProspiders(
+					(Long) countryView.getCtProspiders() == null ? Integer.MAX_VALUE : countryView.getCtProspiders());
 
 			List<CityDto> cities = new ArrayList<>();
 
@@ -227,9 +232,9 @@ public class BranchServiceImpl implements BranchService {
 		});
 
 		// Sort countries by country name
-//		weightageUtil.getSortedCountry(countries, domainName);
-		countries.sort(Comparator.comparing(CountryDto::getCountryName));
-		return ResponseUtil.getOk(countries);
+		List<CountryDto> sortedCountry = weightageUtil.getSortedCountry(countries, domainName);
+//		countries.sort(Comparator.comparing(CountryDto::getCountryName));
+		return ResponseUtil.getOk(sortedCountry);
 	}
 
 	@Override
