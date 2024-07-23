@@ -635,7 +635,7 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	private Course mapAndSetUrlsToCourse(CourseRequestImageDto courseRequest) {
-		try {
+		
 			MultipartFile icon = courseRequest.getIcon();
 			MultipartFile image = courseRequest.getImage();
 			MultipartFile homePageImage = courseRequest.getHomePageImage();
@@ -685,17 +685,10 @@ public class CourseServiceImpl implements CourseService {
 			course = setCourseIntoFaq(course);
 			course = saveCourse(course);
 			return course;
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			throw new DomainMismatchException("Internal Server Error");
-
-		}
-
 	}
 
 	@Override
 	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(CourseRequestImageDto courseRequestDto) {
-		try {
 			long categoryId = courseRequestDto.getCategoryId();
 			Long subCategoryId = courseRequestDto.getSubCategoryId();
 
@@ -736,11 +729,6 @@ public class CourseServiceImpl implements CourseService {
 				log.error("No Category found with given ID: {}", categoryId);
 				throw new IdNotFoundException("No Category found with given Id: " + categoryId);
 			}
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			throw new DomainMismatchException("Internal Server Error");
-
-		}
 	}
 
 }
