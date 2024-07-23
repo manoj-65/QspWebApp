@@ -60,14 +60,19 @@ public class WeightageDaoImpl implements WeightageDao {
 	}
 
 	@Override
-	public void incrementWeightageValues(long qspiders, long jspiders, long pyspiders, long bspiders, String fieldName,
-			long categoryId) {
-		weightageRepository.incrementWeightageValues(qspiders, jspiders, pyspiders, bspiders, fieldName, categoryId);
+	public void incrementWeightageValues(long qspiders, long jspiders, long pyspiders, long prospiders,
+			String fieldName, long categoryId) {
+		weightageRepository.incrementWeightageValues(qspiders, jspiders, pyspiders, prospiders, fieldName, categoryId);
 	}
-	
+
 	@Override
 	public List<Weightage> findAllCityWeightage() {
 		return weightageRepository.findByCityIsNotNull();
 	}
-	
+
+	@Override
+	public List<Weightage> findAllCountryWeightage() {
+		return weightageRepository.findByCountryIsNotNull();
+	}
+
 }

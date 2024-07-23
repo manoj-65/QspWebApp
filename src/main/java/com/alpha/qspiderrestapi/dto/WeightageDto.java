@@ -10,5 +10,5 @@ public class WeightageDto {
 	private long qspiders;
 	private long jspiders;
 	private long pyspiders;
-	private long bspiders;
+	private long prospiders;
 }

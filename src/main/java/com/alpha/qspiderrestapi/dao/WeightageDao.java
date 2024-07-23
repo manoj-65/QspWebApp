@@ -25,9 +25,11 @@ public interface WeightageDao {
 
 	List<Weightage> findCourseOfSubCategoryWeightages(Long subCategoryId);
 
-	void incrementWeightageValues(long qspiders, long jspiders, long pyspiders, long bspiders, String string,
+	void incrementWeightageValues(long qspiders, long jspiders, long pyspiders, long prospiders, String string,
 			long categoryId);
 	
 	List<Weightage> findAllCityWeightage();
+
+	List<Weightage> findAllCountryWeightage();
 
 }
