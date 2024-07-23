@@ -161,11 +161,11 @@ public class BranchServiceImpl implements BranchService {
 		groupedData.forEach((countryName, citiesMap) -> {
 			CountryDto country = new CountryDto();
 			country.setCountryName(countryName);
-			CityCourseBranchView countryView = citiesMap.values().iterator().next().get(0).get(0);
-			country.setCtQspiders(0);
-			country.setCtJspiders(0);
-			country.setCtPyspiders(0);
-			country.setCtProspiders(0);
+//			CityCourseBranchView countryView = citiesMap.values().iterator().next().get(0).get(0);
+//			country.setCtQspiders(0);
+//			country.setCtJspiders(0);
+//			country.setCtPyspiders(0);
+//			country.setCtProspiders(0);
 			List<CityDto> cities = new ArrayList<>();
 
 			citiesMap.forEach((cityName, coursesMap) -> {
