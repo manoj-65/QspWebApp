@@ -19,7 +19,7 @@ public class ViewHomePageUtil {
 	private String pyspDomainName;
 
 	@Value("${organization.bsp}")
-	private String bspDomainName;
+	private String prospDomainName;
 
 	public Organization checkOrganizationType(String hostName) {
 
@@ -29,8 +29,8 @@ public class ViewHomePageUtil {
 			return Organization.JSP;
 		} else if (pyspDomainName.equals(hostName) || hostName.contains("http://localhost")) {
 			return Organization.PYSP;
-		} else if (bspDomainName.equals(hostName) || hostName.contains("http://localhost")) {
-			return Organization.BSP;
+		} else if (prospDomainName.equals(hostName) || hostName.contains("http://localhost")) {
+			return Organization.PROSP;
 		}
 		throw new DomainMismatchException("Domain name is not matching any Organisation Type");
 	}

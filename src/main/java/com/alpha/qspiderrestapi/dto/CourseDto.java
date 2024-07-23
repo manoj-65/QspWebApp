@@ -14,7 +14,7 @@ public class CourseDto {
 	private long cQspiders;
 	private long cJspiders;
 	private long cPyspiders;
-	private long cBspiders;
+	private long cProspiders;
 	private List<BranchDto> branches;
 
 }

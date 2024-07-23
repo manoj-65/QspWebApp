@@ -33,33 +33,33 @@ public class Weightage {
 	private long qspiders;
 	private long jspiders;
 	private long pyspiders;
-	private long bspiders;
+	private long prospiders;
 
 	private Long subCategory_categoryId;
 
 	private Long course_categoryId;
 	private Long course_SubCategoryId;
 
-	@OneToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "categoryId")
 	@JsonIgnore
 	private Category category;
 
-	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "subCategoryId")
 	@JsonIgnore
 	private SubCategory subCategory;
 
-	@ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "courseId")
 	@JsonIgnore
 	private Course course;
-	
-	@OneToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "cityId")
 	@JsonIgnore
 	private City city;
-	
+
 	@CreationTimestamp
 	private LocalDateTime createdDateAndTime;
 	@UpdateTimestamp
