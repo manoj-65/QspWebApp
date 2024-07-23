@@ -26,13 +26,16 @@ import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
 import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.Course;
+import com.alpha.qspiderrestapi.exception.DomainMismatchException;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.CourseService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/{version}/courses")
@@ -203,14 +206,29 @@ public class CourseController {
 //
 //		throw new UnauthorizedVersionException();
 //	}
-	
+
 	@PostMapping(value = "/saveCourse")
 	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(@PathVariable String version,
 			@ModelAttribute CourseRequestImageDto dto) {
-		if (version.equals("v1"))
-			return courseService.saveCourseAlongWithImages(dto);
 
-		throw new UnauthorizedVersionException();
+		try {
+			log.info("Received request to save course along with images, version: {}", version);
+			log.debug("CourseRequestImageDto: {}", dto);
+
+			if (version.equals("v1")) {
+				log.info("Processing saveCourseAlongWithImages for version v1");
+				ResponseEntity<ApiResponse<Course>> response = courseService.saveCourseAlongWithImages(dto);
+				log.info("Response from courseService: {}", response);
+				return response;
+			}
+
+			log.warn("Unauthorized version: {}", version);
+			throw new UnauthorizedVersionException();
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new DomainMismatchException("Internal Server Error");
+
+		}
 	}
 
 	@PutMapping(value = "/updateCourse")
@@ -219,8 +237,7 @@ public class CourseController {
 			@RequestPart(required = false) MultipartFile homePageImage, @RequestPart String course) {
 
 		if (version.equals("v1"))
-			return courseService.updateCourseAlongWithImages(course, icon, image,
-					homePageImage);
+			return courseService.updateCourseAlongWithImages(course, icon, image, homePageImage);
 
 		throw new UnauthorizedVersionException();
 	}
