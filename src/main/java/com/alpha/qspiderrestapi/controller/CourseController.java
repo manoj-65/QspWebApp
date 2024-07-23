@@ -211,7 +211,6 @@ public class CourseController {
 	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(@PathVariable String version,
 			@ModelAttribute CourseRequestImageDto dto) {
 
-		try {
 			log.info("Received request to save course along with images, version: {}", version);
 			log.debug("CourseRequestImageDto: {}", dto);
 
@@ -224,11 +223,6 @@ public class CourseController {
 
 			log.warn("Unauthorized version: {}", version);
 			throw new UnauthorizedVersionException();
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			throw new DomainMismatchException("Internal Server Error");
-
-		}
 	}
 
 	@PutMapping(value = "/updateCourse")
