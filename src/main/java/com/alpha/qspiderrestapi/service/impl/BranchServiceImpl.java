@@ -168,6 +168,7 @@ public class BranchServiceImpl implements BranchService {
 //			country.setCtJspiders(((Long) countryView.getCtJspiders() == null) ? 0l : countryView.getCtJspiders());
 //			country.setCtPyspiders((Long) countryView.getCtPyspiders() == null ? 0l : countryView.getCtPyspiders());
 //			country.setCtProspiders((Long) countryView.getCtProspiders() == null ? 0l : countryView.getCtProspiders());
+
 			List<CityDto> cities = new ArrayList<>();
 
 			citiesMap.forEach((cityName, coursesMap) -> {
