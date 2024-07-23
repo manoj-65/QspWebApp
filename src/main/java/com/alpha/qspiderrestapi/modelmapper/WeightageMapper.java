@@ -18,7 +18,7 @@ public class WeightageMapper {
 	public Weightage weightageDtoToWeightageMapper(WeightageDto dto, Category category) {
 
 		Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
-				.pyspiders(dto.getPyspiders()).prospiders(dto.getBspiders()).category(category).build();
+				.pyspiders(dto.getPyspiders()).prospiders(dto.getProspiders()).category(category).build();
 		category.setWeightage(weightage);
 		weightage.setCategory(category);
 
@@ -33,7 +33,7 @@ public class WeightageMapper {
 			if (opt.isPresent()) {
 				weightage = opt.get();
 				return WeightageDto.builder().qspiders(weightage.getQspiders()).jspiders(weightage.getJspiders())
-						.pyspiders(weightage.getPyspiders()).bspiders(weightage.getProspiders()).build();
+						.pyspiders(weightage.getPyspiders()).prospiders(weightage.getProspiders()).build();
 			} else
 				return null;
 		} else {
@@ -44,7 +44,7 @@ public class WeightageMapper {
 			if (opt.isPresent()) {
 				weightage = opt.get();
 				return WeightageDto.builder().qspiders(weightage.getQspiders()).jspiders(weightage.getJspiders())
-						.pyspiders(weightage.getPyspiders()).bspiders(weightage.getProspiders()).build();
+						.pyspiders(weightage.getPyspiders()).prospiders(weightage.getProspiders()).build();
 			} else
 				return null;
 		}

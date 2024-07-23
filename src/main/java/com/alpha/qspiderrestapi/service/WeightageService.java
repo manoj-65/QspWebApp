@@ -36,4 +36,6 @@ public interface WeightageService {
 
 	ResponseEntity<ApiResponse<Weightage>> saveCategoryWeightageAndIncrement(long categoryId, WeightageDto dto);
 
+	ResponseEntity<ApiResponse<Weightage>> saveCountryWeightage(String countryName, WeightageDto dto);
+
 }

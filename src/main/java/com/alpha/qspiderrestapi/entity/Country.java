@@ -26,7 +26,7 @@ public class Country {
 	private int countryId;
 	@Column(unique = true)
 	private String countryName;
-	@OneToOne(mappedBy = "city", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "country", cascade = CascadeType.ALL)
 	@JsonIgnore
 	private Weightage countryWeightage;
 

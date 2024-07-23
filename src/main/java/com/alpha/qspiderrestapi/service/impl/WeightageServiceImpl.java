@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.alpha.qspiderrestapi.dao.CategoryDao;
 import com.alpha.qspiderrestapi.dao.CityDao;
+import com.alpha.qspiderrestapi.dao.CountryDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dao.WeightageDao;
@@ -18,6 +19,7 @@ import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.WeightageDto;
 import com.alpha.qspiderrestapi.entity.Category;
 import com.alpha.qspiderrestapi.entity.City;
+import com.alpha.qspiderrestapi.entity.Country;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.entity.Weightage;
@@ -49,10 +51,13 @@ public class WeightageServiceImpl implements WeightageService {
 	private WeightageDao weightageDao;
 
 	@Autowired
-	WeightageUtil weightageUtil;
+	private WeightageUtil weightageUtil;
 
 	@Autowired
-	WeightageMapper weightageMapper;
+	private WeightageMapper weightageMapper;
+
+	@Autowired
+	private CountryDao countryDao;
 
 //	@Autowired
 //	private EntityManager entityManager;
@@ -65,13 +70,13 @@ public class WeightageServiceImpl implements WeightageService {
 			if (optCategory.get().getWeightage() == null) {
 
 				Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
-						.pyspiders(dto.getPyspiders()).prospiders(dto.getBspiders()).category(optCategory.get())
+						.pyspiders(dto.getPyspiders()).prospiders(dto.getProspiders()).category(optCategory.get())
 						.build();
 				optCategory.get().setWeightage(weightage);
 				weightage.setCategory(optCategory.get());
 
 				weightageDao.incrementWeightageValues(dto.getQspiders(), dto.getJspiders(), dto.getPyspiders(),
-						dto.getBspiders(), "category_id", categoryId);
+						dto.getProspiders(), "category_id", categoryId);
 
 				weightage = weightageDao.saveWeightage(weightage);
 
@@ -97,10 +102,10 @@ public class WeightageServiceImpl implements WeightageService {
 				throw new InvalidInfoException("The given category and sub-category pair already has a weihtage");
 			}
 			Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
-					.pyspiders(dto.getPyspiders()).prospiders(dto.getBspiders()).subCategory(subCategory)
+					.pyspiders(dto.getPyspiders()).prospiders(dto.getProspiders()).subCategory(subCategory)
 					.subCategory_categoryId(categoryId).build();
 			weightageDao.incrementWeightageValues(dto.getQspiders(), dto.getJspiders(), dto.getPyspiders(),
-					dto.getBspiders(), "sub_category_category_id", categoryId);
+					dto.getProspiders(), "sub_category_category_id", categoryId);
 			weightage = weightageDao.saveWeightage(weightage);
 			return ResponseUtil.getCreated(weightage);
 
@@ -129,10 +134,10 @@ public class WeightageServiceImpl implements WeightageService {
 						throw new InvalidInfoException("The given course and sub-category pair already has a weihtage");
 					}
 					Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
-							.pyspiders(dto.getPyspiders()).prospiders(dto.getBspiders()).course(course)
+							.pyspiders(dto.getPyspiders()).prospiders(dto.getProspiders()).course(course)
 							.course_SubCategoryId(subCategoryId).build();
 					weightageDao.incrementWeightageValues(dto.getQspiders(), dto.getJspiders(), dto.getPyspiders(),
-							dto.getBspiders(), "course_sub_category_id", subCategoryId);
+							dto.getProspiders(), "course_sub_category_id", subCategoryId);
 					weightage = weightageDao.saveWeightage(weightage);
 					return ResponseUtil.getCreated(weightage);
 				} else {
@@ -148,11 +153,11 @@ public class WeightageServiceImpl implements WeightageService {
 					throw new InvalidInfoException("In given category and course pair already has a weihtage");
 				}
 				Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
-						.pyspiders(dto.getPyspiders()).prospiders(dto.getBspiders()).course(course)
+						.pyspiders(dto.getPyspiders()).prospiders(dto.getProspiders()).course(course)
 						.course_categoryId(categoryId).build();
 				// increment old weightages to save new weightages
 				weightageDao.incrementWeightageValues(dto.getQspiders(), dto.getJspiders(), dto.getPyspiders(),
-						dto.getBspiders(), "course_category_id", categoryId);
+						dto.getProspiders(), "course_category_id", categoryId);
 				weightage = weightageDao.saveWeightage(weightage);
 				return ResponseUtil.getCreated(weightage);
 			} else {
@@ -169,7 +174,7 @@ public class WeightageServiceImpl implements WeightageService {
 			List<Weightage> allCityWeightage = weightageDao.findAllCityWeightage();
 
 			Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
-					.pyspiders(dto.getPyspiders()).prospiders(dto.getBspiders()).city(city).build();
+					.pyspiders(dto.getPyspiders()).prospiders(dto.getProspiders()).city(city).build();
 			city.setWeightage(weightage);
 			weightage.setCity(city);
 
@@ -430,7 +435,7 @@ public class WeightageServiceImpl implements WeightageService {
 				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.PYSP,
 						weightageDto.getPyspiders(), courseId));
 				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.PROSP,
-						weightageDto.getBspiders(), courseId));
+						weightageDto.getProspiders(), courseId));
 
 			}
 
@@ -456,7 +461,7 @@ public class WeightageServiceImpl implements WeightageService {
 				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.PYSP,
 						weightageDto.getPyspiders(), courseId));
 				finalWeightage.addAll(getUpdatedWeightages(weightages, target, Organization.PROSP,
-						weightageDto.getBspiders(), courseId));
+						weightageDto.getProspiders(), courseId));
 
 			}
 
@@ -556,6 +561,27 @@ public class WeightageServiceImpl implements WeightageService {
 			}
 		}
 		throw new IdNotFoundException("No category found with the id: " + categoryId);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Weightage>> saveCountryWeightage(String countryName, WeightageDto dto) {
+
+		Country country = countryDao.findCountryByCountryName(countryName)
+				.orElseThrow(() -> new IdNotFoundException("No country found with the given country name"));
+		if (country.getCountryWeightage() == null) {
+			List<Weightage> allCountryWeightage = weightageDao.findAllCountryWeightage();
+
+			Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
+					.pyspiders(dto.getPyspiders()).prospiders(dto.getProspiders()).build();
+			country.setCountryWeightage(weightage);
+			weightage.setCountry(country);
+
+			weightageUtil.checkAndUpdateWeightage(weightage, allCountryWeightage);
+			weightage = weightageDao.saveWeightage(weightage);
+			return ResponseUtil.getCreated(weightage);
+		}
+		throw new InvalidInfoException("Given Country already contains a weightage");
+
 	}
 
 }
