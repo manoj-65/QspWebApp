@@ -158,14 +158,17 @@ public class BranchServiceImpl implements BranchService {
 		List<CountryDto> countries = new ArrayList<>();
 
 		// Process grouped data
+		System.err.println(groupedData);
 		groupedData.forEach((countryName, citiesMap) -> {
 			CountryDto country = new CountryDto();
 			country.setCountryName(countryName);
+			
 //			CityCourseBranchView countryView = citiesMap.values().iterator().next().get(0).get(0);
-//			country.setCtQspiders(0);
-//			country.setCtJspiders(0);
-//			country.setCtPyspiders(0);
-//			country.setCtProspiders(0);
+//			country.setCtQspiders((Long) countryView.getCtQspiders() == null ? 0l : countryView.getCtQspiders());
+//			country.setCtJspiders(((Long) countryView.getCtJspiders() == null) ? 0l : countryView.getCtJspiders());
+//			country.setCtPyspiders((Long) countryView.getCtPyspiders() == null ? 0l : countryView.getCtPyspiders());
+//			country.setCtProspiders((Long) countryView.getCtProspiders() == null ? 0l : countryView.getCtProspiders());
+
 			List<CityDto> cities = new ArrayList<>();
 
 			citiesMap.forEach((cityName, coursesMap) -> {
@@ -224,8 +227,8 @@ public class BranchServiceImpl implements BranchService {
 		});
 
 		// Sort countries by country name
-		weightageUtil.getSortedCountry(countries, domainName);
-//		countries.sort(Comparator.comparing(CountryDto::getCountryName));
+//		weightageUtil.getSortedCountry(countries, domainName);
+		countries.sort(Comparator.comparing(CountryDto::getCountryName));
 		return ResponseUtil.getOk(countries);
 	}
 

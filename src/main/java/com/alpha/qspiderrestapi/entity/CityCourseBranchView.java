@@ -46,5 +46,9 @@ public class CityCourseBranchView {
 	private long cJspiders;
 	private long cPyspiders;
 	private long cProspiders;
+	private Long ctQspiders;
+	private Long ctJspiders;
+	private Long ctPyspiders;
+	private Long ctProspiders;
 
 }
