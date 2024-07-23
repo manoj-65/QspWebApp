@@ -2,10 +2,12 @@
 package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,7 @@ import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.BranchDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestDto;
+import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
 import com.alpha.qspiderrestapi.dto.UpdateCourseRequestDto;
 import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.CityBranchView;
@@ -630,9 +633,62 @@ public class CourseServiceImpl implements CourseService {
 
 		throw new IdNotFoundException("Course With the Given Id Not Found");
 	}
+	
+	private Course mapAndSetUrlsToCourse(CourseRequestImageDto courseRequest) {
+		MultipartFile icon = courseRequest.getIcon();
+		MultipartFile image = courseRequest.getImage();
+		MultipartFile homePageImage = courseRequest.getHomePageImage();
+
+		// string of json body to object
+		ObjectMapper objectMapper = new ObjectMapper();
+		CourseRequestDto value;
+		try {
+			value = objectMapper.readValue(courseRequest.getCourse(), CourseRequestDto.class);
+		} catch (JsonProcessingException e) {
+			System.err.println(e.getMessage());
+			throw new InvalidInfoException("The Json body format is incorrect");
+		}
+
+		// dto to course
+		Course course = Course.builder().courseName(value.getCourseName())
+				.courseDescription(value.getCourseDescription()).branchType(value.getBranchType()).mode(value.getMode())
+				.courseAbout(value.getCourseAbout()).courseSummary(value.getCourseSummary())
+				.courseHighlight(value.getCourseHighlight()).faqs(value.getFaqs()).build();
+
+		// upload icon and set icon url in course object
+		String folder = "COURSE/";
+		folder += course.getCourseName();
+		String iconUrl = awss3Service.uploadFile(icon, folder);
+
+		if (!iconUrl.isEmpty()) {
+			course.setCourseIcon(iconUrl);
+		} else {
+			throw new NullPointerException("Icon can't be uploaded due to admin restriction");
+		}
+
+		// upload course images and set respective urls in course object
+		String folder2 = "COURSE/";
+		folder2 += "IMAGE/" + course.getCourseName();
+
+		String imageUrl = awss3Service.uploadFile(image, folder2);
+
+		String homePageImageUrl = awss3Service.uploadFile(homePageImage, folder2);
+
+		if (!imageUrl.isEmpty() && !homePageImageUrl.isEmpty()) {
+			course.setCourseImage(imageUrl);
+			course.setHomePageCourseImage(homePageImageUrl);
+		} else {
+			throw new NullPointerException("Icon can't be uploaded due to admin restriction");
+		}
+
+		course = setCourseIntoFaq(course);
+		course = saveCourse(course);
+		return course;
+
+	}
 
 	@Override
-	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(CourseRequestDto courseRequestDto) {
+	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(CourseRequestImageDto courseRequestDto) {
 		long categoryId = courseRequestDto.getCategoryId();
 		Long subCategoryId = courseRequestDto.getSubCategoryId();
 		if (categoryDao.isCategoryPresent(categoryId)) {
@@ -658,44 +714,6 @@ public class CourseServiceImpl implements CourseService {
 		} else {
 			throw new IdNotFoundException("No Category found with given Id: " + categoryId);
 		}
-	}
-
-	private Course mapAndSetUrlsToCourse(CourseRequestDto value) {
-		// dto to course
-		Course course = Course.builder().courseName(value.getCourseName())
-				.courseDescription(value.getCourseDescription()).branchType(value.getBranchType()).mode(value.getMode())
-				.courseAbout(value.getCourseAbout()).courseSummary(value.getCourseSummary())
-				.courseHighlight(value.getCourseHighlight()).faqs(value.getFaqs()).build();
-
-		// upload icon and set icon url in course object
-		String folder = "COURSE/";
-		folder += course.getCourseName();
-		String iconUrl = awss3Service.uploadFile(value.getIcon(), folder);
-
-		if (!iconUrl.isEmpty()) {
-			course.setCourseIcon(iconUrl);
-		} else {
-			throw new NullPointerException("Icon can't be uploaded due to admin restriction");
-		}
-
-		// upload course images and set respective urls in course object
-		String folder2 = "COURSE/";
-		folder2 += "IMAGE/" + course.getCourseName();
-
-		String imageUrl = awss3Service.uploadFile(value.getImage(), folder2);
-
-		String homePageImageUrl = awss3Service.uploadFile(value.getHomePageImage(), folder2);
-
-		if (!imageUrl.isEmpty() && !homePageImageUrl.isEmpty()) {
-			course.setCourseImage(imageUrl);
-			course.setHomePageCourseImage(homePageImageUrl);
-		} else {
-			throw new NullPointerException("Icon can't be uploaded due to admin restriction");
-		}
-
-		course = setCourseIntoFaq(course);
-		course = saveCourse(course);
-		return course;
 	}
 
 }
