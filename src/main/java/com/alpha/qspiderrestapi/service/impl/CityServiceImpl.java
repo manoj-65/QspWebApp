@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alpha.qspiderrestapi.dao.AddressDao;
 import com.alpha.qspiderrestapi.dao.CityDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.entity.City;
@@ -21,11 +20,7 @@ public class CityServiceImpl implements CityService{
 	
 	@Autowired
 	private AWSS3ServiceImpl awss3ServiceImpl;
-	
-	@Autowired
-	private AddressDao addressDao;
-	
-
+		
 	@Override
 	public ResponseEntity<ApiResponse<City>> saveCity(MultipartFile cityIcon, MultipartFile cityImage,
 			String cityName) {

@@ -21,10 +21,10 @@ public class CourseRequestDto {
 	private String courseAbout;
 	private String courseHighlight;
 	private List<Faq> faqs;
-	private MultipartFile icon;
-	private MultipartFile image;
-	private MultipartFile homePageImage;
-	private long categoryId;
-	private Long subCategoryId;
+//	private MultipartFile icon;
+//	private MultipartFile image;
+//	private MultipartFile homePageImage;
+//	private long categoryId;
+//	private Long subCategoryId;
 	
 }
