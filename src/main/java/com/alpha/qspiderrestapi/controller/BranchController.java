@@ -124,10 +124,9 @@ public class BranchController {
 	@PostMapping(value = "/uploadFileAndData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(@RequestPart("branch") String branch,
 			@RequestParam("branchImage") MultipartFile branchImage,
-			@RequestParam("branchHomePageImage") MultipartFile branchHomePageImage,
 			@RequestParam("branchGallery") List<MultipartFile> branchGallery, @PathVariable String version) {
 		if (version.equals("v1"))
-			return branchService.saveBranchAlongWithFile(branch, branchImage, branchHomePageImage, branchGallery);
+			return branchService.saveBranchAlongWithFile(branch, branchImage, branchGallery);
 
 		throw new UnauthorizedVersionException();
 

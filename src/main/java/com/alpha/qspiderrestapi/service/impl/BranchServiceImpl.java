@@ -286,7 +286,7 @@ public class BranchServiceImpl implements BranchService {
 
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(String branchObject, MultipartFile branchImage,
-			MultipartFile branchHomePageImage, List<MultipartFile> branchGallery) {
+			List<MultipartFile> branchGallery) {
 
 		BranchRequestDto branchDto = null;
 		try {

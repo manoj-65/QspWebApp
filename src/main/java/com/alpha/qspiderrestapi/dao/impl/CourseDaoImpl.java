@@ -22,7 +22,7 @@ public class CourseDaoImpl implements CourseDao {
 	}
 
 	@Override
-	public Optional<Course> fetchCourseById(long courseId) {
+	public Optional<Course> fetchCourseById(long courseId) { 
 		return courseRepository.findById(courseId);
 	}
 

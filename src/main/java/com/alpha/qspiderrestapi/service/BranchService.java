@@ -29,5 +29,5 @@ public interface BranchService {
 	ResponseEntity<ApiResponse<String>> updateBranchLocation(long branchId, String location);
 
 	ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(String branch, MultipartFile branchImage,
-			MultipartFile branchHomePageImage, List<MultipartFile> branchGallery);
+			List<MultipartFile> branchGallery);
 }

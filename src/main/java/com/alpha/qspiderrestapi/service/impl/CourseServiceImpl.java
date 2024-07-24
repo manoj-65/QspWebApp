@@ -2,12 +2,10 @@
 package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,7 +35,6 @@ import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.Subject;
 import com.alpha.qspiderrestapi.entity.ViewAllHomePage;
 import com.alpha.qspiderrestapi.entity.enums.Organization;
-import com.alpha.qspiderrestapi.exception.DomainMismatchException;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
@@ -215,6 +212,7 @@ public class CourseServiceImpl implements CourseService {
 //		System.out.println(optional);
 		if (optional.isPresent()) {
 			Course course = optional.get();
+			System.err.println(course.getBranchType());
 			CourseIdResponse courseResponse = courseMapper.mapToCourseDto(course);
 //			System.err.println(branchDao.fetchAllCityBranchView());
 
@@ -640,119 +638,112 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	private Course mapAndSetUrlsToCourse(CourseRequestImageDto courseRequest) {
-	    MultipartFile icon = courseRequest.getIcon();
-	    MultipartFile image = courseRequest.getImage();
-	    MultipartFile homePageImage = courseRequest.getHomePageImage();
+		MultipartFile icon = courseRequest.getIcon();
+		MultipartFile image = courseRequest.getImage();
+		MultipartFile homePageImage = courseRequest.getHomePageImage();
 
-	    // Log the received files and JSON body
-	    log.info("Received icon file: {}", icon.getOriginalFilename());
-	    log.info("Received image file: {}", image.getOriginalFilename());
-	    log.info("Received homePageImage file: {}", homePageImage.getOriginalFilename());
-	    log.debug("Received course JSON: {}", courseRequest.getCourse());
+		// Log the received files and JSON body
+		log.info("Received icon file: {}", icon.getOriginalFilename());
+		log.info("Received image file: {}", image.getOriginalFilename());
+		log.info("Received homePageImage file: {}", homePageImage.getOriginalFilename());
+		log.debug("Received course JSON: {}", courseRequest.getCourse());
 
-	    // Convert JSON body to object
-	    ObjectMapper objectMapper = new ObjectMapper();
-	    CourseRequestDto value;
-	    try {
-	        value = objectMapper.readValue(courseRequest.getCourse(), CourseRequestDto.class);
-	        log.debug("Parsed CourseRequestDto: {}", value);
-	    } catch (JsonProcessingException e) {
-	        log.error("Error parsing JSON: {}", e.getMessage());
-	        throw new InvalidInfoException("The Json body format is incorrect");
-	    }
+		// Convert JSON body to object
+		ObjectMapper objectMapper = new ObjectMapper();
+		CourseRequestDto value;
+		try {
+			value = objectMapper.readValue(courseRequest.getCourse(), CourseRequestDto.class);
+			log.debug("Parsed CourseRequestDto: {}", value);
+		} catch (JsonProcessingException e) {
+			log.error("Error parsing JSON: {}", e.getMessage());
+			throw new InvalidInfoException("The Json body format is incorrect");
+		}
 
-	    // DTO to Course
-	    Course course = Course.builder()
-	            .courseName(value.getCourseName())
-	            .courseDescription(value.getCourseDescription())
-	            .branchType(value.getBranchType())
-	            .mode(value.getMode())
-	            .courseAbout(value.getCourseAbout())
-	            .courseSummary(value.getCourseSummary())
-	            .courseHighlight(value.getCourseHighlight())
-	            .faqs(value.getFaqs())
-	            .build();
-	    log.debug("Mapped course object: {}", course);
+		// DTO to Course
+		Course course = Course.builder().courseName(value.getCourseName())
+				.courseDescription(value.getCourseDescription()).branchType(value.getBranchType()).mode(value.getMode())
+				.courseAbout(value.getCourseAbout()).courseSummary(value.getCourseSummary())
+				.courseHighlight(value.getCourseHighlight()).faqs(value.getFaqs()).build();
+		log.debug("Mapped course object: {}", course);
 
-	    // Upload icon and set icon URL in course object
-	    String folder = "COURSE/" + course.getCourseName();
-	    String iconUrl = awss3Service.uploadFile(icon, folder);
-	    log.info("Uploaded icon URL: {}", iconUrl);
+		// Upload icon and set icon URL in course object
+		String folder = "COURSE/" + course.getCourseName();
+		String iconUrl = awss3Service.uploadFile(icon, folder);
+		log.info("Uploaded icon URL: {}", iconUrl);
 
-	    if (!iconUrl.isEmpty()) {
-	        course.setCourseIcon(iconUrl);
-	    } else {
-	        log.error("Icon upload failed due to admin restriction");
-	        throw new NullPointerException("Icon can't be uploaded due to admin restriction");
-	    }
+		if (!iconUrl.isEmpty()) {
+			course.setCourseIcon(iconUrl);
+		} else {
+			log.error("Icon upload failed due to admin restriction");
+			throw new NullPointerException("Icon can't be uploaded due to admin restriction");
+		}
 
-	    // Upload course images and set respective URLs in course object
-	    String folder2 = "COURSE/IMAGE/" + course.getCourseName();
-	    String imageUrl = awss3Service.uploadFile(image, folder2);
-	    String homePageImageUrl = awss3Service.uploadFile(homePageImage, folder2);
-	    log.info("Uploaded course image URL: {}", imageUrl);
-	    log.info("Uploaded homePageImage URL: {}", homePageImageUrl);
+		// Upload course images and set respective URLs in course object
+		String folder2 = "COURSE/IMAGE/" + course.getCourseName();
+		String imageUrl = awss3Service.uploadFile(image, folder2);
+		String homePageImageUrl = awss3Service.uploadFile(homePageImage, folder2);
+		log.info("Uploaded course image URL: {}", imageUrl);
+		log.info("Uploaded homePageImage URL: {}", homePageImageUrl);
 
-	    if (!imageUrl.isEmpty() && !homePageImageUrl.isEmpty()) {
-	        course.setCourseImage(imageUrl);
-	        course.setHomePageCourseImage(homePageImageUrl);
-	    } else {
-	        log.error("Image upload failed due to admin restriction");
-	        throw new NullPointerException("Icon can't be uploaded due to admin restriction");
-	    }
+		if (!imageUrl.isEmpty() && !homePageImageUrl.isEmpty()) {
+			course.setCourseImage(imageUrl);
+			course.setHomePageCourseImage(homePageImageUrl);
+		} else {
+			log.error("Image upload failed due to admin restriction");
+			throw new NullPointerException("Icon can't be uploaded due to admin restriction");
+		}
 
-	    // Set course into FAQ and save course
-	    course = setCourseIntoFaq(course);
-	    log.debug("Set course into FAQ: {}", course);
-	    course = saveCourse(course);
-	    log.info("Saved course: {}", course);
+		// Set course into FAQ and save course
+		course = setCourseIntoFaq(course);
+		log.debug("Set course into FAQ: {}", course);
+		course = saveCourse(course);
+		log.info("Saved course: {}", course);
 
-	    return course;
+		return course;
 	}
-
 
 	@Override
 	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(CourseRequestImageDto courseRequestDto) {
-			long categoryId = courseRequestDto.getCategoryId();
-			Long subCategoryId = courseRequestDto.getSubCategoryId();
+		long categoryId = courseRequestDto.getCategoryId();
+		Long subCategoryId = courseRequestDto.getSubCategoryId();
 
-			log.info("Received request to save course along with images");
-			log.debug("CourseRequestImageDto: {}", courseRequestDto);
-			log.info("Category ID: {}", categoryId);
-			log.info("SubCategory ID: {}", subCategoryId);
+		log.info("Received request to save course along with images");
+		log.debug("CourseRequestImageDto: {}", courseRequestDto);
+		log.info("Category ID: {}", categoryId);
+		log.info("SubCategory ID: {}", subCategoryId);
 
-			if (categoryDao.isCategoryPresent(categoryId)) {
-				log.info("Category with ID {} is present", categoryId);
+		if (categoryDao.isCategoryPresent(categoryId)) {
+			log.info("Category with ID {} is present", categoryId);
 
-				if (subCategoryId != null) {
-					if (subCategoryDao.isSubCategoryPresent(subCategoryId)) {
-						log.info("SubCategory with ID {} is present", subCategoryId);
+			if (subCategoryId != null) {
+				if (subCategoryDao.isSubCategoryPresent(subCategoryId)) {
+					log.info("SubCategory with ID {} is present", subCategoryId);
 
-						Course course = mapAndSetUrlsToCourse(courseRequestDto);
-						log.debug("Mapped course: {}", course);
-
-						subCategoryDao.assignCourseToSubCategory(subCategoryId, course.getCourseId());
-						log.info("Assigned course with ID {} to subCategory with ID {}", course.getCourseId(),
-								subCategoryId);
-
-						return ResponseUtil.getCreated(course);
-					} else {
-						log.warn("No SubCategory found with given ID: {}", subCategoryId);
-						throw new IdNotFoundException("No SubCategory found with given Id: " + subCategoryId);
-					}
-				} else {
 					Course course = mapAndSetUrlsToCourse(courseRequestDto);
 					log.debug("Mapped course: {}", course);
 
-					categoryDao.assignCourseToCategory(categoryId, course.getCourseId());
-					log.info("Assigned course with ID {} to category with ID {}", course.getCourseId(), categoryId);
+					subCategoryDao.assignCourseToSubCategory(subCategoryId, course.getCourseId());
+					log.info("Assigned course with ID {} to subCategory with ID {}", course.getCourseId(),
+							subCategoryId);
 
 					return ResponseUtil.getCreated(course);
+				} else {
+					log.warn("No SubCategory found with given ID: {}", subCategoryId);
+					throw new IdNotFoundException("No SubCategory found with given Id: " + subCategoryId);
 				}
 			} else {
-				log.error("No Category found with given ID: {}", categoryId);
-				throw new IdNotFoundException("No Category found with given Id: " + categoryId);
+				Course course = mapAndSetUrlsToCourse(courseRequestDto);
+				log.debug("Mapped course: {}", course);
+
+				categoryDao.assignCourseToCategory(categoryId, course.getCourseId());
+				log.info("Assigned course with ID {} to category with ID {}", course.getCourseId(), categoryId);
+
+				return ResponseUtil.getCreated(course);
 			}
+		} else {
+			log.error("No Category found with given ID: {}", categoryId);
+			throw new IdNotFoundException("No Category found with given Id: " + categoryId);
+		}
 	}
 
 }

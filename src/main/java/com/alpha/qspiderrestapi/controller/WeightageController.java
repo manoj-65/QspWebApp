@@ -32,7 +32,7 @@ public class WeightageController {
 			return weightageService.saveCategoryWeightage(categoryId, dto);
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
-	}
+	} 
 
 	@PostMapping("/subCategories")
 	public ResponseEntity<ApiResponse<Weightage>> saveSubCategoryWeightage(@PathVariable String version,
