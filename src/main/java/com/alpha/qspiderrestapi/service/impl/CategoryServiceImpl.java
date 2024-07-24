@@ -275,7 +275,7 @@ public class CategoryServiceImpl implements CategoryService {
 	        List<SubCategoryResponse> subCoursesResult = categoryResponse.getSubCourse().stream()
 	            .map(subCourse -> {
 	                List<SubCourseResponse> subCourseResponses = subCourse.getSubCourseResponse().stream()
-	                    .filter(c -> c.getModes().contains(Mode.ONLINECLASSES))
+	                    .filter(c -> c.getModes().contains(Mode.ONLINE_CLASSES))
 	                    .collect(Collectors.toList());
 	                subCourse.setSubCourseResponse(subCourseResponses);
 	                return subCourseResponses.isEmpty() ? null : subCourse;
@@ -286,7 +286,7 @@ public class CategoryServiceImpl implements CategoryService {
 	        categoryResponse.setSubCourse(subCoursesResult);
 
 	        List<CourseResponse> courseResponses = categoryResponse.getCourseResponse().stream()
-	            .filter(c -> c.getModes().contains(Mode.ONLINECLASSES))
+	            .filter(c -> c.getModes().contains(Mode.ONLINE_CLASSES))
 	            .collect(Collectors.toList());
 	        categoryResponse.setCourseResponse(courseResponses);
 
