@@ -149,7 +149,6 @@ public class BranchServiceImpl implements BranchService {
 
 	public ResponseEntity<ApiResponse<List<CountryDto>>> fetchAll(String domainName) {
 		List<CityCourseBranchView> view = viewDao.fetchAll();
-
 		// Group by country -> city -> courseId
 		Map<String, Map<String, Map<Long, List<CityCourseBranchView>>>> groupedData = view.stream()
 				.collect(Collectors.groupingBy(CityCourseBranchView::getCountry, Collectors.groupingBy(
@@ -184,7 +183,7 @@ public class BranchServiceImpl implements BranchService {
 				city.setQspiders(anyBranch.getQspiders());
 				city.setJspiders(anyBranch.getJspiders());
 				city.setPyspiders(anyBranch.getPyspiders());
-				city.setProspiders(anyBranch.getCProspiders());
+				city.setProspiders(anyBranch.getProspiders());
 				city.setBranchCount(anyBranch.getBranchCount());
 				List<CourseDto> courses = new ArrayList<>();
 
