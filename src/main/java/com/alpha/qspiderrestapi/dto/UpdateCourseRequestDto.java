@@ -22,5 +22,5 @@ public class UpdateCourseRequestDto {
 	private List<Faq> faqs;
 	private String courseIcon;
 	private String courseImage;
-	private String homePageCourseImage; 
+	private String homePageImage; 
 }
