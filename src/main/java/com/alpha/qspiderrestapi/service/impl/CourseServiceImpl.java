@@ -242,7 +242,7 @@ public class CourseServiceImpl implements CourseService {
 			return ResponseUtil.getOk(courseResponse);
 		} else {
 			log.error("Course with id: {} not found", courseId);
-			throw new IdNotFoundException("No Course Found with the Given ID");
+			throw new IdNotFoundException("No Course Found with the Given ID"); 
 		}
 	}
 
@@ -718,7 +718,7 @@ public class CourseServiceImpl implements CourseService {
 			if (subCategoryId != null) {
 				if (subCategoryDao.isSubCategoryPresent(subCategoryId)) {
 					log.info("SubCategory with ID {} is present", subCategoryId);
-
+ 
 					Course course = mapAndSetUrlsToCourse(courseRequestDto);
 					log.debug("Mapped course: {}", course);
 
