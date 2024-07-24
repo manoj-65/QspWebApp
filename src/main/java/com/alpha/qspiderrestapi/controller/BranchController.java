@@ -118,9 +118,10 @@ public class BranchController {
 	@GetMapping("/findAll")
 	public ResponseEntity<ApiResponse<List<Branch>>> findAll(@PathVariable String version) {
 		if (version.equals("v1"))
-			return branchService.findAll();
+			return branchService.findAll(); 
 		throw new UnauthorizedVersionException("Given Version Build is Not Runing");
 	}
+
 
 	@PostMapping(value = "/uploadFileAndData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(@PathVariable String version,
