@@ -9,6 +9,7 @@ import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestDto;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
+import com.alpha.qspiderrestapi.dto.UpdateCourseDto;
 import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.Course;
 
@@ -33,13 +34,12 @@ public interface CourseService {
 	ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(long categoryId, Long subCategoryId, String course,
 			MultipartFile icon, MultipartFile image, MultipartFile homePageImage);
 
-	ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(String course,
-			MultipartFile icon, MultipartFile image, MultipartFile homePageImage);
-
 	ResponseEntity<ApiResponse<Course>> updateCourseContent(CourseIdResponse courseIdResponse);
 
 	ResponseEntity<ApiResponse<String>> removeSubjectsFromCourse(Long courseId, List<Long> subjectIds);
 
 	ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(CourseRequestImageDto courseRequestDto);
+
+	ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(UpdateCourseDto updateCourseDto);
 
 }

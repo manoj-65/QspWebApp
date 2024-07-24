@@ -28,6 +28,7 @@ import com.alpha.qspiderrestapi.dto.BranchDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestDto;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
+import com.alpha.qspiderrestapi.dto.UpdateCourseDto;
 import com.alpha.qspiderrestapi.dto.UpdateCourseRequestDto;
 import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.CityBranchView;
@@ -522,9 +523,13 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(String courseRequest, MultipartFile icon,
-			MultipartFile image, MultipartFile homePageImage) {
+	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(UpdateCourseDto updateCourseDto) {
 
+		String courseRequest = updateCourseDto.getCourseContent();
+		MultipartFile icon = updateCourseDto.getIcon();
+		MultipartFile image = updateCourseDto.getImage();
+		MultipartFile homePageImage = updateCourseDto.getHomePageImage();
+		
 		// string of json body to object
 		ObjectMapper objectMapper = new ObjectMapper();
 		UpdateCourseRequestDto value;
