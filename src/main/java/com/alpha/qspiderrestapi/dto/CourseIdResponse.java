@@ -24,7 +24,9 @@ public class CourseIdResponse {
 	private String courseHighlight;
 	private List<Faq> faqs = new ArrayList<Faq>();
 	private List<Organization> branchType;
+	private String courseIcon;
 	private String courseImage;
+	private String homePageImage;
 	private List<CityBranchView> branches;
 	private List<BatchDto> onlineBatches;
 	private List<SubjectDto> subjects;
