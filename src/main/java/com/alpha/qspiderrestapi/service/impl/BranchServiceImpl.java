@@ -24,6 +24,7 @@ import com.alpha.qspiderrestapi.dto.BranchByIdDto;
 import com.alpha.qspiderrestapi.dto.BranchById_BatchDto;
 import com.alpha.qspiderrestapi.dto.BranchById_CourseDto;
 import com.alpha.qspiderrestapi.dto.BranchDto;
+import com.alpha.qspiderrestapi.dto.BranchFileRequestDto;
 import com.alpha.qspiderrestapi.dto.BranchRequestDto;
 import com.alpha.qspiderrestapi.dto.CityDto;
 import com.alpha.qspiderrestapi.dto.CountryDto;
@@ -285,21 +286,20 @@ public class BranchServiceImpl implements BranchService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(String branchObject, MultipartFile branchImage,
-			List<MultipartFile> branchGallery) {
+	public ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(BranchFileRequestDto branchRequestDto) {
 
-		BranchRequestDto branchDto = null;
+		BranchRequestDto branchDto;
 		try {
 			objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true);
-			Reader read = new StringReader(branchObject);
+			Reader read = new StringReader(branchRequestDto.getBranch());
 			branchDto = objectMapper.readValue(read, BranchRequestDto.class);
 			System.err.println(branchDto);
 
 		} catch (IOException e) {
 			System.err.println(e);
+			throw new InvalidInfoException("The Json body format is incorrect");
 		}
 		Branch branch = new Branch();
-
 		log.info("Saving branch: {}", branchDto);
 		branch.setDisplayName(branchDto.getDisplayName());
 		branch.setBranchType(branchDto.getBranchType());
@@ -314,9 +314,8 @@ public class BranchServiceImpl implements BranchService {
 		branch.setBranchFaqs(
 				branch.getBranchFaqs().stream().peek((faqs) -> faqs.setBranch(branch)).collect(Collectors.toList()));
 		Branch savedBranch = branchDao.saveBranch(branch);
-		uploadIcon(branchImage, branch.getBranchId());
-
-		uploadImagesToGallery(branchGallery, branch.getBranchId());
+		uploadIcon(branchRequestDto.getBranchImage(), branch.getBranchId());
+		uploadImagesToGallery(branchRequestDto.getBranchGallery(), branch.getBranchId());
 
 		log.info("Branch saved successfully: {}", branch);
 		cityDao.updateCityBranchCount();
