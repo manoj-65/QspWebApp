@@ -68,7 +68,6 @@ public class CourseMapper {
 				.courseSummary(course.getCourseSummary()).courseAbout(course.getCourseAbout())
 				.courseHighlight(course.getCourseHighlight()).faqs(course.getFaqs())
 				.courseImage(course.getCourseImage()).branchType(course.getBranchType())
-				.courseImage(course.getCourseImage())
 				.subjects(subjectMapper.mapSubjectToSubjectDto(course.getSubjects())).build();
 
 	}

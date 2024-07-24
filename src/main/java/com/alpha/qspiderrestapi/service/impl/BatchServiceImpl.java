@@ -37,7 +37,7 @@ public class BatchServiceImpl implements BatchService {
 
 	@Autowired
 	private BatchDao batchDao;
-	
+
 	@Autowired
 	private CityDao cityDao;
 
@@ -54,18 +54,18 @@ public class BatchServiceImpl implements BatchService {
 			return new IdNotFoundException("No Branch Found with id: " + branchId);
 		});
 		if (course.getMode().contains(batch.getBatchMode())) {
-			if(branch.getBranchType().equals(course.getBranchType().get(0))) {
+			if (branch.getBranchType().equals(course.getBranchType().get(0))) {
 				batch.setBatchStatus(BatchStatus.UPCOMING);
 				batch.setEndingTime(batch.getStartingTime().plusHours(2l));
 				batch.setCourse(course);
 				batch.setBranch(branch);
 				batch = batchDao.saveBatch(batch);
-				log.info("Batch saved successfully: {}", batch); 
+				log.info("Batch saved successfully: {}", batch);
 				return ResponseUtil.getCreated(batch);
 			}
 			throw new InvalidInfoException("Given course and branch belong to different Organisation Type");
 		}
-			throw new InvalidInfoException("Given course and batch mode is not matching");
+		throw new InvalidInfoException("Given course and batch mode is not matching");
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class BatchServiceImpl implements BatchService {
 	@Override
 	@Scheduled(cron = "0 0 3 ? * MON,THU")
 	public void createBatch() {
-		List<String> branchTypes = Arrays.asList("JSP", "QSP", "PYSP","BSP"); // Example branch types
+		List<String> branchTypes = Arrays.asList("JSP", "QSP", "PYSP", "PROSP"); // Example branch types
 		Time startTime1 = Time.valueOf("10:00:00"); // Start time 10:00 AM
 		Time startTime2 = Time.valueOf("14:00:00"); // Start time 2:00 PM
 
@@ -90,10 +90,10 @@ public class BatchServiceImpl implements BatchService {
 
 	@Override
 	public ResponseEntity<ApiResponse<String>> deleteBatch(long batchId) {
-		if(batchDao.isBatchPresent(batchId)) {
+		if (batchDao.isBatchPresent(batchId)) {
 			batchDao.deleteBatch(batchId);
 		}
-			
+
 		return ResponseUtil.getNoContent("Deletion Successful");
 	}
 

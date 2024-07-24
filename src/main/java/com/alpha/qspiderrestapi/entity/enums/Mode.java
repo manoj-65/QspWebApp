@@ -7,3 +7,4 @@ public enum Mode {
 	ONLINECLASSES,
 	OFFLINECLASSES
 }
+ 

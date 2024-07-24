@@ -38,7 +38,7 @@ public class BranchDaoImpl implements BranchDao {
 
 	@Override
 	public void deleteBranch(long branchId) {
-		branchRepository.deleteById(branchId);
+		branchRepository.deleteById(branchId); 
 	}
 
 	@Override

@@ -225,7 +225,7 @@ public class WeightageUtil {
 		return weightages;
 	}
 
-	public List<Weightage> checkAndUpdateBspWeightage(Weightage weightage, List<Weightage> allWeightages) {
+	public List<Weightage> checkAndUpdatePROSPWeightage(Weightage weightage, List<Weightage> allWeightages) {
 
 		List<Weightage> weightages = null;
 		weightages = allWeightages.stream().filter(w -> w.getProspiders() >= weightage.getProspiders())
@@ -305,7 +305,7 @@ public class WeightageUtil {
 			weightages = checkAndUpdateJspWeightage(weightage, allWeightages);
 
 		if (weightage.getProspiders() != 0)
-			weightages = checkAndUpdateBspWeightage(weightage, allWeightages);
+			weightages = checkAndUpdatePROSPWeightage(weightage, allWeightages);
 
 		if (weightage.getJspiders() != 0)
 			weightages = checkAndUpdatePyspWeightage(weightage, allWeightages);

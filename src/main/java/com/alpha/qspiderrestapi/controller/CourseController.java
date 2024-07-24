@@ -78,7 +78,7 @@ public class CourseController {
 
 		throw new UnauthorizedVersionException();
 	}
-
+ 
 	/**
 	 * Retrieves all available courses.
 	 *
