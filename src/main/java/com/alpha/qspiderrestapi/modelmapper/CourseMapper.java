@@ -66,9 +66,10 @@ public class CourseMapper {
 		return CourseIdResponse.builder().courseId(course.getCourseId()).courseName(course.getCourseName())
 				.mode(course.getMode()).courseDescription(course.getCourseDescription())
 				.courseSummary(course.getCourseSummary()).courseAbout(course.getCourseAbout())
-				.courseHighlight(course.getCourseHighlight()).faqs(course.getFaqs())
-				.courseImage(course.getCourseImage()).branchType(course.getBranchType())
-				.subjects(subjectMapper.mapSubjectToSubjectDto(course.getSubjects())).build();
+				.courseHighlight(course.getCourseHighlight()).faqs(course.getFaqs()).courseIcon(course.getCourseIcon())
+				.courseImage(course.getCourseImage()).homePageImage(course.getHomePageCourseImage())
+				.branchType(course.getBranchType()).subjects(subjectMapper.mapSubjectToSubjectDto(course.getSubjects()))
+				.build();
 
 	}
 
