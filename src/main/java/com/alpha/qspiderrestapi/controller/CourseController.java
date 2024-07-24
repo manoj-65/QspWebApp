@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
+import com.alpha.qspiderrestapi.dto.UpdateCourseDto;
 import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.exception.DomainMismatchException;
@@ -226,12 +227,9 @@ public class CourseController {
 	}
 
 	@PutMapping(value = "/updateCourse")
-	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(@PathVariable String version,
-			@RequestPart(required = false) MultipartFile icon, @RequestPart(required = false) MultipartFile image,
-			@RequestPart(required = false) MultipartFile homePageImage, @RequestPart String course) {
-
+	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(@PathVariable String version,@ModelAttribute UpdateCourseDto course) {
 		if (version.equals("v1"))
-			return courseService.updateCourseAlongWithImages(course, icon, image, homePageImage);
+			return courseService.updateCourseAlongWithImages(course);
 
 		throw new UnauthorizedVersionException();
 	}
