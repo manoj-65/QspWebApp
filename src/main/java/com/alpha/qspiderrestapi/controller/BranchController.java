@@ -122,7 +122,8 @@ public class BranchController {
 		throw new UnauthorizedVersionException("Given Version Build is Not Runing");
 	}
 
-	@PostMapping(value = "/uploadFileAndData")
+
+	@PostMapping(value = "/uploadFileAndData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(@PathVariable String version,
 			@ModelAttribute BranchFileRequestDto branchRequestDto) {
 		if (version.equals("v1"))
