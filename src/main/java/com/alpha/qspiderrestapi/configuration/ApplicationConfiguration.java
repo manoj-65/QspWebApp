@@ -26,7 +26,7 @@ public class ApplicationConfiguration {
 		dev.setDescription("Developement environment");
 
 		Contact contact = new Contact();
-		//what should the email be
+		//what should the email be 
 		contact.setEmail("info@email.in");
 		contact.setName("qspiders");
 		
