@@ -92,9 +92,9 @@ public class CategoryController {
 	@GetMapping("/getAllCategories")
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(@PathVariable String version,
 			@RequestHeader("Origin") String domainName) {
-		System.err.println(domainName);
 		if (version.equalsIgnoreCase("V1")) {
-			return categoryService.fetchAllCategories(domainName);
+			boolean isOnline = false;
+			return categoryService.fetchAllCategories(domainName,isOnline);
 		}
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
@@ -187,7 +187,8 @@ public class CategoryController {
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(@PathVariable String version,
 			@RequestHeader("Origin") String domainName) {
 		if (version.equalsIgnoreCase("V1")) {
-			return categoryService.fetchAllOnlineCourses(domainName);
+			boolean isOnline = true;
+			return categoryService.fetchAllCategories(domainName,isOnline);
 		}
 
 		throw new UnauthorizedVersionException("Unauthorized Version");

@@ -3,11 +3,14 @@ package com.alpha.qspiderrestapi.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
 import com.alpha.qspiderrestapi.dto.BranchDto;
+import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.ViewAllHomePage;
+import com.alpha.qspiderrestapi.entity.enums.Mode;
 
 @Component
 public class CourseUtil {
@@ -37,7 +40,7 @@ public class CourseUtil {
 			branchDto.setStreet(result.getStreet());
 			branchDto.setOrganizationType(result.getBranchType());
 			branchDtos.add(branchDto);
-		} 
+		}
 		return branchDtos;
 	}
 
@@ -51,6 +54,11 @@ public class CourseUtil {
 
 		Random random = new Random();
 		return random.nextInt(upperBound - lowerBound) + lowerBound;
+	}
+
+	public List<Course> filterForOnline(List<Course> courses) {
+		return courses.stream().filter(course -> course.getMode().contains(Mode.ONLINE_CLASSES))
+				.collect(Collectors.toList());
 	}
 
 }
