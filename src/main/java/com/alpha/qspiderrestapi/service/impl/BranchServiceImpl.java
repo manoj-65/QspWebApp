@@ -29,6 +29,7 @@ import com.alpha.qspiderrestapi.dto.BranchRequestDto;
 import com.alpha.qspiderrestapi.dto.CityDto;
 import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.dto.CourseDto;
+import com.alpha.qspiderrestapi.dto.UpdateBranchRequestDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.entity.City;
 import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
@@ -289,6 +290,9 @@ public class BranchServiceImpl implements BranchService {
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(BranchFileRequestDto branchRequestDto) {
 
+		MultipartFile branchImage = branchRequestDto.getBranchImage();
+		List<MultipartFile> branchGallery = branchRequestDto.getBranchGallery();
+
 		BranchRequestDto branchDto;
 		try {
 			objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true);
@@ -305,22 +309,71 @@ public class BranchServiceImpl implements BranchService {
 		branch.setDisplayName(branchDto.getDisplayName());
 		branch.setBranchType(branchDto.getBranchType());
 		branch.setBranchTitle(branchDto.getDisplayName() + "-" + branchDto.getBranchType());
-		for (String contact : branchDto.getContacts()) {
-			if (!validatePhoneNumber.isValidPhoneNumber(contact)) {
-				throw new InvalidPhoneNumberException("Invalid contact : " + contact);
-			}
-			branch.setContacts(branchDto.getContacts());
+		if (branchDto != null && branchDto.getContacts().stream()
+				.anyMatch(contact -> !validatePhoneNumber.isValidPhoneNumber(contact))) {
+			throw new InvalidPhoneNumberException("Invalid contact found");
 		}
 		branch.setBranchAddress(branchDto.getBranchAddress());
-		branch.setBranchFaqs(
-				branch.getBranchFaqs().stream().peek((faqs) -> faqs.setBranch(branch)).collect(Collectors.toList()));
+		branch.setBranchFaqs(branchDto.getBranchFaqs());
 		Branch savedBranch = branchDao.saveBranch(branch);
-		uploadIcon(branchRequestDto.getBranchImage(), branch.getBranchId());
-		uploadImagesToGallery(branchRequestDto.getBranchGallery(), branch.getBranchId());
+		if (branchImage != null)
+			uploadIcon(branchImage, branch.getBranchId());
+		if (branchGallery != null)
+			uploadImagesToGallery(branchGallery, branch.getBranchId());
 
 		log.info("Branch saved successfully: {}", branch);
 		cityDao.updateCityBranchCount();
+		return ResponseUtil.getCreated(branch);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Branch>> updateBranchAlongWithFile(BranchFileRequestDto branchRequestDto) {
+
+		MultipartFile branchImage = branchRequestDto.getBranchImage();
+		List<MultipartFile> branchGallery = branchRequestDto.getBranchGallery();
+		UpdateBranchRequestDto branchDto;
+		try {
+			objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true);
+			Reader read = new StringReader(branchRequestDto.getBranch());
+			branchDto = objectMapper.readValue(read, UpdateBranchRequestDto.class);
+			System.err.println(branchDto);
+
+		} catch (IOException e) {
+			System.err.println(e);
+			throw new InvalidInfoException("The Json body format is incorrect");
+		}
+
+		Branch branch = branchDao.fetchBranchById(branchDto.getBranchId()).orElseThrow(
+				() -> new IdNotFoundException("Given branch Id " + branchDto.getBranchId() + " not found"));
+
+		branch.setDisplayName(branchDto.getDisplayName());
+		branch.setBranchType(branchDto.getBranchType());
+		branch.setBranchTitle(branchDto.getDisplayName() + "-" + branchDto.getBranchType());
+		if (branchDto != null && branchDto.getContacts().stream()
+				.anyMatch(contact -> !validatePhoneNumber.isValidPhoneNumber(contact))) {
+			throw new InvalidPhoneNumberException("Invalid contact found");
+		}
+		branch.setContacts(branchDto.getContacts());
+		branch.setEmails(branchDto.getEmails());
+		branch.setBranchAddress(branchDto.getBranchAddress());
+		branch.setBranchFaqs(branchDto.getBranchFaqs());
+		branch.setGallery(branchDto.getBranchGalleryUrl());
+		Branch savedBranch = branchDao.saveBranch(branch);
+		if (branchImage != null)
+			uploadIcon(branchImage, branch.getBranchId());
+		if (branchGallery != null)
+			uploadImagesToGallery(branchGallery, branch.getBranchId());
+
+		log.info("Branch saved successfully: {}", branch);
 		return ResponseUtil.getCreated(savedBranch);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Branch>> fetchByIdForm(long branchId) {
+
+		Branch branch = branchDao.fetchBranchById(branchId).orElseThrow(() -> new IdNotFoundException());
+		return ResponseUtil.getOk(branch);
+
 	}
 
 }

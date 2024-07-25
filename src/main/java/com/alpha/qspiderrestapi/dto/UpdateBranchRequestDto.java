@@ -6,19 +6,19 @@ import com.alpha.qspiderrestapi.entity.Address;
 import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.enums.Organization;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class BranchRequestDto {
+public class UpdateBranchRequestDto {
 
+	private long branchId;
 	private String displayName;
+	private Organization branchType;
 	private List<String> contacts;
 	private List<String> emails;
-	private Organization branchType;
-	private Address branchAddress;
 	private List<Faq> branchFaqs;
+	private Address branchAddress;
+	private String branchImageUrl;
+	private List<String> branchGalleryUrl;
+
 }
