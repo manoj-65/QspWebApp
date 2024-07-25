@@ -118,12 +118,11 @@ public class BranchController {
 	@GetMapping("/findAll")
 	public ResponseEntity<ApiResponse<List<Branch>>> findAll(@PathVariable String version) {
 		if (version.equals("v1"))
-			return branchService.findAll(); 
+			return branchService.findAll();
 		throw new UnauthorizedVersionException("Given Version Build is Not Runing");
 	}
 
-
-	@PostMapping(value = "/uploadFileAndData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/uploadFileAndData", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(@PathVariable String version,
 			@ModelAttribute BranchFileRequestDto branchRequestDto) {
 		if (version.equals("v1"))
@@ -131,6 +130,25 @@ public class BranchController {
 
 		throw new UnauthorizedVersionException();
 
+	}
+
+	@PostMapping(value = "/updateFileAndData")
+	public ResponseEntity<ApiResponse<Branch>> updateBranchAlongWithFile(@PathVariable String version,
+			@ModelAttribute BranchFileRequestDto branchRequestDto) {
+		if (version.equals("v1"))
+			return branchService.updateBranchAlongWithFile(branchRequestDto);
+
+		throw new UnauthorizedVersionException();
+
+	}
+
+	@GetMapping("/getbyidform")
+	public ResponseEntity<ApiResponse<Branch>> fetchByIdForm(@PathVariable String version,
+			@RequestParam long branchId) {
+		if (version.equals("v1"))
+			return branchService.fetchByIdForm(branchId);
+
+		throw new UnauthorizedVersionException();
 	}
 
 }
