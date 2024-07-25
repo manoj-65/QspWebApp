@@ -30,6 +30,7 @@ public class CityCourseBranchView {
 	private String courseName;
 	private String displayName;
 	private String branchImage;
+	private String branch_type;
 	private String location;
 	private String contacts;
 	private long upcomingBatches;
