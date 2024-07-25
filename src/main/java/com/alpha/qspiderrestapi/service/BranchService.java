@@ -30,4 +30,8 @@ public interface BranchService {
 	ResponseEntity<ApiResponse<String>> updateBranchLocation(long branchId, String location);
 
 	ResponseEntity<ApiResponse<Branch>> saveBranchAlongWithFile(BranchFileRequestDto branchRequestDto);
+
+	ResponseEntity<ApiResponse<Branch>> updateBranchAlongWithFile(BranchFileRequestDto branchRequestDto);
+
+	ResponseEntity<ApiResponse<Branch>> fetchByIdForm(long branchId);
 }

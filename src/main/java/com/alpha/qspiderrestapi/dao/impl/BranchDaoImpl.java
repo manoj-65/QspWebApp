@@ -30,7 +30,7 @@ public class BranchDaoImpl implements BranchDao {
 	public Optional<Branch> fetchBranchById(long branchId) {
 		return branchRepository.findById(branchId);
 	}
-
+ 
 	@Override
 	public List<Branch> fetchAllBranches() {
 		return branchRepository.findAll();

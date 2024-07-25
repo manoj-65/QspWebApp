@@ -68,10 +68,10 @@ public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private BranchDao branchDao;
-
+ 
 	@Autowired
 	private ChapterUtil chapterUtil;
-
+ 
 	@Autowired
 	private AWSS3Service awss3Service;
 

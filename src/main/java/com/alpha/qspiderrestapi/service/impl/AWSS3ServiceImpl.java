@@ -37,7 +37,7 @@ public class AWSS3ServiceImpl implements AWSS3Service {
 		String url = "";
 		LOGGER.info("File upload in progress.");
 		try {
-			final File file = convertMultiPartFileToFile(multipartFile);
+			final File file = convertMultiPartFileToFile(multipartFile); 
 			url = uploadFileToS3Bucket(bucketName, file, folder);
 			LOGGER.info("File upload is completed.");
 			file.delete(); // To remove the file locally created in the project folder.
