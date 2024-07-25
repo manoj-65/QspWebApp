@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.alpha.qspiderrestapi.dto.SubCategoryFormResponse;
 import com.alpha.qspiderrestapi.dto.SubCategoryResponse;
 import com.alpha.qspiderrestapi.entity.SubCategory;
+import com.alpha.qspiderrestapi.util.CourseUtil;
 import com.alpha.qspiderrestapi.util.WeightageUtil;
 
 import lombok.Builder;
@@ -25,6 +26,9 @@ public class SubCategoryMapper {
 	@Autowired
 	private SubCourseMapper subCourseMapper;
 	
+	@Autowired
+	private CourseUtil courseUtil;
+	
 	/**
 	 * Converts a SubCategory entity to a SubCategoryResponse DTO.
 	 *
@@ -37,7 +41,10 @@ public class SubCategoryMapper {
 	 * @param hostname 
 	 * @return A SubCategoryResponse DTO containing the mapped data.
 	 */
-	public SubCategoryResponse mapToSubCategoryResponse(SubCategory subCategory, String hostname) {
+	public SubCategoryResponse mapToSubCategoryResponse(SubCategory subCategory, String hostname,boolean isOnline) {
+		if(isOnline) {
+			subCategory.setCourses(courseUtil.filterForOnline(subCategory.getCourses()));
+		}
 		return SubCategoryResponse.builder().subCourseId(subCategory.getSubCategoryId())
 				.icon(subCategory.getSubCategoryIcon()).title(subCategory.getSubCategoryTitle())
 				.subCourseResponse(subCourseMapper.mapToSubCourseResponseList(weightageUtil.getSortedCourseOfSubCategory(subCategory.getCourses(), hostname, subCategory.getSubCategoryId()),subCategory.getSubCategoryId()))
@@ -56,11 +63,11 @@ public class SubCategoryMapper {
 	 * @param subCategories The list of SubCategory entities to be converted.
 	 * @return A list of SubCategoryResponse DTOs containing the mapped data.
 	 */
-	public List<SubCategoryResponse> mapToSubCategoryResponseList(List<SubCategory> subCategories,String hostname,long categoryId) {
+	public List<SubCategoryResponse> mapToSubCategoryResponseList(List<SubCategory> subCategories,String hostname,long categoryId,boolean isOnline) {
 		subCategories = weightageUtil.getSortedSubCategory(subCategories, hostname, categoryId);
 		List<SubCategoryResponse> responseList = new ArrayList<SubCategoryResponse>();
 
-		subCategories.forEach(response -> responseList.add(mapToSubCategoryResponse(response,hostname)));
+		subCategories.forEach(response -> responseList.add(mapToSubCategoryResponse(response,hostname,isOnline)));
 
 		return responseList;
 
