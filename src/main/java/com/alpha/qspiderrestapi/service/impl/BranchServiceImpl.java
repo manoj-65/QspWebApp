@@ -203,6 +203,7 @@ public class BranchServiceImpl implements BranchService {
 						branch.setBranchId(branchView.getBranchId());
 						branch.setBranchName(branchView.getDisplayName());
 						branch.setBranchImage(branchView.getBranchImage());
+						branch.setOrganizationType(branchView.getBranch_type());
 						branch.setLocation(branchView.getLocation());
 						branch.setPhoneNumber(branchView.getContacts());
 						branch.setUpcomingBatches(branchView.getUpcomingBatches());
