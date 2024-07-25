@@ -17,7 +17,7 @@ public interface CategoryService {
 
 	ResponseEntity<ApiResponse<Category>> saveCategory(Category category);
 
-	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName);
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName,boolean isOnline);
 
 	ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId, String domainName);
 
@@ -32,7 +32,7 @@ public interface CategoryService {
 
 	ResponseEntity<ApiResponse<Map<Mode, List<CategoryDashboardResponse>>>> findSortedCategories(String domainName);
 
-	ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(String domainName);
+//	ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(String domainName);
 
 	ResponseEntity<ApiResponse<String>> removeCourseFromCategory(Long categoryId, List<Long> courseIds);
 
