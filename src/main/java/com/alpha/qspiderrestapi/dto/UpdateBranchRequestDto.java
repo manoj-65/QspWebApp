@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class UpdateBranchRequestDto {
 
-	private long branchId;
+	private Long branchId;
 	private String displayName;
 	private Organization branchType;
 	private List<String> contacts;
