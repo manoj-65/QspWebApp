@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ViewAllHomePageResponse {
 
-	private String cityName;
-	List<BranchDto> branches; 
+	private String countryName;
+	private List<CityViewDto> city;
 
 }
