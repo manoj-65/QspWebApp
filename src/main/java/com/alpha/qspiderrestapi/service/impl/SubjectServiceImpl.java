@@ -46,10 +46,10 @@ public class SubjectServiceImpl implements SubjectService {
 	 */
 	@Override
 	public ResponseEntity<ApiResponse<Subject>> saveSubject(Subject subject) {
-		
+
 		Subject subjectEntity = subjectDao.saveSubject(chapterUtil.mapSubjectToChapters(subject));
 		try {
-			return ResponseUtil.getCreated(null);
+			return ResponseUtil.getCreated(subjectEntity);
 		} catch (Exception e) {
 			log.error("Error occurred while saving Subject", e.getMessage());
 			throw e;

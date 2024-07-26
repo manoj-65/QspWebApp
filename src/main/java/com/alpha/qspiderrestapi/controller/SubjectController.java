@@ -1,4 +1,4 @@
- package com.alpha.qspiderrestapi.controller;
+package com.alpha.qspiderrestapi.controller;
 
 import java.util.List;
 
