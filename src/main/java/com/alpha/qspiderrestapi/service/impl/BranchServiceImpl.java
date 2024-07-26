@@ -34,7 +34,6 @@ import com.alpha.qspiderrestapi.dto.UpdateBranchRequestDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.entity.City;
 import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
-import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.exception.InvalidPhoneNumberException;

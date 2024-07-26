@@ -93,7 +93,7 @@ public class CategoryController {
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(@PathVariable String version,
 			@RequestHeader("Origin") String domainName) {
 		if (version.equalsIgnoreCase("V1")) {
-			boolean isOnline = false;
+			boolean isOnline = false; 
 			return categoryService.fetchAllCategories(domainName,isOnline);
 		}
 

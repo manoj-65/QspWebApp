@@ -60,7 +60,6 @@ public class Branch {
 	private Address branchAddress;
 
 	@OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
-	@JsonIgnore
 	private List<Faq> branchFaqs = new ArrayList<Faq>();
 
 	@OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)

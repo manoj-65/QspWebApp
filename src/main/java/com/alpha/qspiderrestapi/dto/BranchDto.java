@@ -12,6 +12,7 @@ public class BranchDto {
 	private String branchImage;
 	private Long upcomingBatches;
 	private Long ongoingBatches;
+	private String country;
 	private String city;
 	private int pinCode;
 	private String state;
