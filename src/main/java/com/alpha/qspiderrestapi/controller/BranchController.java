@@ -151,4 +151,13 @@ public class BranchController {
 		throw new UnauthorizedVersionException();
 	}
 
+	@GetMapping("/getAllBranches/formfilter")
+	public ResponseEntity<ApiResponse<List<CountryDto>>> getAllBranchesForForm(@PathVariable String version,
+			@RequestHeader("Origin") String domainName) {
+		if (version.equals("v1"))
+			return branchService.getAllBranchesForForm(domainName);
+
+		throw new UnauthorizedVersionException();
+	}
+
 }

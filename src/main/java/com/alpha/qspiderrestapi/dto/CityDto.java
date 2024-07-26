@@ -16,4 +16,5 @@ public class CityDto {
 	private long pyspiders;
 	private long prospiders;
 	private long branchCount;
+	private List<OrganizationDto> organizations;
 }

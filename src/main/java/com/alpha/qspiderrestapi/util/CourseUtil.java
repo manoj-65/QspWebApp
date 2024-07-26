@@ -34,6 +34,7 @@ public class CourseUtil {
 			branchDto.setLocation(result.getLocation());
 			branchDto.setUpcomingBatches(result.getUpcomingBatches());
 			branchDto.setOngoingBatches(result.getOngoingBatches());
+			branchDto.setCountry(result.getCountry());
 			branchDto.setCity(result.getCityName());
 			branchDto.setPinCode(result.getPincode());
 			branchDto.setState(result.getState());

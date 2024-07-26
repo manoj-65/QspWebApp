@@ -56,7 +56,8 @@ public class CustomAuthenticationManager {
 			"/api/{version}/weightage/updateCategoryWeightage", "api/{version}/weightage/categoryWeightage",
 			"/api/{version}/courses/updateCourseContent", "/api/{version}/categories/removeCourseFromCategory",
 			"/api/{version}/cities", "/api/{version}/subCategories/removeCourseFromSubCategory",
-			"/api/{version}/courses/updateCourse", "api/{version}/weightage/country" };
+			"/api/{version}/courses/updateCourse", "api/{version}/weightage/country",
+			"/api/{version}/branches/getAllBranches/formfilter" };
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -84,7 +85,7 @@ public class CustomAuthenticationManager {
 		authenticationProvider.setUserDetailsService(userDetailsService);
 		authenticationProvider.setPasswordEncoder(passwordEncoder());
 		return authenticationProvider;
- 
+
 	}
 
 	@Bean

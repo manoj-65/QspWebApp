@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,6 +22,7 @@ import com.alpha.qspiderrestapi.dao.SubjectDao;
 import com.alpha.qspiderrestapi.dao.ViewAllHomePageDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.BranchDto;
+import com.alpha.qspiderrestapi.dto.CityViewDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestDto;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
@@ -68,10 +68,10 @@ public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private BranchDao branchDao;
- 
+
 	@Autowired
 	private ChapterUtil chapterUtil;
- 
+
 	@Autowired
 	private AWSS3Service awss3Service;
 
@@ -242,7 +242,7 @@ public class CourseServiceImpl implements CourseService {
 			return ResponseUtil.getOk(courseResponse);
 		} else {
 			log.error("Course with id: {} not found", courseId);
-			throw new IdNotFoundException("No Course Found with the Given ID"); 
+			throw new IdNotFoundException("No Course Found with the Given ID");
 		}
 	}
 
@@ -397,17 +397,35 @@ public class CourseServiceImpl implements CourseService {
 		List<ViewAllHomePage> var = viewDao.fetchAllViewByCityName(orgType);
 		List<BranchDto> branchDtos = courseUtil.getTheBranchDto(var);
 
-		Map<String, List<BranchDto>> cityBranchListMap = branchDtos.stream()
-				.collect(Collectors.groupingBy(BranchDto::getCity));
+		Map<String, Map<String, List<BranchDto>>> countryCityBranchListMap = branchDtos.stream()
+				.collect(Collectors.groupingBy(BranchDto::getCountry, Collectors.groupingBy(BranchDto::getCity)));
 
 		List<ViewAllHomePageResponse> response = new ArrayList<>();
 
 		String cityName = null;
-		for (Entry<String, List<BranchDto>> branchTypeEntry : cityBranchListMap.entrySet()) {
+		String countryName = null;
+		for (Map.Entry<String, Map<String, List<BranchDto>>> branchTypeCountryEntry : countryCityBranchListMap
+				.entrySet()) {
 			ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
-			pageResponse.setCityName(branchTypeEntry.getKey());
-			pageResponse.setBranches(branchTypeEntry.getValue());
+			List<CityViewDto> cities = new ArrayList<CityViewDto>();
+
+			pageResponse.setCountryName(branchTypeCountryEntry.getKey());
+			for (var branchTypeCityEntry : branchTypeCountryEntry.getValue().entrySet()) {
+				CityViewDto city = new CityViewDto();
+				city.setCityName(branchTypeCityEntry.getKey());
+				List<BranchDto> branches = new ArrayList<BranchDto>();
+				for (var branchTypeEntry : branchTypeCityEntry.getValue()) {
+
+					branches.add(branchTypeEntry);
+				}
+				city.setBranches(branches);
+				cities.add(city);
+			}
+			pageResponse.setCity(cities);
 			response.add(pageResponse);
+
+//			pageResponse.setCityName(branchTypeEntry.getValue());
+//			pageResponse.setBranches(branchTypeEntry.getValue());
 
 		}
 
@@ -527,7 +545,7 @@ public class CourseServiceImpl implements CourseService {
 		MultipartFile icon = updateCourseDto.getIcon();
 		MultipartFile image = updateCourseDto.getImage();
 		MultipartFile homePageImage = updateCourseDto.getHomePageImage();
-		
+
 		// string of json body to object
 		ObjectMapper objectMapper = new ObjectMapper();
 		UpdateCourseRequestDto value;
@@ -718,7 +736,7 @@ public class CourseServiceImpl implements CourseService {
 			if (subCategoryId != null) {
 				if (subCategoryDao.isSubCategoryPresent(subCategoryId)) {
 					log.info("SubCategory with ID {} is present", subCategoryId);
- 
+
 					Course course = mapAndSetUrlsToCourse(courseRequestDto);
 					log.debug("Mapped course: {}", course);
 

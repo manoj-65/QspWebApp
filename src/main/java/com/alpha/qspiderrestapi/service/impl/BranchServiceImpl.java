@@ -29,6 +29,7 @@ import com.alpha.qspiderrestapi.dto.BranchRequestDto;
 import com.alpha.qspiderrestapi.dto.CityDto;
 import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.dto.CourseDto;
+import com.alpha.qspiderrestapi.dto.OrganizationDto;
 import com.alpha.qspiderrestapi.dto.UpdateBranchRequestDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.entity.City;
@@ -373,6 +374,78 @@ public class BranchServiceImpl implements BranchService {
 
 		Branch branch = branchDao.fetchBranchById(branchId).orElseThrow(() -> new IdNotFoundException());
 		return ResponseUtil.getOk(branch);
+
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<CountryDto>>> getAllBranchesForForm(String domainName) {
+
+		List<CityCourseBranchView> view = viewDao.fetchAll();
+		// Group by country -> city -> branchType
+		Map<String, Map<String, Map<String, List<CityCourseBranchView>>>> groupedData = view.stream()
+				.collect(Collectors.groupingBy(CityCourseBranchView::getCountry, Collectors.groupingBy(
+						CityCourseBranchView::getCity, Collectors.groupingBy(CityCourseBranchView::getBranch_type))));
+
+		List<CountryDto> countries = new ArrayList<>();
+
+		// Process grouped data
+		groupedData.forEach((countryName, citiesMap) -> {
+			CountryDto country = new CountryDto();
+			country.setCountryName(countryName);
+
+			CityCourseBranchView countryView = citiesMap.values().iterator().next().values().iterator().next().get(0);
+
+			country.setCtQspiders(
+					(Long) countryView.getCtQspiders() == null ? Integer.MAX_VALUE : countryView.getCtQspiders());
+			country.setCtJspiders(
+					((Long) countryView.getCtJspiders() == null) ? Integer.MAX_VALUE : countryView.getCtJspiders());
+			country.setCtPyspiders(
+					(Long) countryView.getCtPyspiders() == null ? Integer.MAX_VALUE : countryView.getCtPyspiders());
+			country.setCtProspiders(
+					(Long) countryView.getCtProspiders() == null ? Integer.MAX_VALUE : countryView.getCtProspiders());
+
+			List<CityDto> cities = new ArrayList<>();
+
+			citiesMap.forEach((cityName, organizationMap) -> {
+				CityDto city = new CityDto();
+				city.setCityName(cityName);
+				CityCourseBranchView anyBranch = organizationMap.values().iterator().next().get(0);
+				city.setQspiders(anyBranch.getQspiders());
+				city.setJspiders(anyBranch.getJspiders());
+				city.setPyspiders(anyBranch.getPyspiders());
+				city.setProspiders(anyBranch.getProspiders());
+				List<OrganizationDto> organizations = new ArrayList<>();
+
+				organizationMap.forEach((orgType, branchesList) -> {
+					OrganizationDto organization = new OrganizationDto();
+					organization.setOrganization(orgType);
+					List<BranchDto> branches = branchesList.stream().map(branchView -> {
+						BranchDto branch = new BranchDto();
+						branch.setBranchId(branchView.getBranchId());
+						branch.setBranchName(branchView.getDisplayName());
+						branch.setOrganizationType(branchView.getBranch_type());
+						return branch;
+					}).sorted(Comparator.comparing(BranchDto::getBranchId)).distinct().collect(Collectors.toList());
+					organization.setBranches(branches);
+					organizations.add(organization);
+
+				});
+
+				// set list of organization to city
+				city.setOrganizations(organizations);
+				cities.add(city);
+			});
+
+			// Sort cities by domain weightage
+			List<CityDto> sortedCity = weightageUtil.getSortedCity(cities, domainName);
+			country.setCities(sortedCity);
+			countries.add(country);
+		});
+
+		// Sort countries by country name
+		List<CountryDto> sortedCountry = weightageUtil.getSortedCountry(countries, domainName);
+//		countries.sort(Comparator.comparing(CountryDto::getCountryName));
+		return ResponseUtil.getOk(sortedCountry);
 
 	}
 
