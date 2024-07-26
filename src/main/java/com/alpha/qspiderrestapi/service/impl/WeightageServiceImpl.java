@@ -1,7 +1,10 @@
 package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -101,6 +104,8 @@ public class WeightageServiceImpl implements WeightageService {
 			if (subCategory.getWeightage().stream().anyMatch(w -> w.getSubCategory_categoryId() == categoryId)) {
 				throw new InvalidInfoException("The given category and sub-category pair already has a weihtage");
 			}
+			List<Weightage> weightages = weightageDao.findSubCategoryWeightages(categoryId);
+			maxWeightageCheck(dto, weightages);
 			Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
 					.pyspiders(dto.getPyspiders()).prospiders(dto.getProspiders()).subCategory(subCategory)
 					.subCategory_categoryId(categoryId).build();
@@ -133,6 +138,10 @@ public class WeightageServiceImpl implements WeightageService {
 							w -> w.getCourse_SubCategoryId() != null && w.getCourse_SubCategoryId() == subCategoryId)) {
 						throw new InvalidInfoException("The given course and sub-category pair already has a weihtage");
 					}
+				//checking whether the given weightages are within the limit and is not out of bound
+					List<Weightage> weightages = weightageDao.findCourseOfSubCategoryWeightages(subCategoryId);
+					maxWeightageCheck(dto,weightages);
+					
 					Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
 							.pyspiders(dto.getPyspiders()).prospiders(dto.getProspiders()).course(course)
 							.course_SubCategoryId(subCategoryId).build();
@@ -152,6 +161,12 @@ public class WeightageServiceImpl implements WeightageService {
 						.anyMatch(w -> w.getCourse_categoryId() != null && w.getCourse_categoryId() == categoryId)) {
 					throw new InvalidInfoException("In given category and course pair already has a weihtage");
 				}
+				
+			//checking whether the given weightages are within the limit and is not out of bound
+				List<Weightage> weightages = weightageDao.findCourseOfCategoryWeightages(categoryId);
+				maxWeightageCheck(dto,weightages);
+				
+
 				Weightage weightage = Weightage.builder().qspiders(dto.getQspiders()).jspiders(dto.getJspiders())
 						.pyspiders(dto.getPyspiders()).prospiders(dto.getProspiders()).course(course)
 						.course_categoryId(categoryId).build();
@@ -164,6 +179,43 @@ public class WeightageServiceImpl implements WeightageService {
 				throw new InvalidInfoException("In given info, category does not contain the course");
 			}
 		}
+	}
+
+	private void maxWeightageCheck(WeightageDto dto, List<Weightage> weightages) {
+		Map<Organization, Weightage> orgWeightageMap = new HashMap<Organization, Weightage>();
+		for (Organization org : Organization.values()) {
+			Optional<Weightage> max = weightages.stream()
+					.max((w1, w2) -> (int) -(int) getOrgWeightage(w2, org));
+			orgWeightageMap.put(org, max.get());
+		}
+		String errorStm = "Given weightage out of bound : ";
+		int count = 0;
+		for (Entry<Organization, Weightage> weightage : orgWeightageMap.entrySet()) {
+			if (weightage.getKey().equals(Organization.QSP)) {
+				if (dto.getQspiders() > (weightage.getValue().getQspiders() + 1l)) {
+					errorStm+=(" qspiders value max limit : "+(weightage.getValue().getQspiders() + 1l)+",");
+					count++;
+				}
+			}
+			if (weightage.getKey().equals(Organization.JSP)) {
+				if (dto.getJspiders() > (weightage.getValue().getJspiders() + 1l)) {
+					errorStm+=(" jspiders value max limit : "+(weightage.getValue().getJspiders() + 1l)+",");
+					count++;				}
+			}
+			if (weightage.getKey().equals(Organization.PYSP)) {
+				if (dto.getPyspiders() > (weightage.getValue().getPyspiders() + 1l)) {
+					errorStm+=(" pyspiders value max limit : "+(weightage.getValue().getPyspiders() + 1l)+",");
+					count++;				}
+			}
+			if (weightage.getKey().equals(Organization.PROSP)) {
+				if (dto.getProspiders() > (weightage.getValue().getProspiders() + 1l)) {
+					errorStm+=(" prospiders value max limit : "+(weightage.getValue().getProspiders() + 1l)+",");
+					count++;				}
+			}
+		}
+		
+		if(count>0) 
+			throw new InvalidInfoException(errorStm);		
 	}
 
 	@Override
@@ -447,7 +499,7 @@ public class WeightageServiceImpl implements WeightageService {
 				throw new IdNotFoundException("No course found with the id :" + courseId);
 
 			List<Weightage> weightages = weightageDao.findCourseOfCategoryWeightages(categoryId);
-
+			
 			if (weightages.isEmpty()) {
 				throw new InvalidInfoException("No weightages found with the given category and course pair");
 			} else {
@@ -550,6 +602,7 @@ public class WeightageServiceImpl implements WeightageService {
 
 		Optional<Category> category = categoryDao.fetchCategoryById(categoryId);
 		List<Weightage> allWeightages = weightageDao.getAllWeightages();
+		maxWeightageCheck(dto, allWeightages);
 		if (category.isPresent()) {
 			if (category.get().getWeightage() == null) {
 				Weightage weightage = weightageMapper.weightageDtoToWeightageMapper(dto, category.get());
