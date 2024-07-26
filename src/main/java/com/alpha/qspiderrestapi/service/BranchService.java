@@ -34,4 +34,6 @@ public interface BranchService {
 	ResponseEntity<ApiResponse<Branch>> updateBranchAlongWithFile(BranchFileRequestDto branchRequestDto);
 
 	ResponseEntity<ApiResponse<Branch>> fetchByIdForm(long branchId);
+
+	ResponseEntity<ApiResponse<List<CountryDto>>> getAllBranchesForForm(String domainName);
 }
