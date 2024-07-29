@@ -56,7 +56,6 @@ public class BatchServiceImpl implements BatchService {
 		if (course.getMode().contains(batch.getBatchMode())) {
 			if (branch.getBranchType().equals(course.getBranchType().get(0))) {
 				batch.setBatchStatus(BatchStatus.UPCOMING);
-				batch.setEndingTime(batch.getStartingTime().plusHours(2l));
 				batch.setCourse(course);
 				batch.setBranch(branch);
 				batch = batchDao.saveBatch(batch);
