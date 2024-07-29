@@ -340,13 +340,14 @@ public class BranchServiceImpl implements BranchService {
 			System.err.println(branchDto);
 
 		} catch (IOException e) {
-			System.err.println(e);
+			System.err.println(e.getMessage());
 			throw new InvalidInfoException("The Json body format is incorrect");
 		}
 
 		Branch branch = branchDao.fetchBranchById(branchDto.getBranchId()).orElseThrow(
 				() -> new IdNotFoundException("Given branch Id " + branchDto.getBranchId() + " not found"));
 
+		branch.setBranchId(branchDto.getBranchId());
 		branch.setDisplayName(branchDto.getDisplayName());
 		branch.setBranchType(branchDto.getBranchType());
 		branch.setBranchTitle(branchDto.getDisplayName() + "-" + branchDto.getBranchType());
@@ -358,7 +359,10 @@ public class BranchServiceImpl implements BranchService {
 		branch.setEmails(branchDto.getEmails());
 		branch.setBranchAddress(branchDto.getBranchAddress());
 		branch.setBranchFaqs(branchDto.getBranchFaqs());
-		branch.setGallery(branchDto.getBranchGalleryUrl());
+		if (branchDto.getBranchImageUrl() != null && branchDto.getBranchGalleryUrl() != null) {
+			branch.setGallery(branchDto.getBranchGalleryUrl());
+			branch.setBranchImage(branchDto.getBranchImageUrl());
+		}
 		Branch savedBranch = branchDao.saveBranch(branch);
 		if (branchImage != null)
 			uploadIcon(branchImage, branch.getBranchId());
