@@ -334,7 +334,7 @@ public class BranchServiceImpl implements BranchService {
 		List<MultipartFile> branchGallery = branchRequestDto.getBranchGallery();
 		UpdateBranchRequestDto branchDto;
 		try {
-			objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true);
+			objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true); 
 			Reader read = new StringReader(branchRequestDto.getBranch());
 			branchDto = objectMapper.readValue(read, UpdateBranchRequestDto.class);
 			System.err.println(branchDto);

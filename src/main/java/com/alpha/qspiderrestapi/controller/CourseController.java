@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,9 +23,7 @@ import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
 import com.alpha.qspiderrestapi.dto.UpdateCourseDto;
-import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.Course;
-import com.alpha.qspiderrestapi.exception.DomainMismatchException;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.CourseService;
 
@@ -41,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/{version}/courses")
 public class CourseController {
- 
+
 	@Autowired
 	private CourseService courseService;
 
@@ -79,7 +75,7 @@ public class CourseController {
 
 		throw new UnauthorizedVersionException();
 	}
- 
+
 	/**
 	 * Retrieves all available courses.
 	 *
@@ -185,14 +181,14 @@ public class CourseController {
 		throw new UnauthorizedVersionException();
 	}
 
-	@GetMapping("/viewAll")
-	public ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> viewAllResponseHomePage(
-			@PathVariable String version, @RequestHeader("Origin") String hostName) {
-		if (version.equals("v1"))
-			return courseService.fetchViewForHomepage(hostName);
-
-		throw new UnauthorizedVersionException();
-	}
+//	@GetMapping("/viewAll")
+//	public ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> viewAllResponseHomePage(
+//			@PathVariable String version, @RequestHeader("Origin") String hostName) {
+//		if (version.equals("v1"))
+//			return courseService.fetchViewForHomepage(hostName);
+//
+//		throw new UnauthorizedVersionException();
+//	}
 
 //	@PostMapping(value = "/saveCourse")
 //	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(@PathVariable String version,
@@ -212,22 +208,23 @@ public class CourseController {
 	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(@PathVariable String version,
 			@ModelAttribute CourseRequestImageDto dto) {
 
-			log.info("Received request to save course along with images, version: {}", version);
-			log.debug("CourseRequestImageDto: {}", dto);
+		log.info("Received request to save course along with images, version: {}", version);
+		log.debug("CourseRequestImageDto: {}", dto);
 
-			if (version.equals("v1")) {
-				log.info("Processing saveCourseAlongWithImages for version v1");
-				ResponseEntity<ApiResponse<Course>> response = courseService.saveCourseAlongWithImages(dto);
-				log.info("Response from courseService: {}", response);
-				return response;
-			}
+		if (version.equals("v1")) {
+			log.info("Processing saveCourseAlongWithImages for version v1");
+			ResponseEntity<ApiResponse<Course>> response = courseService.saveCourseAlongWithImages(dto);
+			log.info("Response from courseService: {}", response);
+			return response;
+		}
 
-			log.warn("Unauthorized version: {}", version);
-			throw new UnauthorizedVersionException();
+		log.warn("Unauthorized version: {}", version);
+		throw new UnauthorizedVersionException();
 	}
 
 	@PutMapping(value = "/updateCourse")
-	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(@PathVariable String version,@ModelAttribute UpdateCourseDto course) {
+	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(@PathVariable String version,
+			@ModelAttribute UpdateCourseDto course) {
 		if (version.equals("v1"))
 			return courseService.updateCourseAlongWithImages(course);
 
