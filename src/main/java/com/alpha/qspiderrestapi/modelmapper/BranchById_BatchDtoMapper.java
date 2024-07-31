@@ -16,7 +16,7 @@ public class BranchById_BatchDtoMapper {
 							   .batchId(batch.getBatchId())
 							   .batchName(batch.getCourse().getCourseName())
 							   .trainerName(batch.getTrainerName())
-							   .batchType(batch.getStartingDate().getDayOfWeek().equals(DayOfWeek.SUNDAY)?"WEEK_END":"WEEK_DAYS")
+							   .batchType(batch.getStartingDate().getDayOfWeek().equals(DayOfWeek.SUNDAY)?"Weekend":"Weekdays")
 							   .startingDate(batch.getStartingDate())
 							   .endingDate(batch.getEndingDate())
 							   .startingTime(batch.getStartingTime())

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,9 +39,9 @@ public class FaqController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<Faq>>> fetchAllFaqByOrganisation(@PathVariable String version,
-			@RequestParam Organization organization) {
+			@RequestHeader String Origin) {
 		if (version.equalsIgnoreCase("V1"))
-			return faqService.fetchAllFaqs(organization);
+			return faqService.fetchAllFaqs(Origin);
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 

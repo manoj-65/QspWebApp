@@ -41,7 +41,6 @@ public class Batch {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long batchId;
-	@Column(unique = true)
 	private String batchTitle;
 	private String trainerName;
 

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
 import com.alpha.qspiderrestapi.dto.CategoryFormResponse;
+import com.alpha.qspiderrestapi.dto.CategoryRequestDto;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
 import com.alpha.qspiderrestapi.entity.Category;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
@@ -202,5 +204,14 @@ public class CategoryController {
 
 		throw new UnauthorizedVersionException();
 	}
+	
+	@PostMapping("/files")
+	public ResponseEntity<ApiResponse<Category>> saveCategoryWithIcons(@PathVariable String version,
+			@ModelAttribute CategoryRequestDto category) {
+		if (version.equalsIgnoreCase("V1"))
+			return categoryService.saveCategoryWithIcons(category);
+
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	} 
 
 }

@@ -27,4 +27,8 @@ public interface BatchDao {
 
 	void createBatches(List<String> branchTypes, Time startTime1, Time startTime2);
 
+	void updateToOngoing();
+
+	void updateToBlocked();
+
 }

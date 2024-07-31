@@ -29,4 +29,16 @@ public interface BatchRepository extends JpaRepository<Batch, Long> {
 	@Query(value = "SELECT create_batches(:branchTypes, :startTime1, :startTime2)", nativeQuery = true)
 	 void createBatches(@Param("branchTypes") String[] branchTypes, @Param("startTime1") Time startTime1, @Param("startTime2") Time startTime2);
 	
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE batch SET batch_status = 'ONGOING' WHERE starting_date = (SELECT current_date)", nativeQuery = true)
+	 int updateToOngoing();
+	
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE batch SET batch_status = 'BLOCKED' WHERE starting_date = (SELECT current_date)-3;", nativeQuery = true)
+	 int updateToBlocked();
+	
+	
+	
 }
