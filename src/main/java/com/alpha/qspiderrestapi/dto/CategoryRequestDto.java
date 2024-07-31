@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class CategoryRequestDto {
 
+	private long id;
 	private String title;
 	private MultipartFile icon;
 	private MultipartFile alternativeIcon;

@@ -213,5 +213,14 @@ public class CategoryController {
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	} 
+	
+	@PatchMapping
+	public ResponseEntity<ApiResponse<Category>> editCategory(@PathVariable String version,
+			@ModelAttribute CategoryRequestDto category) {
+		if (version.equalsIgnoreCase("V1"))
+			return categoryService.editCategory(category);
+
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	} 
 
 }

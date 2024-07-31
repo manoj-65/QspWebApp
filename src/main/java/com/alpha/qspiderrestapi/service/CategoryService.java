@@ -39,4 +39,6 @@ public interface CategoryService {
 
 	ResponseEntity<ApiResponse<Category>> saveCategoryWithIcons(CategoryRequestDto category);
 
+	ResponseEntity<ApiResponse<Category>> editCategory(CategoryRequestDto category);
+
 }
