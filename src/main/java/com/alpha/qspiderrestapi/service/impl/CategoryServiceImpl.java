@@ -293,16 +293,51 @@ public class CategoryServiceImpl implements CategoryService {
 			throw new NullPointerException("Sent file is null");
 		}
 
-		
 		Category category = Category.builder().categoryTitle(categoryDto.getTitle()).categoryIcon(iconUrl)
 				.categoryAlternativeIcon(alternativeIconUrl).build();
-		
+
 		List<Weightage> allCategoryWeightages = weightageDao.getAllWeightages();
 		Weightage weightage = weightageUtil.setMaxWeightage(allCategoryWeightages);
 		weightage.setCategory(category);
 		category.setWeightage(weightage);
-		
+
 		return ResponseUtil.getCreated(categoryDao.saveCategory(category));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Category>> editCategory(CategoryRequestDto categoryDto) {
+
+		long categoryId = categoryDto.getId();
+		MultipartFile iconfile = categoryDto.getIcon();
+		MultipartFile alternativeIconfile = categoryDto.getAlternativeIcon();
+
+		String folder = "CATEGORY/";
+		Optional<Category> optionalcategory = categoryDao.fetchCategoryById(categoryId);
+		if (optionalcategory.isPresent()) {
+			Category category = optionalcategory.get();
+			category.setCategoryTitle(categoryDto.getTitle());
+			folder += optionalcategory.get().getCategoryTitle();
+			String iconUrl;
+			String alternativeIconUrl;
+			try {
+
+				if (iconfile != null) {
+					iconUrl = awss3Service.uploadFile(iconfile, folder);
+					category.setCategoryIcon(iconUrl);
+				}
+				if (alternativeIconfile != null) {
+					alternativeIconUrl = awss3Service.uploadFile(alternativeIconfile, folder);
+					category.setCategoryAlternativeIcon(alternativeIconUrl);
+				}
+
+			} catch (NullPointerException e) {
+				log.error("Error uploading icon to S3: {}", e.getMessage());
+				throw new NullPointerException("Error uploading icon");
+			}
+			return ResponseUtil.getCreated(categoryDao.saveCategory(category));
+		}
+		throw new IdNotFoundException("Category With the Given Id : "+categoryDto.getId()+" Not Found");
+
 	}
 
 //	@Override

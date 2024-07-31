@@ -53,7 +53,7 @@ public class CustomAuthenticationManager {
 			"/api/{version}/branches/findAll", "/api/{version}/branches/modifyLocationUrl", "/api/{version}/faqs",
 			"api/{version}/weightage/categories", "api/{version}/weightage/subCategories",
 			"api/{version}/weightage/courses", "api/{version}/weightage/city", "/api/{version}/courses/saveCourse",
-			"/api/{version}/weightage/updateCategoryWeightage", "api/{version}/weightage/categoryWeightage",
+			"/api/{version}/weightage/categories", "api/{version}/weightage/categoryWeightage",
 			"/api/{version}/courses/updateCourseContent", "/api/{version}/categories/removeCourseFromCategory",
 			"/api/{version}/cities", "/api/{version}/subCategories/removeCourseFromSubCategory",
 			"/api/{version}/courses/updateCourse", "api/{version}/weightage/country",

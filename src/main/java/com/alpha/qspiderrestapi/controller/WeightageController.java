@@ -90,7 +90,7 @@ public class WeightageController {
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 
-	@PatchMapping("/updateCategoryWeightage")
+	@PatchMapping("/categories")
 	public ResponseEntity<ApiResponse<String>> updateCategoryWeightage(@PathVariable String version,
 			@RequestParam Long categoryId, @RequestParam Long weightage, Organization organisation) {
 		if (version.equalsIgnoreCase("V1"))
