@@ -544,7 +544,7 @@ public class BranchServiceImpl implements BranchService {
 
 	private Organization getOrganization(String origin) {
 		Organization organization = null;
-		if (qspDomainName.equals(origin))
+		if (qspDomainName.equals(origin) || origin.contains("localhost"))
 			organization = Organization.QSP;
 		else if (jspDomainName.equals(origin))
 			organization = Organization.JSP;

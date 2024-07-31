@@ -66,7 +66,6 @@ public class BatchServiceImpl implements BatchService {
 				log.error("Branch not found with ID: {}", branchId.longValue());
 				return new IdNotFoundException("No Branch Found with id: " + branchId);
 			});
-			System.err.println(branch.getBranchType().equals(course.getBranchType().get(0))+" "+branch.getBranchType()+" "+course.getBranchType().get(0));
 			if (branch.getBranchType().equals(course.getBranchType().get(0))) {
 				batchMode = Mode.OFFLINE_CLASSES;
 			} else {
