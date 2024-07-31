@@ -44,7 +44,7 @@ public class CustomAuthenticationManager {
 
 	private static final String[] ADMIN_URLS = { "/api/{version}/users/saveUser", "/api/{version}/categories",
 			"/api/{version}/subcategories", "/api/{version}/categories/uploadIcon",
-			"/api/{version}/subcategories/uploadIcon", "/api/{version}/batches" };
+			"/api/{version}/subcategories/uploadIcon", "/api/{version}/batches","/api/{version}/categories/files" };
 
 	private static final String[] COURSEADDER_URLS = { "/api/{version}/courses", "/api/{version}/subjects/getall",
 			"/api/{version}/subjects", "/api/{version}/categories/getCategory", "/api/{version}/branches",

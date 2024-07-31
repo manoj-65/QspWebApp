@@ -14,6 +14,7 @@ import com.alpha.qspiderrestapi.dto.FaqDto;
 import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.enums.FaqType;
 import com.alpha.qspiderrestapi.entity.enums.Organization;
+import com.alpha.qspiderrestapi.exception.DomainMismatchException;
 import com.alpha.qspiderrestapi.exception.FaqNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidOrganisationTypeException;
 import com.alpha.qspiderrestapi.service.FaqService;
@@ -25,8 +26,17 @@ public class FaqServiceImpl implements FaqService {
 	@Autowired
 	private FaqDao faqDao;
 
-	@Value("organisatin.qsp")
+	@Value("${organization.qsp}")
 	private String qspDomainName;
+
+	@Value("${organization.jsp}")
+	private String jspDomainName;
+
+	@Value("${organization.pysp}")
+	private String pyspDomainName;
+
+	@Value("${organization.bsp}")
+	private String prospDomainName;
 
 	@Override
 	public ResponseEntity<ApiResponse<List<Faq>>> saveFaq(List<FaqDto> faqDtos, Organization organizationType) {
@@ -46,8 +56,19 @@ public class FaqServiceImpl implements FaqService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<List<Faq>>> fetchAllFaqs(Organization organization) {
-
+	public ResponseEntity<ApiResponse<List<Faq>>> fetchAllFaqs(String origin) {
+		Organization organization = null;
+		if(qspDomainName.equals(origin)) 
+			organization = Organization.QSP;
+		else if(jspDomainName.equals(origin))
+			organization = Organization.JSP;
+		else if(pyspDomainName.equals(origin))
+			organization = Organization.PYSP;
+		else if(prospDomainName.equals(origin))
+			organization = Organization.PROSP;
+		else
+			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
+	
 		List<Faq> faQs = faqDao.fetchAllFaqs(organization);
 		if (faQs != null) {
 			if (!faQs.isEmpty()) {

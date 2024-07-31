@@ -356,4 +356,23 @@ public class WeightageUtil {
 			throw new DomainMismatchException("Domain name is not matching any Organisation Type ");
 		}
 	}
+
+	public Weightage setMaxWeightage(List<Weightage> allCategoryWeightages) {
+		Weightage weightage = new Weightage();
+		for (Organization org : Organization.values()) {
+			if (org.equals(Organization.QSP)) {
+				weightage.setQspiders(findMaxSize(allCategoryWeightages, org)+1l);
+			}
+			if (org.equals(Organization.JSP)) {
+				weightage.setJspiders(findMaxSize(allCategoryWeightages, org)+1l);
+			}
+			if (org.equals(Organization.PYSP)) {
+				weightage.setPyspiders(findMaxSize(allCategoryWeightages, org)+1l);
+			}
+			if (org.equals(Organization.PROSP)) {
+				weightage.setProspiders(findMaxSize(allCategoryWeightages, org)+1l);
+			}
+		}
+		return weightage;
+	}
 }

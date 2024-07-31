@@ -1,6 +1,7 @@
 package com.alpha.qspiderrestapi.service.impl;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,10 +15,12 @@ import com.alpha.qspiderrestapi.dao.BranchDao;
 import com.alpha.qspiderrestapi.dao.CityDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.BatchRequestDto;
 import com.alpha.qspiderrestapi.entity.Batch;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.enums.BatchStatus;
+import com.alpha.qspiderrestapi.entity.enums.Mode;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.service.BatchService;
@@ -42,27 +45,43 @@ public class BatchServiceImpl implements BatchService {
 	private CityDao cityDao;
 
 	@Override
-	public ResponseEntity<ApiResponse<Batch>> saveBatch(long branchId, long courseId, Batch batch) {
+	public ResponseEntity<ApiResponse<Batch>> saveBatch(Long branchId, long courseId, BatchRequestDto batch) {
 		log.info("Saving batch for branch ID: {} and course ID: {}", branchId, courseId);
+		
+		if(batch.getStartingDate().isAfter(LocalDate.now().minusDays(1)) && batch.getEndingDate().isBefore(batch.getStartingDate()))
+			throw new InvalidInfoException("Invalid start and end dates");
+		
+		if(batch.getEndingTime().isBefore(batch.getStartingTime()))
+			throw new InvalidInfoException("Invalid start and end times");
+		
 		Course course = courseDao.fetchCourseById(courseId).orElseThrow(() -> {
 			log.error("Course not found with ID: {}", courseId);
 			return new IdNotFoundException("No Course Found with id: " + courseId);
 		});
-
-		Branch branch = branchDao.fetchBranchById(branchId).orElseThrow(() -> {
-			log.error("Branch not found with ID: {}", branchId);
-			return new IdNotFoundException("No Branch Found with id: " + branchId);
-		});
-		if (course.getMode().contains(batch.getBatchMode())) {
+		Branch branch = null;
+		Mode batchMode = Mode.ONLINE_CLASSES;
+		if (branchId != null) {
+			
+			branch = branchDao.fetchBranchById(branchId).orElseThrow(() -> {
+				log.error("Branch not found with ID: {}", branchId.longValue());
+				return new IdNotFoundException("No Branch Found with id: " + branchId);
+			});
 			if (branch.getBranchType().equals(course.getBranchType().get(0))) {
-				batch.setBatchStatus(BatchStatus.UPCOMING);
-				batch.setCourse(course);
-				batch.setBranch(branch);
-				batch = batchDao.saveBatch(batch);
-				log.info("Batch saved successfully: {}", batch);
-				return ResponseUtil.getCreated(batch);
+				batchMode = Mode.OFFLINE_CLASSES;
+			} else {
+				throw new InvalidInfoException("Given course and branch belong to different Organisation Type");
 			}
-			throw new InvalidInfoException("Given course and branch belong to different Organisation Type");
+		}
+		if (course.getMode().contains(batchMode)) {
+			Batch builtBatch = Batch.builder().batchTitle(batch.getBatchTitle()).trainerName(batch.getTrainerName())
+					.startingDate(batch.getStartingDate()).endingDate(batch.getEndingDate())
+					.startingTime(batch.getEndingTime()).endingTime(batch.getStartingTime()).batchMode(batchMode)
+					.batchStatus(BatchStatus.UPCOMING).extendingDays(batch.getExtendingDays()).branch(branch)
+					.course(course).build();
+
+			builtBatch = batchDao.saveBatch(builtBatch);
+			log.info("Batch saved successfully: {}", batch);
+			return ResponseUtil.getCreated(builtBatch);
 		}
 		throw new InvalidInfoException("Given course and batch mode is not matching");
 	}
@@ -73,6 +92,15 @@ public class BatchServiceImpl implements BatchService {
 
 		batchDao.updateBatchStatus(BatchStatus.ONGOING, BatchStatus.BLOCKED);
 		batchDao.updateBatchStatus(BatchStatus.UPCOMING, BatchStatus.ONGOING);
+		cityDao.updateCityBranchCount();
+	}
+	
+	@Override
+	@Scheduled(cron = "0 0 2 * * ?")
+	public void updateBatchStatuses() {
+
+		batchDao.updateToOngoing();
+		batchDao.updateToBlocked();
 		cityDao.updateCityBranchCount();
 	}
 

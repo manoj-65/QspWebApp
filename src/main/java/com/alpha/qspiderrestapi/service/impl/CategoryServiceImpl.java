@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -16,16 +15,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dao.CategoryDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
+import com.alpha.qspiderrestapi.dao.WeightageDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
 import com.alpha.qspiderrestapi.dto.CategoryFormResponse;
+import com.alpha.qspiderrestapi.dto.CategoryRequestDto;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
 import com.alpha.qspiderrestapi.dto.CourseResponse;
-import com.alpha.qspiderrestapi.dto.SubCategoryResponse;
-import com.alpha.qspiderrestapi.dto.SubCourseResponse;
 import com.alpha.qspiderrestapi.entity.Category;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
+import com.alpha.qspiderrestapi.entity.Weightage;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
@@ -66,6 +66,9 @@ public class CategoryServiceImpl implements CategoryService {
 	@Autowired
 	private CourseMapper courseMapper;
 
+	@Autowired
+	private WeightageDao weightageDao;
+
 	@Value(value = "organization.qsp")
 	private String qspDomainName;
 
@@ -105,12 +108,13 @@ public class CategoryServiceImpl implements CategoryService {
 	 *                   during data access.
 	 */
 	@Override
-	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName,boolean isOnline) {
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName, boolean isOnline) {
 
 		List<Category> categories = categoryDao.fetchAllCategories();
 		categories = weightageUtil.getSortedCategory(categories, domainName);
 		List<CategoryResponse> categoryResponse = new ArrayList<CategoryResponse>();
-		categories.forEach(category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainName,isOnline)));
+		categories.forEach(
+				category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainName, isOnline)));
 		log.info("Category list has been upadated and set");
 		return ResponseUtil.getOk(categoryResponse);
 	}
@@ -124,7 +128,7 @@ public class CategoryServiceImpl implements CategoryService {
 			return new IdNotFoundException();
 		});
 		log.info("Category fetched successfully: {}", category);
-		return ResponseUtil.getOk(categoryMapper.mapToCategoryDto(category, domainName,isOnline));
+		return ResponseUtil.getOk(categoryMapper.mapToCategoryDto(category, domainName, isOnline));
 
 	}
 
@@ -265,6 +269,40 @@ public class CategoryServiceImpl implements CategoryService {
 			log.error("Category not found with ID: {}", categoryId);
 		throw new IdNotFoundException("Category With the Given Id Not Found");
 
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Category>> saveCategoryWithIcons(CategoryRequestDto categoryDto) {
+		log.info("Saving category: {}", categoryDto);
+		String folder = "CATEGORY/";
+
+		folder += categoryDto.getTitle();
+		String iconUrl;
+		String alternativeIconUrl;
+		if (categoryDto.getIcon() != null && categoryDto.getAlternativeIcon() != null) {
+			try {
+				iconUrl = awss3Service.uploadFile(categoryDto.getIcon(), folder);
+				alternativeIconUrl = awss3Service.uploadFile(categoryDto.getAlternativeIcon(), folder);
+				log.info("icon file Uploaded successfully to sw3: {}", iconUrl);
+				log.info("alternative Icon file Uploaded successfully to sw3: {}", alternativeIconUrl);
+			} catch (NullPointerException e) {
+				log.error("Error uploading icon to S3: {}", e.getMessage());
+				throw new NullPointerException("Error uploading icon");
+			}
+		} else {
+			throw new NullPointerException("Sent file is null");
+		}
+
+		
+		Category category = Category.builder().categoryTitle(categoryDto.getTitle()).categoryIcon(iconUrl)
+				.categoryAlternativeIcon(alternativeIconUrl).build();
+		
+		List<Weightage> allCategoryWeightages = weightageDao.getAllWeightages();
+		Weightage weightage = weightageUtil.setMaxWeightage(allCategoryWeightages);
+		weightage.setCategory(category);
+		category.setWeightage(weightage);
+		
+		return ResponseUtil.getCreated(categoryDao.saveCategory(category));
 	}
 
 //	@Override

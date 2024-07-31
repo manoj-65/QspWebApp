@@ -611,8 +611,9 @@ public class CourseServiceImpl implements CourseService {
 		course.setCourseHighlight(value.getCourseHighlight());
 		value.getFaqs().forEach(f -> f.setCourse(course));
 		course.setFaqs(value.getFaqs());
-
-		return ResponseUtil.getOk(courseDao.saveCourse(course));
+		Course saveCourse = courseDao.saveCourse(course);
+		saveCourse.getFaqs().forEach(f->System.err.println(f.getQuestion()));
+		return ResponseUtil.getOk(saveCourse);
 	}
 
 	@Override
