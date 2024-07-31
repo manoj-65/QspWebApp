@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
 import com.alpha.qspiderrestapi.dto.UpdateCourseDto;
@@ -29,6 +30,7 @@ import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.exception.DomainMismatchException;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
+import com.alpha.qspiderrestapi.service.BranchService;
 import com.alpha.qspiderrestapi.service.CourseService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +46,7 @@ public class CourseController {
  
 	@Autowired
 	private CourseService courseService;
-
+	
 	/**
 	 * Saves a new course associated with a specific category.
 	 *
@@ -182,15 +184,6 @@ public class CourseController {
 			@RequestParam("homePageImagefile") MultipartFile homePageImage, @RequestParam long courseId) {
 		if (version.equals("v1"))
 			return courseService.uploadImages(imagefile, homePageImage, courseId);
-		throw new UnauthorizedVersionException();
-	}
-
-	@GetMapping("/viewAll")
-	public ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> viewAllResponseHomePage(
-			@PathVariable String version, @RequestHeader("Origin") String hostName) {
-		if (version.equals("v1"))
-			return courseService.fetchViewForHomepage(hostName);
-
 		throw new UnauthorizedVersionException();
 	}
 

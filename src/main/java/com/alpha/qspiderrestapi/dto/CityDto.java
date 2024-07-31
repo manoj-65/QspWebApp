@@ -17,4 +17,5 @@ public class CityDto {
 	private long prospiders;
 	private long branchCount;
 	private List<OrganizationDto> organizations;
+	private List<BranchDto> branchDtos;
 }
