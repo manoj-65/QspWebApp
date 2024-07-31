@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +35,8 @@ import com.alpha.qspiderrestapi.dto.UpdateBranchRequestDto;
 import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.entity.City;
 import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
+import com.alpha.qspiderrestapi.exception.DomainMismatchException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.exception.InvalidPhoneNumberException;
@@ -76,6 +79,18 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+
+	@Value("${organization.qsp}")
+	private String qspDomainName;
+
+	@Value("${organization.jsp}")
+	private String jspDomainName;
+
+	@Value("${organization.pysp}")
+	private String pyspDomainName;
+
+	@Value("${organization.bsp}")
+	private String prospDomainName;
 
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch) {
@@ -451,6 +466,94 @@ public class BranchServiceImpl implements BranchService {
 //		countries.sort(Comparator.comparing(CountryDto::getCountryName));
 		return ResponseUtil.getOk(sortedCountry);
 
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<CountryDto>>> viewall(String domainName) {
+
+		List<CityCourseBranchView> view = viewDao.fetchAll();
+		// Group by country -> city -> courseId
+		Map<String, Map<String, List<CityCourseBranchView>>> groupedData = view.stream().collect(Collectors
+				.groupingBy(CityCourseBranchView::getCountry, Collectors.groupingBy(CityCourseBranchView::getCity)));
+
+		List<CountryDto> countries = new ArrayList<>();
+
+		// Process grouped data
+		groupedData.forEach((countryName, citiesMap) -> {
+			CountryDto country = new CountryDto();
+			country.setCountryName(countryName);
+
+			CityCourseBranchView countryView = citiesMap.values().iterator().next().get(0);
+
+			country.setCtQspiders(
+					(Long) countryView.getCtQspiders() == null ? Integer.MAX_VALUE : countryView.getCtQspiders());
+			country.setCtJspiders(
+					((Long) countryView.getCtJspiders() == null) ? Integer.MAX_VALUE : countryView.getCtJspiders());
+			country.setCtPyspiders(
+					(Long) countryView.getCtPyspiders() == null ? Integer.MAX_VALUE : countryView.getCtPyspiders());
+			country.setCtProspiders(
+					(Long) countryView.getCtProspiders() == null ? Integer.MAX_VALUE : countryView.getCtProspiders());
+
+			List<CityDto> cities = new ArrayList<>();
+
+			citiesMap.forEach((cityName, branchesList) -> {
+				CityDto city = new CityDto();
+				city.setCityName(cityName);
+				CityCourseBranchView anyBranch = branchesList.get(0);
+				city.setCityIcon(anyBranch.getCityIconUrl());
+				city.setCityImage(anyBranch.getCityImageUrl());
+				city.setQspiders(anyBranch.getQspiders());
+				city.setJspiders(anyBranch.getJspiders());
+				city.setPyspiders(anyBranch.getPyspiders());
+				city.setProspiders(anyBranch.getProspiders());
+				city.setBranchCount(anyBranch.getBranchCount());
+
+				List<BranchDto> branches = branchesList.stream().map(branchView -> {
+					BranchDto branch = new BranchDto();
+					branch.setBranchId(branchView.getBranchId());
+					branch.setBranchName(branchView.getDisplayName());
+					branch.setBranchImage(branchView.getBranchImage());
+					branch.setOrganizationType(branchView.getBranch_type());
+					branch.setLocation(branchView.getLocation());
+					branch.setPhoneNumber(branchView.getContacts());
+					branch.setUpcomingBatches(branchView.getUpcomingBatches());
+					branch.setOngoingBatches(branchView.getOngoingBatches());
+					branch.setAddressId(branchView.getAddressId());
+					branch.setState(branchView.getState());
+					branch.setStreet(branchView.getStreet());
+					branch.setPinCode(branchView.getPincode());
+					return branch;
+				}).distinct().filter(b -> b.getOrganizationType().equals(getOrganization(domainName).toString()))
+						.sorted(Comparator.comparing(BranchDto::getBranchId)).collect(Collectors.toList());
+				city.setBranchDtos(branches);
+				cities.add(city);
+			});
+
+			// Sort cities by domain weightage
+			List<CityDto> sortedCity = weightageUtil.getSortedCity(cities, domainName);
+			country.setCities(sortedCity);
+			countries.add(country);
+		});
+
+		// Sort countries by country name
+		List<CountryDto> sortedCountry = weightageUtil.getSortedCountry(countries, domainName);
+//		countries.sort(Comparator.comparing(CountryDto::getCountryName));
+		return ResponseUtil.getOk(sortedCountry);
+
+	}
+
+	private Organization getOrganization(String origin) {
+		Organization organization = null;
+		if (qspDomainName.equals(origin))
+			organization = Organization.QSP;
+		else if (jspDomainName.equals(origin))
+			organization = Organization.JSP;
+		else if (pyspDomainName.equals(origin))
+			organization = Organization.PYSP;
+		else if (prospDomainName.equals(origin))
+			organization = Organization.PROSP;
+
+		return organization;
 	}
 
 }

@@ -36,4 +36,6 @@ public interface BranchService {
 	ResponseEntity<ApiResponse<Branch>> fetchByIdForm(long branchId);
 
 	ResponseEntity<ApiResponse<List<CountryDto>>> getAllBranchesForForm(String domainName);
+
+	ResponseEntity<ApiResponse<List<CountryDto>>> viewall(String domainName);
 }

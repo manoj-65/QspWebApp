@@ -39,9 +39,9 @@ public class FaqController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<Faq>>> fetchAllFaqByOrganisation(@PathVariable String version,
-			@RequestHeader String Origin) {
+			@RequestHeader String origin) {
 		if (version.equalsIgnoreCase("V1"))
-			return faqService.fetchAllFaqs(Origin);
+			return faqService.fetchAllFaqs(origin);
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 

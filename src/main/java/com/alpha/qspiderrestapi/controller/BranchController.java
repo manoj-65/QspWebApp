@@ -160,5 +160,14 @@ public class BranchController {
 
 		throw new UnauthorizedVersionException();
 	}
+	
+	@GetMapping("/viewAll")
+	public ResponseEntity<ApiResponse<List<CountryDto>>> viewAllResponseHomePage(
+			@PathVariable String version, @RequestHeader("Origin") String hostName) {
+		if (version.equals("v1"))
+			return branchService.viewall(hostName);
+
+		throw new UnauthorizedVersionException();
+	}
 
 }

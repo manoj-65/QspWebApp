@@ -37,7 +37,7 @@ public class CustomAuthenticationManager {
 			"/api/{version}/users/getProfile", "/api/v1/categories/formresponse",
 			"/api/{version}/categories/getAllCategories", "/api/{version}/categories/getbyid",
 			"/api/{version}/subjects/course", "/api/{version}/branches/getAllBranches", "/api/{version}/feedback",
-			"/api/{version}/courses/getbyid", "/api/{version}/branches/getbyid", "/api/{version}/courses/viewAll",
+			"/api/{version}/courses/getbyid", "/api/{version}/branches/getbyid", "/api/{version}/branches/viewAll",
 			"/api/{version}/enquiry", "/api/{version}/batches", "/api/{version}/categories/findAllCategories",
 			"/api/{version}/faqs", "api/{version}/weightage/removeCategoryWeightage",
 			"/api/{version}/weightage/removeSubCategoryWeightage", "/api/{version}/categories/onlineCourses" };

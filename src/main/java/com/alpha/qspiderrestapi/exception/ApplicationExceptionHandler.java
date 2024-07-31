@@ -119,7 +119,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 
 	@ExceptionHandler(FaqNotFoundException.class)
 	public ResponseEntity<ApiResponse<String>> handleFaqNotFoundException(FaqNotFoundException exception) {
-		return ResponseUtil.getInternalServerError(exception.getMessage());
+		return ResponseUtil.getNotFound(exception.getMessage());
 	}
 
 }
