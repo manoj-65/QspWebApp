@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,9 +28,11 @@ import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.entity.Weightage;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
+import com.alpha.qspiderrestapi.exception.InvalidOrganisationTypeException;
 import com.alpha.qspiderrestapi.modelmapper.CategoryMapper;
 import com.alpha.qspiderrestapi.modelmapper.CourseMapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
@@ -69,8 +72,17 @@ public class CategoryServiceImpl implements CategoryService {
 	@Autowired
 	private WeightageDao weightageDao;
 
-	@Value(value = "organization.qsp")
+	@Value("${organization.qsp}")
 	private String qspDomainName;
+
+	@Value("${organization.jsp}")
+	private String jspDomainName;
+
+	@Value("${organization.pysp}")
+	private String pyspDomainName;
+
+	@Value("${organization.bsp}")
+	private String prospDomainName;
 
 	/**
 	 * Saves a new category.
@@ -108,15 +120,44 @@ public class CategoryServiceImpl implements CategoryService {
 	 *                   during data access.
 	 */
 	@Override
-	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName, boolean isOnline) {
-
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName, boolean isOnline,
+			Organization organization) {
+		
 		List<Category> categories = categoryDao.fetchAllCategories();
 		categories = weightageUtil.getSortedCategory(categories, domainName);
 		List<CategoryResponse> categoryResponse = new ArrayList<CategoryResponse>();
-		categories.forEach(
-				category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainName, isOnline)));
+		if (!Objects.isNull(organization)) {
+			String domainNameKey = getDomainName(organization);
+			categories.forEach(
+					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainNameKey, isOnline)));
+		}else {
+			categories.forEach(
+					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainName, isOnline)));
+		}
+		
 		log.info("Category list has been upadated and set");
 		return ResponseUtil.getOk(categoryResponse);
+	}
+
+	private String getDomainName(Organization organization) {
+		switch (organization) {
+			case QSP: {
+				return qspDomainName;
+			}
+			case JSP: {
+				return jspDomainName;
+			}
+			case PYSP: {
+				return pyspDomainName;
+			}
+			case PROSP: {
+				return prospDomainName;
+			}
+			default: {
+				throw new InvalidOrganisationTypeException("Given Organization " + organization + " type not found");
+			}
+
+		}
 	}
 
 	// fetches category based on the given id
@@ -336,7 +377,7 @@ public class CategoryServiceImpl implements CategoryService {
 			}
 			return ResponseUtil.getCreated(categoryDao.saveCategory(category));
 		}
-		throw new IdNotFoundException("Category With the Given Id : "+categoryDto.getId()+" Not Found");
+		throw new IdNotFoundException("Category With the Given Id : " + categoryDto.getId() + " Not Found");
 
 	}
 

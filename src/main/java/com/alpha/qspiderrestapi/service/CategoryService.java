@@ -13,12 +13,13 @@ import com.alpha.qspiderrestapi.dto.CategoryRequestDto;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
 import com.alpha.qspiderrestapi.entity.Category;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 
 public interface CategoryService {
 
 	ResponseEntity<ApiResponse<Category>> saveCategory(Category category);
 
-	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName,boolean isOnline);
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName,boolean isOnline, Organization organization);
 
 	ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId, String domainName);
 

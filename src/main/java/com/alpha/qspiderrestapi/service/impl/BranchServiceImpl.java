@@ -80,18 +80,6 @@ public class BranchServiceImpl implements BranchService {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	@Value("${organization.qsp}")
-	private String qspDomainName;
-
-	@Value("${organization.jsp}")
-	private String jspDomainName;
-
-	@Value("${organization.pysp}")
-	private String pyspDomainName;
-
-	@Value("${organization.bsp}")
-	private String prospDomainName;
-
 	@Override
 	public ResponseEntity<ApiResponse<Branch>> saveBranch(Branch branch) {
 		Optional<City> city = cityDao.findCityByCityName(branch.getBranchAddress().getCity());
@@ -523,7 +511,7 @@ public class BranchServiceImpl implements BranchService {
 					branch.setStreet(branchView.getStreet());
 					branch.setPinCode(branchView.getPincode());
 					return branch;
-				}).distinct().filter(b -> b.getOrganizationType().equals(getOrganization(domainName).toString()))
+				}).distinct().filter(b -> b.getOrganizationType().equals(weightageUtil.getOrganization(domainName).toString()))
 						.sorted(Comparator.comparing(BranchDto::getBranchId)).collect(Collectors.toList());
 				city.setBranchDtos(branches);
 				cities.add(city);
@@ -540,20 +528,6 @@ public class BranchServiceImpl implements BranchService {
 //		countries.sort(Comparator.comparing(CountryDto::getCountryName));
 		return ResponseUtil.getOk(sortedCountry);
 
-	}
-
-	private Organization getOrganization(String origin) {
-		Organization organization = null;
-		if (qspDomainName.equals(origin) || origin.contains("localhost"))
-			organization = Organization.QSP;
-		else if (jspDomainName.equals(origin))
-			organization = Organization.JSP;
-		else if (pyspDomainName.equals(origin))
-			organization = Organization.PYSP;
-		else if (prospDomainName.equals(origin))
-			organization = Organization.PROSP;
-
-		return organization;
 	}
 
 }
