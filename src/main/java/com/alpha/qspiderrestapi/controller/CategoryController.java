@@ -27,6 +27,7 @@ import com.alpha.qspiderrestapi.dto.CategoryRequestDto;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
 import com.alpha.qspiderrestapi.entity.Category;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.CategoryService;
 
@@ -93,10 +94,10 @@ public class CategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@GetMapping("/getAllCategories")
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(@PathVariable String version,
-			@RequestHeader("Origin") String domainName) {
+			@RequestHeader("Origin") String domainName,@RequestParam(required = false) Organization organization) {
 		if (version.equalsIgnoreCase("V1")) {
 			boolean isOnline = false; 
-			return categoryService.fetchAllCategories(domainName,isOnline);
+			return categoryService.fetchAllCategories(domainName,isOnline,organization);
 		}
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
@@ -190,7 +191,7 @@ public class CategoryController {
 			@RequestHeader("Origin") String domainName) {
 		if (version.equalsIgnoreCase("V1")) {
 			boolean isOnline = true;
-			return categoryService.fetchAllCategories(domainName,isOnline);
+			return categoryService.fetchAllCategories(domainName,isOnline,null);
 		}
 
 		throw new UnauthorizedVersionException("Unauthorized Version");

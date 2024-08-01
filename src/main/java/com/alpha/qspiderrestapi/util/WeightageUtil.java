@@ -375,4 +375,18 @@ public class WeightageUtil {
 		}
 		return weightage;
 	}
+	
+	public Organization getOrganization(String origin) {
+		Organization organization = null;
+		if (qspDomainName.equals(origin) || origin.contains("localhost"))
+			organization = Organization.QSP;
+		else if (jspDomainName.equals(origin))
+			organization = Organization.JSP;
+		else if (pyspDomainName.equals(origin))
+			organization = Organization.PYSP;
+		else if (prospDomainName.equals(origin))
+			organization = Organization.PROSP;
+
+		return organization;
+	}
 }

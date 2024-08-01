@@ -39,10 +39,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 		return ResponseUtil.getNotFound(exception.getMessage());
 	}
 
-	@ExceptionHandler(NullPointerException.class)
-	public ResponseEntity<ApiResponse<String>> catchNullPointerException(NullPointerException exception) {
-		return ResponseUtil.getBadRequest(exception.getMessage());
-	}
+//	@ExceptionHandler(NullPointerException.class)
+//	public ResponseEntity<ApiResponse<String>> catchNullPointerException(NullPointerException exception) {
+//		return ResponseUtil.getBadRequest(exception.getMessage());
+//	}
 
 	@ExceptionHandler(DuplicateDataInsertionException.class)
 	public ResponseEntity<ApiResponse<String>> duplicateDataInsertionException(
