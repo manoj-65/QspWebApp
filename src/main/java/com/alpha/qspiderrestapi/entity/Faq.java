@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+//@JsonIgnoreProperties(value = {"createdDateAndTime","updatedDateAndTime"}, allowSetters = true)
 public class Faq {
 
 	@Id

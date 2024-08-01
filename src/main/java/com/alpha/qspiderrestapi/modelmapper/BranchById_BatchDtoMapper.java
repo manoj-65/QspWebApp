@@ -1,5 +1,6 @@
 package com.alpha.qspiderrestapi.modelmapper;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class BranchById_BatchDtoMapper {
 							   .batchId(batch.getBatchId())
 							   .batchName(batch.getCourse().getCourseName())
 							   .trainerName(batch.getTrainerName())
-							   .batchType("Weekdays")
+							   .batchType(batch.getStartingDate().getDayOfWeek().equals(DayOfWeek.SUNDAY)?"Weekend":"Weekdays")
 							   .startingDate(batch.getStartingDate())
 							   .endingDate(batch.getEndingDate())
 							   .startingTime(batch.getStartingTime())

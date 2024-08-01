@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
 import com.alpha.qspiderrestapi.dto.CategoryFormResponse;
+import com.alpha.qspiderrestapi.dto.CategoryRequestDto;
 import com.alpha.qspiderrestapi.dto.CategoryResponse;
 import com.alpha.qspiderrestapi.entity.Category;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
@@ -35,5 +36,7 @@ public interface CategoryService {
 //	ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllOnlineCourses(String domainName);
 
 	ResponseEntity<ApiResponse<String>> removeCourseFromCategory(Long categoryId, List<Long> courseIds);
+
+	ResponseEntity<ApiResponse<Category>> saveCategoryWithIcons(CategoryRequestDto category);
 
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.BatchRequestDto;
 import com.alpha.qspiderrestapi.entity.Batch;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
 import com.alpha.qspiderrestapi.service.BatchService;
@@ -35,10 +36,10 @@ public class BatchController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@PostMapping
-	public ResponseEntity<ApiResponse<Batch>> saveBatch(@PathVariable String version, @RequestParam long branchId,
-			@RequestParam long courseId, @RequestBody Batch batch) {
+	public ResponseEntity<ApiResponse<Batch>> saveBatch(@PathVariable String version, @RequestParam(required = false) Long branchId,
+			@RequestParam long courseId, @RequestBody BatchRequestDto batchDto) {
 		if (version.equalsIgnoreCase("V1"))
-			return batchService.saveBatch(branchId, courseId, batch);
+			return batchService.saveBatch(branchId, courseId, batchDto);
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
 	

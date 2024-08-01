@@ -63,4 +63,14 @@ public class BatchDaoImpl implements BatchDao {
 		batchRepository.createBatches(branchTypes.toArray(new String[0]),startTime1,startTime2);
 	}
 
+	@Override
+	public void updateToOngoing() {
+		 batchRepository.updateToOngoing();
+	}
+	
+	@Override
+	public void updateToBlocked() {
+		 batchRepository.updateToBlocked();
+	}
+
 }
