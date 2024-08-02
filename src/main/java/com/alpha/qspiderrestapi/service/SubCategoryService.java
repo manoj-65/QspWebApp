@@ -20,4 +20,6 @@ public interface SubCategoryService {
 
 	ResponseEntity<ApiResponse<String>> removeCourseFromCategory(Long subCategoryId, List<Long> courseIds);
 
+	ResponseEntity<ApiResponse<String>> removeSubCategoryAndUnmapCourses(Long subCategoryId);
+
 }

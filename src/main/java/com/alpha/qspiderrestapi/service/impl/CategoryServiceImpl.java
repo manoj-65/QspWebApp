@@ -411,8 +411,10 @@ public class CategoryServiceImpl implements CategoryService {
 			}
 			categoryDao.saveCategory(category);
 			categoryDao.deleteCategory(categoryId);
+			return ResponseUtil.getOk("Category Unmapped and deleted");
+
 		}
-		return ResponseUtil.getOk("Category Unmapped and deleted");
+		throw new IdNotFoundException("Category Id: " + categoryId + " Not found");
 	}
 
 //	@Override
