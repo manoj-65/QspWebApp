@@ -21,20 +21,15 @@ import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dao.SubjectDao;
 import com.alpha.qspiderrestapi.dao.ViewAllHomePageDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
-import com.alpha.qspiderrestapi.dto.BranchDto;
-import com.alpha.qspiderrestapi.dto.CityViewDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestDto;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
 import com.alpha.qspiderrestapi.dto.UpdateCourseDto;
 import com.alpha.qspiderrestapi.dto.UpdateCourseRequestDto;
-import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.CityBranchView;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.Faq;
 import com.alpha.qspiderrestapi.entity.Subject;
-import com.alpha.qspiderrestapi.entity.ViewAllHomePage;
-import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
@@ -45,6 +40,7 @@ import com.alpha.qspiderrestapi.util.ChapterUtil;
 import com.alpha.qspiderrestapi.util.CourseUtil;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 import com.alpha.qspiderrestapi.util.ViewHomePageUtil;
+import com.alpha.qspiderrestapi.util.WeightageUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -86,6 +82,9 @@ public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private CourseUtil courseUtil;
+
+	@Autowired
+	private WeightageUtil weightageUtil;
 
 	@Autowired
 	private CourseMapper courseMapper;
@@ -391,70 +390,149 @@ public class CourseServiceImpl implements CourseService {
 		throw new IdNotFoundException("Course With the Given Id Not Found");
 	}
 
-	@Override
-	public ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> fetchViewForHomepage(String hostName) {
-		Organization orgType = util.checkOrganizationType(hostName);
-		List<ViewAllHomePage> var = viewDao.fetchAllViewByCityName(orgType);
-		List<BranchDto> branchDtos = courseUtil.getTheBranchDto(var);
-
-		Map<String, Map<String, List<BranchDto>>> countryCityBranchListMap = branchDtos.stream()
-				.collect(Collectors.groupingBy(BranchDto::getCountry, Collectors.groupingBy(BranchDto::getCity)));
-
-		List<ViewAllHomePageResponse> response = new ArrayList<>();
-
-		String cityName = null;
-		String countryName = null;
-		for (Map.Entry<String, Map<String, List<BranchDto>>> branchTypeCountryEntry : countryCityBranchListMap
-				.entrySet()) {
-			ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
-			List<CityViewDto> cities = new ArrayList<CityViewDto>();
-
-			pageResponse.setCountryName(branchTypeCountryEntry.getKey());
-			for (var branchTypeCityEntry : branchTypeCountryEntry.getValue().entrySet()) {
-				CityViewDto city = new CityViewDto();
-				city.setCityName(branchTypeCityEntry.getKey());
-				List<BranchDto> branches = new ArrayList<BranchDto>();
-				for (var branchTypeEntry : branchTypeCityEntry.getValue()) {
-
-					branches.add(branchTypeEntry);
-				}
-				city.setBranches(branches);
-				cities.add(city);
-			}
-			pageResponse.setCity(cities);
-			response.add(pageResponse);
-
-//			pageResponse.setCityName(branchTypeEntry.getValue());
-//			pageResponse.setBranches(branchTypeEntry.getValue());
-
-		}
-
-		// Convert BranchDto objects to Branch objects (assuming conversion logic)
-//		for (BranchDto dto : branchDtos) {
-//			branches.add(dto);
+//	@Override
+//	public ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> fetchViewForHomepage(String hostName) {
+//		Organization orgType = util.checkOrganizationType(hostName);
+//		List<ViewAllHomePage> var = viewDao.fetchAllViewByCityName(orgType);
+//		List<BranchDto> branchDtos = courseUtil.getTheBranchDto(var);
+//		Map<String, Map<String, List<BranchDto>>> countryCityBranchListMap = branchDtos.stream()
+//				.collect(Collectors.groupingBy(BranchDto::getCountry, Collectors.groupingBy(BranchDto::getCity)));
+//
+//		List<ViewAllHomePageResponse> response = new ArrayList<>();
+//
+//		String cityName;
+//		String countryName;
+//		for (Map.Entry<String, Map<String, List<BranchDto>>> branchTypeCountryEntry : countryCityBranchListMap
+//				.entrySet()) {
+//			ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
+//			List<CityViewDto> cities = new ArrayList<CityViewDto>();
+//
+//			pageResponse.setCountryName(branchTypeCountryEntry.getKey());
+//			for (var branchTypeCityEntry : branchTypeCountryEntry.getValue().entrySet()) {
+//				CityViewDto city = new CityViewDto();
+//				city.setCityName(branchTypeCityEntry.getKey());
+//				List<BranchDto> branches = new ArrayList<BranchDto>();
+//				for (var branchTypeEntry : branchTypeCityEntry.getValue()) {
+//					branches.add(branchTypeEntry);
+//					city.setQspiders(branchTypeEntry.getQspiders());
+//					city.setJspiders(branchTypeEntry.getJspiders());
+//					city.setPyspiders(branchTypeEntry.getPyspiders());
+//					city.setProspiders(branchTypeEntry.getProspiders());
+//					pageResponse.setCtQspiders(branchTypeEntry.getCtQspiders());
+//					pageResponse.setCtJspiders(branchTypeEntry.getCtJspiders());
+//					pageResponse.setCtPyspiders(branchTypeEntry.getCtPyspiders());
+//					pageResponse.setCtProspiders(branchTypeEntry.getCtProspiders());
+//				}
+//				city.setBranches(branches);
+//				cities.add(city);
+//			}
+//			pageResponse.setCity(cities);
+//
+//			response.add(pageResponse);
+//
+////			pageResponse.setCityName(branchTypeEntry.getValue());
+////			pageResponse.setBranches(branchTypeEntry.getValue());
+//
 //		}
-
-		// Create and populate ViewAllHomePageResponse object
-
-		// Now set the list of Branch objects
-
-//			Map<String, BranchDto> test = new HashMap<String, BranchDto>();
-//			for (BranchDto branchDto: branches) {
-//				test.put(branchDto.getCity(), branchDto);
+//
+//		List<CountryDto> countries = new ArrayList<CountryDto>();
+//		ArrayList<CityDto> cities = new ArrayList<CityDto>();
+//		response.stream().peek(country -> {
+//			CountryDto countryObject = new CountryDto();
+//			countryObject.setCountryName(country.getCountryName());
+//			for (CityViewDto city : country.getCity()) {
+//				CityDto cityView = new CityDto();
+//				cityView.setCityName(city.getCityName());
+//				cityView.setQspiders(city.getQspiders());
+//				cityView.setJspiders(city.getJspiders());
+//				cityView.setPyspiders(city.getPyspiders());
+//				cityView.setProspiders(city.getProspiders());
+//				cities.add(cityView);
 //			}
-
-//			List<ViewAllHomePageResponse> response = new ArrayList<ViewAllHomePageResponse>();
-		//
-//			for (Entry<String, Map<String, List<BranchDto>>> entry : cityBranchMap.entrySet()) {
-//				ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
-//				pageResponse.setBranches(entry.getValue());
-//				pageResponse.setCityName(entry.getKey());
-//				response.add(pageResponse);
-		//
-//			}
-
-		return ResponseUtil.getOk(response);
-	}
+//			countryObject.setCtQspiders(country.getCtQspiders());
+//			countryObject.setCtJspiders(country.getCtJspiders());
+//			countryObject.setCtPyspiders(country.getCtPyspiders());
+//			countryObject.setCtProspiders(country.getCtProspiders());
+//			countries.add(countryObject);
+//		}).collect(Collectors.toList());
+//
+//		List<CountryDto> sortedCountry = weightageUtil.getSortedCountry(countries, hostName);
+//		List<CityDto> sortedCity = weightageUtil.getSortedCity(cities, hostName);
+//
+//		System.err.println(sortedCountry);
+//		Map<String, CountryDto> countryMap = sortedCountry.stream()
+//				.collect(Collectors.toMap(CountryDto::getCountryName, Function.identity()));
+//
+//		Map<Long, CountryDto> countryqspWeightageMap = sortedCountry.stream()
+//				.collect(Collectors.toMap(CountryDto::getCtQspiders, Function.identity()));
+//
+//		Map<Long, CountryDto> countryjspWeightageMap = sortedCountry.stream()
+//				.collect(Collectors.toMap(CountryDto::getCtJspiders, Function.identity()));
+//
+//		Map<Long, CountryDto> countrypyspWeightageMap = sortedCountry.stream()
+//				.collect(Collectors.toMap(CountryDto::getCtPyspiders, Function.identity()));
+//
+//		Map<Long, CountryDto> countryprospWeightageMap = sortedCountry.stream()
+//				.collect(Collectors.toMap(CountryDto::getCtProspiders, Function.identity()));
+//
+//		Map<String, CityDto> cityMap = sortedCity.stream()
+//				.collect(Collectors.toMap(CityDto::getCityName, Function.identity()));
+//
+//		Map<Long, CityDto> cityqspMap = sortedCity.stream()
+//				.collect(Collectors.toMap(CityDto::getQspiders, Function.identity()));
+//
+//		Map<Long, CityDto> cityjspMap = sortedCity.stream()
+//				.collect(Collectors.toMap(CityDto::getJspiders, Function.identity()));
+//
+//		Map<Long, CityDto> citypyspMap = sortedCity.stream()
+//				.collect(Collectors.toMap(CityDto::getPyspiders, Function.identity()));
+//
+//		Map<Long, CityDto> cityprospMap = sortedCity.stream()
+//				.collect(Collectors.toMap(CityDto::getProspiders, Function.identity()));
+//
+//		System.err.println(countryMap);
+//		response.stream().forEach((pageResponse) -> {
+//			pageResponse.setCountryName(countryMap.get(pageResponse.getCountryName()).getCountryName());
+//			pageResponse.setCtQspiders(countryqspWeightageMap.get(pageResponse.getCountryName()).getCtQspiders());
+//			pageResponse.setCtJspiders(countryjspWeightageMap.get(pageResponse.getCountryName()).getCtJspiders());
+//			pageResponse.setCtPyspiders(countrypyspWeightageMap.get(pageResponse.getCountryName()).getCtPyspiders());
+//			pageResponse.setCtProspiders(countryprospWeightageMap.get(pageResponse.getCountryName()).getCtProspiders());
+//			pageResponse.getCity().stream().forEach((cityResponse) -> {
+//				cityResponse.setCityName(cityMap.get(cityResponse.getCityName()).getCityName());
+//				cityResponse.setQspiders(cityqspMap.get(cityResponse.getCityName()).getQspiders());
+//				cityResponse.setJspiders(cityjspMap.get(cityResponse.getCityName()).getJspiders());
+//				cityResponse.setPyspiders(citypyspMap.get(cityResponse.getCityName()).getPyspiders());
+//				cityResponse.setProspiders(cityprospMap.get(cityResponse.getCityName()).getProspiders());
+//
+//			});
+//		});
+//
+//		// Convert BranchDto objects to Branch objects (assuming conversion logic)
+////		for (BranchDto dto : branchDtos) {
+////			branches.add(dto);
+////		}
+//
+//		// Create and populate ViewAllHomePageResponse object
+//
+//		// Now set the list of Branch objects
+//
+////			Map<String, BranchDto> test = new HashMap<String, BranchDto>();
+////			for (BranchDto branchDto: branches) {
+////				test.put(branchDto.getCity(), branchDto);
+////			}
+//
+////			List<ViewAllHomePageResponse> response = new ArrayList<ViewAllHomePageResponse>();
+//		//
+////			for (Entry<String, Map<String, List<BranchDto>>> entry : cityBranchMap.entrySet()) {
+////				ViewAllHomePageResponse pageResponse = new ViewAllHomePageResponse();
+////				pageResponse.setBranches(entry.getValue());
+////				pageResponse.setCityName(entry.getKey());
+////				response.add(pageResponse);
+//		//
+////			}
+//
+//		return ResponseUtil.getOk(response);
+//	}
 
 	@Override
 	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(long categoryId, Long subCategoryId,

@@ -44,11 +44,11 @@ public class Category {
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
 	private List<SubCategory> subCategories = new ArrayList<SubCategory>();
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "category_course", joinColumns = @JoinColumn(name = "categoryId"), inverseJoinColumns = @JoinColumn(name = "courseId"))
 	private List<Course> courses = new ArrayList<Course>();
 
-	@OneToOne(mappedBy = "category",cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "category", cascade = CascadeType.ALL)
 	@JsonIgnore
 	private Weightage weightage;
 

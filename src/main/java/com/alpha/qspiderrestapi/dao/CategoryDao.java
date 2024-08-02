@@ -22,4 +22,6 @@ public interface CategoryDao {
 	boolean isCourseIdPresent(long categoryId, long courseId);
 
 	void removeCourseFromCategory(List<Long> courseIds, Long categoryId);
+
+//	void deleteCategoryUmappedCourse(Long categoryId);
 }

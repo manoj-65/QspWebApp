@@ -62,4 +62,38 @@ public class CourseUtil {
 				.collect(Collectors.toList());
 	}
 
+//	public List<CountryDto> getTheCountryDto(List<ViewAllHomePage> fetchAllViewByCityName) {
+//
+//		List<CountryDto> countryDtos = new ArrayList<CountryDto>();
+//
+//		for (ViewAllHomePage result : fetchAllViewByCityName) {
+//			CountryDto countryDto = new CountryDto();
+//			countryDto.setCountryName(result.getCountry());
+//			countryDto.setCtQspiders(result.getCtQspiders());
+//			countryDto.setCtJspiders(result.getCtJspiders());
+//			countryDto.setCtPyspiders(result.getCtPyspiders());
+//			countryDto.setCtProspiders(result.getCtProspiders());
+//			countryDto.setCities(getTheCityDto(fetchAllViewByCityName));
+//		}
+//			
+//			
+//
+//	}
+
+//	private List<CityDto> getTheCityDto(List<ViewAllHomePage> fetchAllViewByCityName) {
+//
+//		List<CityDto> cityDtos = new ArrayList<CityDto>();
+//
+//		for (ViewAllHomePage result : fetchAllViewByCityName) {
+//
+//			CityDto cityDto = new CityDto();
+//			cityDto.setCityName(result.getCityName());
+//			cityDto.setQspiders(result.getCQspiders());
+//			cityDto.setJspiders(result.getCJspiders());
+//			cityDto.setPyspiders(result.getCPyspiders());
+//			cityDto.setProspiders(result.getCProspiders());
+//			
+//			List<BranchDto> branchDtos = getTheBranchDto(result);
+//		}
+
 }

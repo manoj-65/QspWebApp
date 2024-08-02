@@ -31,5 +31,13 @@ public class ViewAllHomePage {
 	private String state;
 	private String country;
 	private int pincode;
+	private Long ctQspiders;
+	private Long ctJspiders;
+	private Long ctPyspiders;
+	private Long ctProspiders;
+	private Long cQspiders;
+	private Long cJspiders;
+	private Long cPyspiders;
+	private Long cProspiders;
 
 }
