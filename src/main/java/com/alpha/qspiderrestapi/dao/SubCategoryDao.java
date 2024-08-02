@@ -23,4 +23,6 @@ public interface SubCategoryDao {
 
 	void removeCourseFromSubCategory(Long subCategoryId, List<Long> courseIds);
 
+	void deleteAllSubCategory();
+
 }

@@ -90,7 +90,12 @@ public class SubCategoryDaoImpl implements SubCategoryDao {
 
 	@Override
 	public void removeCourseFromSubCategory(Long subCategoryId, List<Long> courseIds) {
-		subCategoryRepository.removeCourseFromSubCategory(subCategoryId, courseIds); 
+		subCategoryRepository.removeCourseFromSubCategory(subCategoryId, courseIds);
+	}
+
+	@Override
+	public void deleteAllSubCategory() {
+		subCategoryRepository.deleteAll();
 	}
 
 }

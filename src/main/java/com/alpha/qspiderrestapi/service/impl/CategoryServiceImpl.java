@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dao.CategoryDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
+import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dao.WeightageDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
@@ -27,9 +29,11 @@ import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.entity.Weightage;
 import com.alpha.qspiderrestapi.entity.enums.Mode;
+import com.alpha.qspiderrestapi.entity.enums.Organization;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
+import com.alpha.qspiderrestapi.exception.InvalidOrganisationTypeException;
 import com.alpha.qspiderrestapi.modelmapper.CategoryMapper;
 import com.alpha.qspiderrestapi.modelmapper.CourseMapper;
 import com.alpha.qspiderrestapi.service.AWSS3Service;
@@ -47,6 +51,9 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Autowired
 	private CategoryDao categoryDao;
+
+	@Autowired
+	private SubCategoryDao subCategoryDao;
 
 	@Autowired
 	private CourseDao courseDao;
@@ -69,8 +76,17 @@ public class CategoryServiceImpl implements CategoryService {
 	@Autowired
 	private WeightageDao weightageDao;
 
-	@Value(value = "organization.qsp")
+	@Value("${organization.qsp}")
 	private String qspDomainName;
+
+	@Value("${organization.jsp}")
+	private String jspDomainName;
+
+	@Value("${organization.pysp}")
+	private String pyspDomainName;
+
+	@Value("${organization.bsp}")
+	private String prospDomainName;
 
 	/**
 	 * Saves a new category.
@@ -108,15 +124,44 @@ public class CategoryServiceImpl implements CategoryService {
 	 *                   during data access.
 	 */
 	@Override
-	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName, boolean isOnline) {
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName, boolean isOnline,
+			Organization organization) {
 
 		List<Category> categories = categoryDao.fetchAllCategories();
 		categories = weightageUtil.getSortedCategory(categories, domainName);
 		List<CategoryResponse> categoryResponse = new ArrayList<CategoryResponse>();
-		categories.forEach(
-				category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainName, isOnline)));
+		if (!Objects.isNull(organization)) {
+			String domainNameKey = getDomainName(organization);
+			categories.forEach(category -> categoryResponse
+					.add(categoryMapper.mapToCategoryDto(category, domainNameKey, isOnline)));
+		} else {
+			categories.forEach(
+					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainName, isOnline)));
+		}
+
 		log.info("Category list has been upadated and set");
 		return ResponseUtil.getOk(categoryResponse);
+	}
+
+	private String getDomainName(Organization organization) {
+		switch (organization) {
+		case QSP: {
+			return qspDomainName;
+		}
+		case JSP: {
+			return jspDomainName;
+		}
+		case PYSP: {
+			return pyspDomainName;
+		}
+		case PROSP: {
+			return prospDomainName;
+		}
+		default: {
+			throw new InvalidOrganisationTypeException("Given Organization " + organization + " type not found");
+		}
+
+		}
 	}
 
 	// fetches category based on the given id
@@ -293,16 +338,81 @@ public class CategoryServiceImpl implements CategoryService {
 			throw new NullPointerException("Sent file is null");
 		}
 
-		
 		Category category = Category.builder().categoryTitle(categoryDto.getTitle()).categoryIcon(iconUrl)
 				.categoryAlternativeIcon(alternativeIconUrl).build();
-		
+
 		List<Weightage> allCategoryWeightages = weightageDao.getAllWeightages();
 		Weightage weightage = weightageUtil.setMaxWeightage(allCategoryWeightages);
 		weightage.setCategory(category);
 		category.setWeightage(weightage);
-		
+
 		return ResponseUtil.getCreated(categoryDao.saveCategory(category));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Category>> editCategory(CategoryRequestDto categoryDto) {
+
+		long categoryId = categoryDto.getId();
+		MultipartFile iconfile = categoryDto.getIcon();
+		MultipartFile alternativeIconfile = categoryDto.getAlternativeIcon();
+
+		String folder = "CATEGORY/";
+		Optional<Category> optionalcategory = categoryDao.fetchCategoryById(categoryId);
+		if (optionalcategory.isPresent()) {
+			Category category = optionalcategory.get();
+			category.setCategoryTitle(categoryDto.getTitle());
+			folder += optionalcategory.get().getCategoryTitle();
+			String iconUrl;
+			String alternativeIconUrl;
+			try {
+
+				if (iconfile != null) {
+					iconUrl = awss3Service.uploadFile(iconfile, folder);
+					category.setCategoryIcon(iconUrl);
+				}
+				if (alternativeIconfile != null) {
+					alternativeIconUrl = awss3Service.uploadFile(alternativeIconfile, folder);
+					category.setCategoryAlternativeIcon(alternativeIconUrl);
+				}
+
+			} catch (NullPointerException e) {
+				log.error("Error uploading icon to S3: {}", e.getMessage());
+				throw new NullPointerException("Error uploading icon");
+			}
+			return ResponseUtil.getCreated(categoryDao.saveCategory(category));
+		}
+		throw new IdNotFoundException("Category With the Given Id : " + categoryDto.getId() + " Not Found");
+
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> removeCategoryAndUnmapCourses(Long categoryId) {
+
+		if (categoryDao.isCategoryPresent(categoryId)) {
+			Category category = categoryDao.fetchCategoryById(categoryId)
+					.orElseThrow(() -> new IdNotFoundException("Given category " + categoryId + " is not present"));
+			List<SubCategory> subCategories = category.getSubCategories();
+			if (!subCategories.isEmpty()) {
+				subCategories.stream().forEach(subCategory -> subCategoryDao.removeCourseFromSubCategory(
+						subCategory.getSubCategoryId(),
+						subCategory.getCourses().stream().map(Course::getCourseId).collect(Collectors.toList())));
+				// todo: query to delete only subcategory not course
+				subCategoryDao.deleteAllSubCategory();
+			}
+
+			List<Course> courses = category.getCourses();
+			if (!courses.isEmpty()) {
+				courses.stream().forEach(course -> categoryDao.removeCourseFromCategory(
+						courses.stream().map(Course::getCourseId).collect(Collectors.toList()), categoryId));
+
+				// Had to write a query to make it delete without deleting the courses in
+				// relation
+
+			}
+			categoryDao.saveCategory(category);
+			categoryDao.deleteCategory(categoryId);
+		}
+		return ResponseUtil.getOk("Category Unmapped and deleted");
 	}
 
 //	@Override
