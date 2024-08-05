@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CourseFormResponseDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
 import com.alpha.qspiderrestapi.dto.UpdateCourseDto;
@@ -95,7 +96,7 @@ public class CourseController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@GetMapping("/getall")
-	public ResponseEntity<ApiResponse<List<Course>>> fetchAllCourses(@PathVariable String version) {
+	public ResponseEntity<ApiResponse<List<CourseFormResponseDto>>> fetchAllCourses(@PathVariable String version) {
 		if (version.equals("v1"))
 			return courseService.fetchAllCourse();
 

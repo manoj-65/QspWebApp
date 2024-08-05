@@ -2,6 +2,7 @@
 package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,12 @@ import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dao.SubjectDao;
 import com.alpha.qspiderrestapi.dao.ViewAllHomePageDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CategoryFormResponseDto;
+import com.alpha.qspiderrestapi.dto.CourseFormResponseDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestDto;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
+import com.alpha.qspiderrestapi.dto.SubCategoryFormResponseDto;
 import com.alpha.qspiderrestapi.dto.UpdateCourseDto;
 import com.alpha.qspiderrestapi.dto.UpdateCourseRequestDto;
 import com.alpha.qspiderrestapi.entity.CityBranchView;
@@ -185,8 +189,37 @@ public class CourseServiceImpl implements CourseService {
 	 *                   during data access.
 	 */
 	@Override
-	public ResponseEntity<ApiResponse<List<Course>>> fetchAllCourse() {
-		return ResponseUtil.getOk(courseDao.fetchAllCourses());
+	public ResponseEntity<ApiResponse<List<CourseFormResponseDto>>> fetchAllCourse() {
+		List<CourseFormResponseDto> response = courseDao.fetchAllCourses().stream().map(course -> {
+			CourseFormResponseDto courseDto = new CourseFormResponseDto();
+			courseDto.setCourse_id(course.getCourseId());
+			courseDto.setCourse_icon(course.getCourseIcon());
+			courseDto.setCourse_name(course.getCourseName());
+			courseDto.setSubjectCount(course.getSubjects().size());
+
+			// set category list
+			List<CategoryFormResponseDto> categoryResponse = course.getCategories().stream().map(category -> {
+				CategoryFormResponseDto categoryDto = new CategoryFormResponseDto();
+				categoryDto.setCategoryId(category.getCategoryId());
+				categoryDto.setCategoryTitle(category.getCategoryTitle());
+				return categoryDto;
+			}).collect(Collectors.toList());
+			courseDto.setCategories(categoryResponse);
+
+			// set subCategory list
+			List<SubCategoryFormResponseDto> subCategoryResponse = course.getSubCategories().stream()
+					.map(subCategory -> {
+						SubCategoryFormResponseDto subCategoryDto = new SubCategoryFormResponseDto();
+						subCategoryDto.setSubCategoryId(subCategory.getSubCategoryId());
+						subCategoryDto.setSubCategoryTitle(subCategory.getSubCategoryTitle());
+						return subCategoryDto;
+					}).collect(Collectors.toList());
+			courseDto.setSubCategories(subCategoryResponse);
+
+			return courseDto;
+		}).sorted(Comparator.comparing(CourseFormResponseDto::getCourse_name)).collect(Collectors.toList());
+
+		return ResponseUtil.getOk(response);
 	}
 
 	/**

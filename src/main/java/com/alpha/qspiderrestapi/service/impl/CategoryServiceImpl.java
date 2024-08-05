@@ -128,12 +128,12 @@ public class CategoryServiceImpl implements CategoryService {
 			Organization organization) {
 
 		List<Category> categories = categoryDao.fetchAllCategories();
-		categories = weightageUtil.getSortedCategory(categories, domainName);
 		List<CategoryResponse> categoryResponse = new ArrayList<CategoryResponse>();
 		if (!Objects.isNull(organization)) {
 			String domainNameKey = getDomainName(organization);
-			categories.forEach(category -> categoryResponse
-					.add(categoryMapper.mapToCategoryDto(category, domainNameKey, isOnline)));
+			categories = weightageUtil.getSortedCategory(categories, domainNameKey);
+			categories.forEach(
+					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainNameKey, isOnline)));
 		} else {
 			categories.forEach(
 					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainName, isOnline)));
