@@ -122,15 +122,15 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName, boolean isOnline,
 			Organization organization) {
-		
-		List<Category> categories = categoryDao.fetchAllCategories();
-		categories = weightageUtil.getSortedCategory(categories, domainName);
 		List<CategoryResponse> categoryResponse = new ArrayList<CategoryResponse>();
+		List<Category> categories = categoryDao.fetchAllCategories();
 		if (!Objects.isNull(organization)) {
 			String domainNameKey = getDomainName(organization);
+			categories = weightageUtil.getSortedCategory(categories, domainNameKey);
 			categories.forEach(
 					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainNameKey, isOnline)));
 		}else {
+			categories = weightageUtil.getSortedCategory(categories, domainName);
 			categories.forEach(
 					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainName, isOnline)));
 		}

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
+import com.alpha.qspiderrestapi.dto.CourseFormResponseDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestDto;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
@@ -17,7 +18,7 @@ public interface CourseService {
 
 	ResponseEntity<ApiResponse<Course>> saveCourse(long categoryId, Long subCategoryId, Course course);
 
-	ResponseEntity<ApiResponse<List<Course>>> fetchAllCourse();
+	ResponseEntity<ApiResponse<List<CourseFormResponseDto>>> fetchAllCourse();
 
 	ResponseEntity<ApiResponse<CourseIdResponse>> fetchCourseById(long courseId);
 

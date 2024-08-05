@@ -14,23 +14,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dto.ApiResponse;
-import com.alpha.qspiderrestapi.dto.CountryDto;
+import com.alpha.qspiderrestapi.dto.CourseFormResponseDto;
 import com.alpha.qspiderrestapi.dto.CourseIdResponse;
 import com.alpha.qspiderrestapi.dto.CourseRequestImageDto;
 import com.alpha.qspiderrestapi.dto.UpdateCourseDto;
-import com.alpha.qspiderrestapi.dto.ViewAllHomePageResponse;
 import com.alpha.qspiderrestapi.entity.Course;
-import com.alpha.qspiderrestapi.exception.DomainMismatchException;
 import com.alpha.qspiderrestapi.exception.UnauthorizedVersionException;
-import com.alpha.qspiderrestapi.service.BranchService;
 import com.alpha.qspiderrestapi.service.CourseService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -101,7 +96,7 @@ public class CourseController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
 	@GetMapping("/getall")
-	public ResponseEntity<ApiResponse<List<Course>>> fetchAllCourses(@PathVariable String version) {
+	public ResponseEntity<ApiResponse<List<CourseFormResponseDto>>> fetchAllCourses(@PathVariable String version) {
 		if (version.equals("v1"))
 			return courseService.fetchAllCourse();
 
