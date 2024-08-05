@@ -19,7 +19,8 @@ public interface CategoryService {
 
 	ResponseEntity<ApiResponse<Category>> saveCategory(Category category);
 
-	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName,boolean isOnline, Organization organization);
+	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName, boolean isOnline,
+			Organization organization);
 
 	ResponseEntity<ApiResponse<CategoryResponse>> fetchCategoryById(long categoryId, String domainName);
 
@@ -41,5 +42,7 @@ public interface CategoryService {
 	ResponseEntity<ApiResponse<Category>> saveCategoryWithIcons(CategoryRequestDto category);
 
 	ResponseEntity<ApiResponse<Category>> editCategory(CategoryRequestDto category);
+
+	ResponseEntity<ApiResponse<String>> removeCategoryAndUnmapCourses(Long categoryId);
 
 }

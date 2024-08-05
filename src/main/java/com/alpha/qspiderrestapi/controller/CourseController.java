@@ -38,10 +38,10 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/{version}/courses")
 public class CourseController {
- 
+
 	@Autowired
 	private CourseService courseService;
-	
+
 	/**
 	 * Saves a new course associated with a specific category.
 	 *
@@ -76,7 +76,7 @@ public class CourseController {
 
 		throw new UnauthorizedVersionException();
 	}
- 
+
 	/**
 	 * Retrieves all available courses.
 	 *
@@ -182,6 +182,15 @@ public class CourseController {
 		throw new UnauthorizedVersionException();
 	}
 
+//	@GetMapping("/viewAll")
+//	public ResponseEntity<ApiResponse<List<ViewAllHomePageResponse>>> viewAllResponseHomePage(
+//			@PathVariable String version, @RequestHeader("Origin") String hostName) {
+//		if (version.equals("v1"))
+//			return courseService.fetchViewForHomepage(hostName);
+//
+//		throw new UnauthorizedVersionException();
+//	}
+
 //	@PostMapping(value = "/saveCourse")
 //	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(@PathVariable String version,
 //			@RequestParam long categoryId, @RequestParam(required = false) Long subCategoryId,
@@ -200,22 +209,23 @@ public class CourseController {
 	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(@PathVariable String version,
 			@ModelAttribute CourseRequestImageDto dto) {
 
-			log.info("Received request to save course along with images, version: {}", version);
-			log.debug("CourseRequestImageDto: {}", dto);
+		log.info("Received request to save course along with images, version: {}", version);
+		log.debug("CourseRequestImageDto: {}", dto);
 
-			if (version.equals("v1")) {
-				log.info("Processing saveCourseAlongWithImages for version v1");
-				ResponseEntity<ApiResponse<Course>> response = courseService.saveCourseAlongWithImages(dto);
-				log.info("Response from courseService: {}", response);
-				return response;
-			}
+		if (version.equals("v1")) {
+			log.info("Processing saveCourseAlongWithImages for version v1");
+			ResponseEntity<ApiResponse<Course>> response = courseService.saveCourseAlongWithImages(dto);
+			log.info("Response from courseService: {}", response);
+			return response;
+		}
 
-			log.warn("Unauthorized version: {}", version);
-			throw new UnauthorizedVersionException();
+		log.warn("Unauthorized version: {}", version);
+		throw new UnauthorizedVersionException();
 	}
 
 	@PutMapping(value = "/updateCourse")
-	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(@PathVariable String version,@ModelAttribute UpdateCourseDto course) {
+	public ResponseEntity<ApiResponse<Course>> updateCourseAlongWithImages(@PathVariable String version,
+			@ModelAttribute UpdateCourseDto course) {
 		if (version.equals("v1"))
 			return courseService.updateCourseAlongWithImages(course);
 

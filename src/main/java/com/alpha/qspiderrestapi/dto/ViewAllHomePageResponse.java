@@ -14,6 +14,10 @@ import lombok.NoArgsConstructor;
 public class ViewAllHomePageResponse {
 
 	private String countryName;
+	private Long ctQspiders;
+	private Long ctJspiders;
+	private Long ctPyspiders;
+	private Long ctProspiders;
 	private List<CityViewDto> city;
 
 }

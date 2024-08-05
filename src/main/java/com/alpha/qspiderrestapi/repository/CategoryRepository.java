@@ -41,4 +41,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	@Query(value = "delete from category_course where course_id IN (:courseIds) and category_id = :categoryId", nativeQuery = true)
 	int removeCourseById(@Param("courseIds") List<Long> courseIds, @Param("categoryId") long categoryId);
 
+//	void deleteCategoryWithoutUnmap(Long categoryId);
+
 }

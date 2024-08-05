@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alpha.qspiderrestapi.dao.CategoryDao;
 import com.alpha.qspiderrestapi.dao.CourseDao;
+import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dao.WeightageDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.dto.CategoryDashboardResponse;
@@ -50,6 +51,9 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Autowired
 	private CategoryDao categoryDao;
+
+	@Autowired
+	private SubCategoryDao subCategoryDao;
 
 	@Autowired
 	private CourseDao courseDao;
@@ -122,40 +126,40 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> fetchAllCategories(String domainName, boolean isOnline,
 			Organization organization) {
-		List<CategoryResponse> categoryResponse = new ArrayList<CategoryResponse>();
+
 		List<Category> categories = categoryDao.fetchAllCategories();
+		List<CategoryResponse> categoryResponse = new ArrayList<CategoryResponse>();
 		if (!Objects.isNull(organization)) {
 			String domainNameKey = getDomainName(organization);
 			categories = weightageUtil.getSortedCategory(categories, domainNameKey);
 			categories.forEach(
 					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainNameKey, isOnline)));
-		}else {
-			categories = weightageUtil.getSortedCategory(categories, domainName);
+		} else {
 			categories.forEach(
 					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainName, isOnline)));
 		}
-		
+
 		log.info("Category list has been upadated and set");
 		return ResponseUtil.getOk(categoryResponse);
 	}
 
 	private String getDomainName(Organization organization) {
 		switch (organization) {
-			case QSP: {
-				return qspDomainName;
-			}
-			case JSP: {
-				return jspDomainName;
-			}
-			case PYSP: {
-				return pyspDomainName;
-			}
-			case PROSP: {
-				return prospDomainName;
-			}
-			default: {
-				throw new InvalidOrganisationTypeException("Given Organization " + organization + " type not found");
-			}
+		case QSP: {
+			return qspDomainName;
+		}
+		case JSP: {
+			return jspDomainName;
+		}
+		case PYSP: {
+			return pyspDomainName;
+		}
+		case PROSP: {
+			return prospDomainName;
+		}
+		default: {
+			throw new InvalidOrganisationTypeException("Given Organization " + organization + " type not found");
+		}
 
 		}
 	}
@@ -379,6 +383,38 @@ public class CategoryServiceImpl implements CategoryService {
 		}
 		throw new IdNotFoundException("Category With the Given Id : " + categoryDto.getId() + " Not Found");
 
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> removeCategoryAndUnmapCourses(Long categoryId) {
+
+		if (categoryDao.isCategoryPresent(categoryId)) {
+			Category category = categoryDao.fetchCategoryById(categoryId)
+					.orElseThrow(() -> new IdNotFoundException("Given category " + categoryId + " is not present"));
+			List<SubCategory> subCategories = category.getSubCategories();
+			if (!subCategories.isEmpty()) {
+				subCategories.stream().forEach(subCategory -> subCategoryDao.removeCourseFromSubCategory(
+						subCategory.getSubCategoryId(),
+						subCategory.getCourses().stream().map(Course::getCourseId).collect(Collectors.toList())));
+				// todo: query to delete only subcategory not course
+				subCategoryDao.deleteAllSubCategory();
+			}
+
+			List<Course> courses = category.getCourses();
+			if (!courses.isEmpty()) {
+				courses.stream().forEach(course -> categoryDao.removeCourseFromCategory(
+						courses.stream().map(Course::getCourseId).collect(Collectors.toList()), categoryId));
+
+				// Had to write a query to make it delete without deleting the courses in
+				// relation
+
+			}
+			categoryDao.saveCategory(category);
+			categoryDao.deleteCategory(categoryId);
+			return ResponseUtil.getOk("Category Unmapped and deleted");
+
+		}
+		throw new IdNotFoundException("Category Id: " + categoryId + " Not found");
 	}
 
 //	@Override

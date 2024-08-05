@@ -223,5 +223,15 @@ public class CategoryController {
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	} 
+	
+	@DeleteMapping("/deleteCategory")
+	public ResponseEntity<ApiResponse<String>> removeCategory(@PathVariable String version,
+			@RequestParam Long categoryId) {
+		if (version.equals("v1"))
+			return categoryService.removeCategoryAndUnmapCourses(categoryId);
+
+		throw new UnauthorizedVersionException();
+	}
+	
 
 }

@@ -36,7 +36,6 @@ import com.alpha.qspiderrestapi.entity.Branch;
 import com.alpha.qspiderrestapi.entity.City;
 import com.alpha.qspiderrestapi.entity.CityCourseBranchView;
 import com.alpha.qspiderrestapi.entity.enums.Organization;
-import com.alpha.qspiderrestapi.exception.DomainMismatchException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.exception.InvalidPhoneNumberException;
@@ -139,7 +138,7 @@ public class BranchServiceImpl implements BranchService {
 		if (optionalBranch.isPresent()) {
 			folder += optionalBranch.get().getBranchTitle();
 			String iconUrl = awss3Service.uploadFile(file, folder);
-			if (!iconUrl.isEmpty()) {
+			if (!iconUrl.isEmpty()) { 
 				log.info("File successfully uploaded to sw3: {}" + iconUrl);
 				optionalBranch.get().setBranchImage(iconUrl);
 				branchDao.saveBranch(optionalBranch.get());
@@ -337,7 +336,7 @@ public class BranchServiceImpl implements BranchService {
 		List<MultipartFile> branchGallery = branchRequestDto.getBranchGallery();
 		UpdateBranchRequestDto branchDto;
 		try {
-			objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true);
+			objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true); 
 			Reader read = new StringReader(branchRequestDto.getBranch());
 			branchDto = objectMapper.readValue(read, UpdateBranchRequestDto.class);
 			System.err.println(branchDto);
@@ -458,7 +457,7 @@ public class BranchServiceImpl implements BranchService {
 
 	@Override
 	public ResponseEntity<ApiResponse<List<CountryDto>>> viewall(String domainName) {
-
+ 
 		List<CityCourseBranchView> view = viewDao.fetchAll();
 		// Group by country -> city -> courseId
 		Map<String, Map<String, List<CityCourseBranchView>>> groupedData = view.stream().collect(Collectors

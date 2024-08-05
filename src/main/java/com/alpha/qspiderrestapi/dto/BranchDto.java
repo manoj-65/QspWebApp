@@ -19,4 +19,13 @@ public class BranchDto {
 	private String street;
 	private String organizationType;
 	private long addressId;
+	private long ctQspiders;
+	private long ctJspiders;
+	private long ctPyspiders;
+	private long ctProspiders;
+	private long qspiders;
+	private long jspiders;
+	private long pyspiders;
+	private long prospiders;
+
 }

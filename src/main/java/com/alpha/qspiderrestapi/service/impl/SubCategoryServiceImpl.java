@@ -2,6 +2,7 @@ package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import com.alpha.qspiderrestapi.dao.CourseDao;
 import com.alpha.qspiderrestapi.dao.SubCategoryDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.entity.Category;
+import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
 import com.alpha.qspiderrestapi.exception.DuplicateDataInsertionException;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
@@ -174,6 +176,22 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			throw new IdNotFoundException("SubCategory With the Given Id Not Found");
 		}
 
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<String>> removeSubCategoryAndUnmapCourses(Long subCategoryId) {
+		if (categoryDao.isCategoryPresent(subCategoryId)) {
+			SubCategory subCategory = subCategoryDao.fetchSubCategoryById(subCategoryId).orElseThrow(
+					() -> new IdNotFoundException("Given SubCategory " + subCategoryId + " is not present"));
+			List<Course> courses = subCategory.getCourses();
+			if (!courses.isEmpty()) {
+				subCategoryDao.removeCourseFromSubCategory(subCategoryId,
+						courses.stream().map(Course::getCourseId).collect(Collectors.toList()));
+				// todo: query to delete only subcategory not course
+			}
+			subCategoryDao.deleteSubCategory(subCategoryId);
+		}
+		return ResponseUtil.getOk("SubCategory Unmapped and deleted");
 	}
 
 }

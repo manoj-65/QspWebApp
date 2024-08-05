@@ -118,12 +118,21 @@ public class SubCategoryController {
 			return subCategoryService.uploadIcon(file, subCategoryId);
 		throw new UnauthorizedVersionException();
 	}
- 
+
 	@DeleteMapping("/removeCourseFromSubCategory")
 	public ResponseEntity<ApiResponse<String>> removeCourseFromSubCategory(@PathVariable String version,
 			@RequestParam Long subCategoryId, @RequestBody List<Long> courseIds) {
 		if (version.equals("v1"))
 			return subCategoryService.removeCourseFromCategory(subCategoryId, courseIds);
+
+		throw new UnauthorizedVersionException();
+	}
+
+	@DeleteMapping("/deleteSubCategory")
+	public ResponseEntity<ApiResponse<String>> removeSubCategory(@PathVariable String version,
+			@RequestParam Long subCategoryId) {
+		if (version.equals("v1"))
+			return subCategoryService.removeSubCategoryAndUnmapCourses(subCategoryId);
 
 		throw new UnauthorizedVersionException();
 	}
