@@ -135,6 +135,7 @@ public class CategoryServiceImpl implements CategoryService {
 			categories.forEach(
 					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainNameKey, isOnline)));
 		} else {
+			categories = weightageUtil.getSortedCategory(categories, domainName);
 			categories.forEach(
 					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainName, isOnline)));
 		}
