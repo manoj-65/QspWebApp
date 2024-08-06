@@ -47,13 +47,14 @@ public class BatchServiceImpl implements BatchService {
 	@Override
 	public ResponseEntity<ApiResponse<Batch>> saveBatch(Long branchId, long courseId, BatchRequestDto batch) {
 		log.info("Saving batch for branch ID: {} and course ID: {}", branchId, courseId);
-		
-		if(batch.getStartingDate().isAfter(LocalDate.now().minusDays(1)) && batch.getEndingDate().isBefore(batch.getStartingDate()))
+
+		if (batch.getStartingDate().isAfter(LocalDate.now().minusDays(1))
+				&& batch.getEndingDate().isBefore(batch.getStartingDate()))
 			throw new InvalidInfoException("Invalid start and end dates");
-		
-		if(batch.getEndingTime().isBefore(batch.getStartingTime()))
+
+		if (batch.getEndingTime().isBefore(batch.getStartingTime()))
 			throw new InvalidInfoException("Invalid start and end times");
-		
+
 		Course course = courseDao.fetchCourseById(courseId).orElseThrow(() -> {
 			log.error("Course not found with ID: {}", courseId);
 			return new IdNotFoundException("No Course Found with id: " + courseId);
@@ -61,7 +62,7 @@ public class BatchServiceImpl implements BatchService {
 		Branch branch = null;
 		Mode batchMode = Mode.ONLINE_CLASSES;
 		if (branchId != null) {
-			
+
 			branch = branchDao.fetchBranchById(branchId).orElseThrow(() -> {
 				log.error("Branch not found with ID: {}", branchId.longValue());
 				return new IdNotFoundException("No Branch Found with id: " + branchId);
@@ -75,7 +76,7 @@ public class BatchServiceImpl implements BatchService {
 		if (course.getMode().contains(batchMode)) {
 			Batch builtBatch = Batch.builder().batchTitle(batch.getBatchTitle()).trainerName(batch.getTrainerName())
 					.startingDate(batch.getStartingDate()).endingDate(batch.getEndingDate())
-					.startingTime(batch.getEndingTime()).endingTime(batch.getStartingTime()).batchMode(batchMode)
+					.startingTime(batch.getStartingTime()).endingTime(batch.getEndingTime()).batchMode(batchMode)
 					.batchStatus(BatchStatus.UPCOMING).extendingDays(batch.getExtendingDays()).branch(branch)
 					.course(course).build();
 
@@ -94,7 +95,7 @@ public class BatchServiceImpl implements BatchService {
 		batchDao.updateBatchStatus(BatchStatus.UPCOMING, BatchStatus.ONGOING);
 		cityDao.updateCityBranchCount();
 	}
-	
+
 	@Override
 	@Scheduled(cron = "0 0 2 * * ?")
 	public void updateBatchStatuses() {
