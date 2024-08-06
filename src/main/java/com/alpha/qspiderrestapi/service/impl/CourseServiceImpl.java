@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -841,6 +842,12 @@ public class CourseServiceImpl implements CourseService {
 		log.info("Category ID: {}", categoryId);
 		log.info("SubCategory ID: {}", subCategoryId);
 
+		List<Long> subjectIds = courseRequestDto.getSubjectIds();
+		List<Subject> subjects = new ArrayList<Subject>();
+		if (Objects.nonNull(subjectIds)) {
+			subjects = subjectDao.fetchSubjectsByIds(subjectIds);
+		}
+
 		if (categoryDao.isCategoryPresent(categoryId)) {
 			log.info("Category with ID {} is present", categoryId);
 
@@ -849,11 +856,14 @@ public class CourseServiceImpl implements CourseService {
 					log.info("SubCategory with ID {} is present", subCategoryId);
 
 					Course course = mapAndSetUrlsToCourse(courseRequestDto);
-					log.debug("Mapped course: {}", course);
 
 					subCategoryDao.assignCourseToSubCategory(subCategoryId, course.getCourseId());
 					log.info("Assigned course with ID {} to subCategory with ID {}", course.getCourseId(),
 							subCategoryId);
+
+					List<Subject> collect = subjects.stream().peek(subject -> subject.getCourses().add(course))
+							.collect(Collectors.toList());
+					course.setSubjects(collect);
 
 					return ResponseUtil.getCreated(course);
 				} else {
@@ -862,7 +872,6 @@ public class CourseServiceImpl implements CourseService {
 				}
 			} else {
 				Course course = mapAndSetUrlsToCourse(courseRequestDto);
-				log.debug("Mapped course: {}", course);
 
 				categoryDao.assignCourseToCategory(categoryId, course.getCourseId());
 				log.info("Assigned course with ID {} to category with ID {}", course.getCourseId(), categoryId);

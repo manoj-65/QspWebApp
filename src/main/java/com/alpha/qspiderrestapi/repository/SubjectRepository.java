@@ -1,5 +1,7 @@
 package com.alpha.qspiderrestapi.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,5 +30,8 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
 	@Modifying
 	@Query(value = "delete from course_subject where subject_id = :subjectId", nativeQuery = true)
 	int removeSubjectAndCourseById(long subjectId);
+	
+	@Query(value = "select * from subject where subject_id IN (:subjectIds)", nativeQuery = true)
+	List<Subject> fetchSubjectsByIds(List<Long> subjectIds);
 
 }
