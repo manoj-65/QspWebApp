@@ -26,7 +26,7 @@ public class SubCourseMapper {
 				.homePageCourseImage(course.getHomePageCourseImage())
 				.modes(course.getMode())
 				.weightageDto(weightageMapper.getDto(course.getWeightages(), 0l, Long.valueOf(subCategoryId)))
-				.build();
+				.subjectCount(course.getSubjects().size()).build();
 	}
 
 	public List<SubCourseResponse> mapToSubCourseResponseList(List<Course> courses, long subCategoryId) {

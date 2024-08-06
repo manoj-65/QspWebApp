@@ -22,4 +22,6 @@ public class SubCourseResponse {
 	private String homePageCourseImage;
 	private List<Mode> modes;
 	private WeightageDto weightageDto;
+	private int subjectCount;
+
 }
