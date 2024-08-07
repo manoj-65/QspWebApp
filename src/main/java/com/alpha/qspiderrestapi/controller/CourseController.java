@@ -215,7 +215,6 @@ public class CourseController {
 		if (version.equals("v1")) {
 			log.info("Processing saveCourseAlongWithImages for version v1");
 			ResponseEntity<ApiResponse<Course>> response = courseService.saveCourseAlongWithImages(dto);
-			log.info("Response from courseService: {}", response);
 			return response;
 		}
 

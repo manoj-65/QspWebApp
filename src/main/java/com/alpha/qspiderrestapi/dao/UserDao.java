@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.alpha.qspiderrestapi.dto.UserDto;
 import com.alpha.qspiderrestapi.entity.User;
+import com.alpha.qspiderrestapi.entity.enums.Role;
 
 public interface UserDao {
 	User saveUser(User user);
@@ -19,6 +20,6 @@ public interface UserDao {
 
 	Optional<User> findUserByUserPhoneNumber(long phoneNumber);
 
-	List<User> getAllCourseAdders();
+	List<User> getUsersByRole(Role role);
 
 }
