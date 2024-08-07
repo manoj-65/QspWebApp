@@ -2,6 +2,7 @@ package com.alpha.qspiderrestapi.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import com.alpha.qspiderrestapi.security.JwtTokenProvider;
 import com.alpha.qspiderrestapi.service.UserService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 import com.alpha.qspiderrestapi.util.UserUtil;
+import com.alpha.qspiderrestapi.util.ValidatePhoneNumber;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +37,9 @@ public class UserServiceImpl implements UserService {
 	private UserDao userDao;
 	@Autowired
 	private UserUtil userUtil;
+	
+	@Autowired
+	private ValidatePhoneNumber validatePhoneNumber;
 
 	@Autowired
 	private ApplicationUserDetailsService applicationUserDetailsService;
@@ -158,10 +163,28 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ResponseEntity<ApiResponse<List<UserDto>>> getAllTrainers() {
-		List<User> allCourseAdders = userDao.getUsersByRole(Role.TRAINER);
+		List<User> trainers = userDao.getUsersByRole(Role.TRAINER);
 		List<UserDto> userDtos = new ArrayList<UserDto>();
-		allCourseAdders.forEach(user -> userDtos.add(UserDtoMapper.mapUserToUserDto(user)));
+		trainers.forEach(user -> userDtos.add(UserDtoMapper.mapUserToUserDto(user)));
 		return ResponseUtil.getOk(userDtos);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<UserDto>> saveTrainer(UserDto userDto) {
+		User user = User.builder()
+						.userName(userDto.getUserName())
+						.status(Status.ACTIVE)
+						.role(Role.TRAINER)
+						.userPassword(userDto.getUserPassword())
+						.build();
+		userDto.getPhoneNumber().forEach(c->{
+			String phoneNumber = c.getCountryCode()+c.getPhoneNumber();
+			validatePhoneNumber.isValidPhoneNumber(phoneNumber);
+		});
+		user.setEmails(userUtil.mapEmailToUser(userDto.getUserEmail(), user));
+		user.setContacts(userUtil.mapPhoneNumberToUser(userDto.getPhoneNumber(), user));
+		user = userDao.saveUser(user);
+		return ResponseUtil.getCreated(UserDtoMapper.mapUserToUserDto(user));
 	}
 
 }

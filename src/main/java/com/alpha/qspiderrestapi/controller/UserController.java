@@ -96,4 +96,17 @@ public class UserController {
 			return userService.getAllTrainers();
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
+	
+	@Hidden
+	@Operation(description = "A Trainer (role based user) is saved into the database", summary = "Saves a trainer")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Success", responseCode = "201"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
+	@PostMapping("/trainer")
+	public ResponseEntity<ApiResponse<UserDto>> saveTrainer(@PathVariable String version, @RequestBody UserDto user) {
+		if (version.equalsIgnoreCase("V1"))
+			return userService.saveTrainer(user);
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	}
 }
