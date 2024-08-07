@@ -11,5 +11,4 @@ public interface CityService {
 	ResponseEntity<ApiResponse<City>> saveCity(MultipartFile cityIcon, MultipartFile cityImage, String cityName);
 
 	ResponseEntity<ApiResponse<City>> updateCity(MultipartFile cityIcon, MultipartFile cityImage, String cityName);
-
 }
