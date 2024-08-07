@@ -22,4 +22,6 @@ public interface UserService {
 	ResponseEntity<ApiResponse<List<UserDto>>> getAllCourseAdders();
 
 	ResponseEntity<ApiResponse<List<UserDto>>> getAllTrainers();
+
+	ResponseEntity<ApiResponse<UserDto>> saveTrainer(UserDto user);
 }
