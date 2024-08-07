@@ -20,4 +20,6 @@ public interface UserService {
 	ResponseEntity<ApiResponse<UserProfile>> getUserProfile(String token);
 
 	ResponseEntity<ApiResponse<List<UserDto>>> getAllCourseAdders();
+
+	ResponseEntity<ApiResponse<List<UserDto>>> getAllTrainers();
 }

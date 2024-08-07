@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.alpha.qspiderrestapi.dao.UserDao;
-import com.alpha.qspiderrestapi.dto.UserDto;
 import com.alpha.qspiderrestapi.entity.User;
+import com.alpha.qspiderrestapi.entity.enums.Role;
 import com.alpha.qspiderrestapi.repository.UserRepository;
 
 @Repository
@@ -47,8 +47,8 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public List<User> getAllCourseAdders() {
-		return userRepository.findUserByRole();
+	public List<User> getUsersByRole(Role role) {
+		return userRepository.findUserByRole(role);
 	}
 
 }

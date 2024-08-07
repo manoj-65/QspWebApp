@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.alpha.qspiderrestapi.entity.User;
+import com.alpha.qspiderrestapi.entity.enums.Role;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -22,6 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query(value = "SELECT u FROM User u WHERE u.userId IN(SELECT c.user.userId FROM Contact c WHERE c.phoneNumber=?1)")
 	Optional<User> findUserByUserPhoneNumber(long phoneNumber);
 
-	@Query(value = "SELECT u FROM User u WHERE u.role='COURSEADDER'")
-	List<User> findUserByRole();
+	@Query(value = "SELECT u FROM User u WHERE u.role = :role")
+	List<User> findUserByRole(Role role);
 }

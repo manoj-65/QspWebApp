@@ -150,8 +150,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ResponseEntity<ApiResponse<List<UserDto>>> getAllCourseAdders() {
-		List<User> allCourseAdders = userDao.getAllCourseAdders();
-		List<UserDto> userDtos = new ArrayList();
+		List<User> allCourseAdders = userDao.getUsersByRole(Role.COURSEADDER);
+		List<UserDto> userDtos = new ArrayList<UserDto>();
+		allCourseAdders.forEach(user -> userDtos.add(UserDtoMapper.mapUserToUserDto(user)));
+		return ResponseUtil.getOk(userDtos);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<UserDto>>> getAllTrainers() {
+		List<User> allCourseAdders = userDao.getUsersByRole(Role.TRAINER);
+		List<UserDto> userDtos = new ArrayList<UserDto>();
 		allCourseAdders.forEach(user -> userDtos.add(UserDtoMapper.mapUserToUserDto(user)));
 		return ResponseUtil.getOk(userDtos);
 	}

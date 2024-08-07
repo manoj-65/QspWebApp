@@ -84,4 +84,16 @@ public class UserController {
 			return userService.getAllCourseAdders();
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
+	
+	@Operation(description = "Fetches all the users with the role of Trainer", summary = "Fetches Trainers")
+	@ApiResponses(value = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Ok", responseCode = "200"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "401"),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404") })
+	@GetMapping("/trainers/getall")
+	public ResponseEntity<ApiResponse<List<UserDto>>> getAllTrainers(@PathVariable String version) {
+		if (version.equalsIgnoreCase("V1"))
+			return userService.getAllTrainers();
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	}
 }
