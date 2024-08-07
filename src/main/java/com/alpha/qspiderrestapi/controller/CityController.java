@@ -34,13 +34,13 @@ public class CityController {
 		}
 		throw new UnauthorizedVersionException();
 	}
-	
+
 	@PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<City>> updateCity(@PathVariable String version,
 			@RequestParam("cityIcon") MultipartFile cityIcon, @RequestParam("cityImage") MultipartFile cityImage,
-			@RequestParam("cityName") String cityName) {
+			@RequestParam("oldCityName") String cityName, @RequestParam("newCityName") String newCityName) {
 		if (version.equalsIgnoreCase("v1")) {
-			return cityService.updateCity(cityIcon, cityImage, cityName);
+			return cityService.updateCity(cityIcon, cityImage, cityName, newCityName);
 		}
 		throw new UnauthorizedVersionException();
 	}

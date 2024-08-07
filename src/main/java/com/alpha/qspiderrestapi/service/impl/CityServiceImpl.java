@@ -22,6 +22,9 @@ public class CityServiceImpl implements CityService {
 	@Autowired
 	private AWSS3ServiceImpl awss3ServiceImpl;
 
+	@Autowired
+	private BranchServiceImpl branchServiceImpl;
+
 	@Override
 	public ResponseEntity<ApiResponse<City>> saveCity(MultipartFile cityIcon, MultipartFile cityImage,
 			String cityName) {
@@ -50,11 +53,19 @@ public class CityServiceImpl implements CityService {
 
 	@Override
 	public ResponseEntity<ApiResponse<City>> updateCity(MultipartFile cityIcon, MultipartFile cityImage,
-			String cityName) {
+			String cityName, String newCityName) {
 
-		City city = cityDao.findCityByCityName(cityName).orElseThrow(() -> new InvalidInfoException("City name not found"));
-		//implementation left
-		return null;
+		City city = cityDao.findCityByCityName(cityName)
+				.orElseThrow(() -> new InvalidInfoException("City name not found"));
+
+		city.setCityName(newCityName);
+		city = cityDao.save(city);
+		if (cityImage != null)
+			branchServiceImpl.uploadIcon(cityImage, city.getCityIconId());
+		if (cityIcon != null)
+			branchServiceImpl.uploadIcon(cityIcon, city.getCityIconId());
+
+		return ResponseUtil.getOk(city);
 	}
 
 }
