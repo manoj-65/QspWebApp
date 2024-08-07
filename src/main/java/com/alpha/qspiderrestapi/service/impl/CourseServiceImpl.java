@@ -827,12 +827,13 @@ public class CourseServiceImpl implements CourseService {
 		course = setCourseIntoFaq(course);
 		log.debug("Set course into FAQ: {}", course);
 		course = saveCourse(course);
-		log.info("Saved course: {}", course);
+		log.info("Saved course: {}", course.getCourseName());
 
 		return course;
 	}
 
 	@Override
+	@Transactional
 	public ResponseEntity<ApiResponse<Course>> saveCourseAlongWithImages(CourseRequestImageDto courseRequestDto) {
 		long categoryId = courseRequestDto.getCategoryId();
 		Long subCategoryId = courseRequestDto.getSubCategoryId();
@@ -842,12 +843,6 @@ public class CourseServiceImpl implements CourseService {
 		log.info("Category ID: {}", categoryId);
 		log.info("SubCategory ID: {}", subCategoryId);
 
-		List<Long> subjectIds = courseRequestDto.getSubjectIds();
-		List<Subject> subjects = new ArrayList<Subject>();
-		if (Objects.nonNull(subjectIds)) {
-			subjects = subjectDao.fetchSubjectsByIds(subjectIds);
-		}
-
 		if (categoryDao.isCategoryPresent(categoryId)) {
 			log.info("Category with ID {} is present", categoryId);
 
@@ -856,14 +851,10 @@ public class CourseServiceImpl implements CourseService {
 					log.info("SubCategory with ID {} is present", subCategoryId);
 
 					Course course = mapAndSetUrlsToCourse(courseRequestDto);
-
+					assignSubjectsToCourse(course.getCourseId(), courseRequestDto.getSubjectIds());
 					subCategoryDao.assignCourseToSubCategory(subCategoryId, course.getCourseId());
 					log.info("Assigned course with ID {} to subCategory with ID {}", course.getCourseId(),
 							subCategoryId);
-
-					List<Subject> collect = subjects.stream().peek(subject -> subject.getCourses().add(course))
-							.collect(Collectors.toList());
-					course.setSubjects(collect);
 
 					return ResponseUtil.getCreated(course);
 				} else {
@@ -872,7 +863,7 @@ public class CourseServiceImpl implements CourseService {
 				}
 			} else {
 				Course course = mapAndSetUrlsToCourse(courseRequestDto);
-
+				assignSubjectsToCourse(course.getCourseId(), courseRequestDto.getSubjectIds());
 				categoryDao.assignCourseToCategory(categoryId, course.getCourseId());
 				log.info("Assigned course with ID {} to category with ID {}", course.getCourseId(), categoryId);
 
