@@ -378,6 +378,9 @@ public class CourseServiceImpl implements CourseService {
 			if (!(course.get().getSubCategories().isEmpty())) {
 				courseDao.removeCourseAndSubCategoryById(courseId);
 			}
+			if (!course.get().getSubjects().isEmpty())
+				courseDao.removeSubjectsFromCourse(courseId,
+						course.get().getSubjects().stream().map(Subject::getSubjectId).collect(Collectors.toList()));
 			courseDao.deleteCourse(course.get());
 
 		} else

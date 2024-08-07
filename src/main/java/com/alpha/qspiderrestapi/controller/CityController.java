@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,17 +21,26 @@ import com.alpha.qspiderrestapi.service.CityService;
 @RestController
 @RequestMapping("/api/{version}/cities")
 public class CityController {
-	
+
 	@Autowired
-	private CityService  cityService;
-	
+	private CityService cityService;
+
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<City>> saveCity(@PathVariable String version,
-			@RequestParam("cityIcon") MultipartFile cityIcon,
-			@RequestParam("cityImage") MultipartFile cityImage,
-			@RequestParam("cityName") String cityName){
-		if(version.equalsIgnoreCase("v1")) {
-			return cityService.saveCity(cityIcon,cityImage,cityName);
+			@RequestParam("cityIcon") MultipartFile cityIcon, @RequestParam("cityImage") MultipartFile cityImage,
+			@RequestParam("cityName") String cityName) {
+		if (version.equalsIgnoreCase("v1")) {
+			return cityService.saveCity(cityIcon, cityImage, cityName);
+		}
+		throw new UnauthorizedVersionException();
+	}
+
+	@PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<ApiResponse<City>> updateCity(@PathVariable String version,
+			@RequestParam("cityIcon") MultipartFile cityIcon, @RequestParam("cityImage") MultipartFile cityImage,
+			@RequestParam("oldCityName") String cityName, @RequestParam("newCityName") String newCityName) {
+		if (version.equalsIgnoreCase("v1")) {
+			return cityService.updateCity(cityIcon, cityImage, cityName, newCityName);
 		}
 		throw new UnauthorizedVersionException();
 	}
