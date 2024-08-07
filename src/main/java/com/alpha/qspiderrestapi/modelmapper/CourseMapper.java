@@ -39,7 +39,7 @@ public class CourseMapper {
 				.image_url(course.getCourseImage()).title(course.getCourseName())
 				.description(course.getCourseDescription()).homePageCourseImage(course.getHomePageCourseImage())
 				.modes(course.getMode()).weightageDto(weightageMapper.getDto(course.getWeightages(), categoryId, null))
-				.build();
+				.subjectCount(course.getSubjects().size()).build();
 	}
 
 	/**

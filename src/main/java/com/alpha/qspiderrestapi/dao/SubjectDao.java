@@ -18,4 +18,6 @@ public interface SubjectDao {
 	boolean isSubjectPresent(long subjectId);
 
 	int removeSubjectAndCourseById(long subjectId);
+
+	List<Subject> fetchSubjectsByIds(List<Long> subjectIds);
 }

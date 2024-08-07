@@ -82,5 +82,10 @@ public class SubjectDaoImpl implements SubjectDao {
 	public int removeSubjectAndCourseById(long subjectId) {
 		return subjectRepository.removeSubjectAndCourseById(subjectId);
 	}
+	
+	@Override
+	public List<Subject> fetchSubjectsByIds(List<Long> subjectIds) {
+		return subjectRepository.fetchSubjectsByIds(subjectIds);
+	}
 
 }

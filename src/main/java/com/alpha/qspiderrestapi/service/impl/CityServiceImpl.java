@@ -9,6 +9,7 @@ import com.alpha.qspiderrestapi.dao.CityDao;
 import com.alpha.qspiderrestapi.dto.ApiResponse;
 import com.alpha.qspiderrestapi.entity.City;
 import com.alpha.qspiderrestapi.exception.IdNotFoundException;
+import com.alpha.qspiderrestapi.exception.InvalidInfoException;
 import com.alpha.qspiderrestapi.service.CityService;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
 
@@ -45,6 +46,15 @@ public class CityServiceImpl implements CityService {
 				throw new NullPointerException("CityIcon can't be Uploaded Due the Admin restriction");
 		} else
 			throw new IdNotFoundException("No City found with the given name : " + cityName);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<City>> updateCity(MultipartFile cityIcon, MultipartFile cityImage,
+			String cityName) {
+
+		City city = cityDao.findCityByCityName(cityName).orElseThrow(() -> new InvalidInfoException("City name not found"));
+		//implementation left
+		return null;
 	}
 
 }
