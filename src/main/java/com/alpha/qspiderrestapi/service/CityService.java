@@ -8,7 +8,6 @@ import com.alpha.qspiderrestapi.entity.City;
 
 public interface CityService {
 
-	ResponseEntity<ApiResponse<City>> saveCity(MultipartFile cityIcon, MultipartFile cityImage,
-			String cityName);
+	ResponseEntity<ApiResponse<City>> saveCity(MultipartFile cityIcon, MultipartFile cityImage, String cityName);
 
 }

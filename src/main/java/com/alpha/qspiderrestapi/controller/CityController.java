@@ -20,17 +20,16 @@ import com.alpha.qspiderrestapi.service.CityService;
 @RestController
 @RequestMapping("/api/{version}/cities")
 public class CityController {
-	
+
 	@Autowired
-	private CityService  cityService;
-	
+	private CityService cityService;
+
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<City>> saveCity(@PathVariable String version,
-			@RequestParam("cityIcon") MultipartFile cityIcon,
-			@RequestParam("cityImage") MultipartFile cityImage,
-			@RequestParam("cityName") String cityName){
-		if(version.equalsIgnoreCase("v1")) {
-			return cityService.saveCity(cityIcon,cityImage,cityName);
+			@RequestParam("cityIcon") MultipartFile cityIcon, @RequestParam("cityImage") MultipartFile cityImage,
+			@RequestParam("cityName") String cityName) {
+		if (version.equalsIgnoreCase("v1")) {
+			return cityService.saveCity(cityIcon, cityImage, cityName);
 		}
 		throw new UnauthorizedVersionException();
 	}
