@@ -58,7 +58,7 @@ public class CustomAuthenticationManager {
 			"/api/{version}/cities", "/api/{version}/subCategories/removeCourseFromSubCategory",
 			"/api/{version}/courses/updateCourse", "api/{version}/weightage/country",
 			"/api/{version}/branches/getAllBranches/formfilter", "api/{version}/users/courseadders/getall",
-			"api/{version}/users/trainers/getall" };
+			"api/{version}/users/trainers/getall","api/{version}/weightage/courses/form" };
 
 	private static final String[] ADMIN_COURSEADDER_URLS = COURSEADDER_URLS;
 

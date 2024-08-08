@@ -96,7 +96,7 @@ public class SubCategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400") })
 	@PatchMapping(value = "/assigncourses")
-	public ResponseEntity<ApiResponse<SubCategory>> assignCoursesToSubCategory(@PathVariable String version,
+	public ResponseEntity<ApiResponse<String>> assignCoursesToSubCategory(@PathVariable String version,
 			@RequestParam int subCategoryId, @RequestBody List<Long> courseIds) {
 		if (version.equalsIgnoreCase("V1"))
 			return subCategoryService.assignCoursesToSubCategory(subCategoryId, courseIds);

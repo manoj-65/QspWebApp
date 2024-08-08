@@ -16,7 +16,7 @@ public interface SubCategoryService {
 
 	ResponseEntity<ApiResponse<String>> uploadIcon(MultipartFile file, long subCategoryId);
 
-	ResponseEntity<ApiResponse<SubCategory>> assignCoursesToSubCategory(long subCategoryId, List<Long> courseIds);
+	ResponseEntity<ApiResponse<String>> assignCoursesToSubCategory(long subCategoryId, List<Long> courseIds);
 
 	ResponseEntity<ApiResponse<String>> removeCourseFromCategory(Long subCategoryId, List<Long> courseIds);
 

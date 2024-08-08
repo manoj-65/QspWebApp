@@ -75,4 +75,9 @@ public class WeightageDaoImpl implements WeightageDao {
 		return weightageRepository.findByCountryIsNotNull();
 	}
 
+	@Override
+	public List<Weightage> getWeightagesByCourseId(long courseId) {
+		return weightageRepository.findByCourseId(courseId);
+	}
+
 }

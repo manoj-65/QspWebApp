@@ -220,7 +220,7 @@ public class CategoryServiceImpl implements CategoryService {
 				if (courseDao.isCoursePresent(id)) {
 					if (categoryDao.isCourseIdPresent(categoryId, id)) {
 						log.warn("Duplicate course ID: {} already assigned to category", id);
-						throw new DuplicateDataInsertionException("Given courseId: " + id + " already present");
+						throw new DuplicateDataInsertionException("Given courseId: " + id + " already present, cannot map courses to this category" );
 					}
 				} else {
 					log.error("Course not found with ID: {}", id);
@@ -228,7 +228,7 @@ public class CategoryServiceImpl implements CategoryService {
 				}
 				categoryDao.assignCourseToCategory(category.getCategoryId(), id);
 			});
-			return ResponseUtil.getOk("Category unmapped");
+			return ResponseUtil.getOk("Courses mapped to category successfully!!");
 		} else
 			log.error("Category not found with ID: {}", categoryId);
 		throw new IdNotFoundException("Category With the Given Id Not Found");

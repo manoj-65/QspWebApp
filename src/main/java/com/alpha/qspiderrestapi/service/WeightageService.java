@@ -38,4 +38,7 @@ public interface WeightageService {
 
 	ResponseEntity<ApiResponse<Weightage>> saveCountryWeightage(String countryName, WeightageDto dto);
 
+	ResponseEntity<ApiResponse<String>> updateCourseWeightageForAdminForm(long categoryId, Long subCategoryId,
+			long courseId, Long weightage, Organization organisation);
+
 }

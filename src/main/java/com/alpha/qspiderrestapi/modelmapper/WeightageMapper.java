@@ -32,8 +32,7 @@ public class WeightageMapper {
 					&& w.getCourse_SubCategoryId() == subCategoryId.longValue()).findFirst();
 			if (opt.isPresent()) {
 				weightage = opt.get();
-				return WeightageDto.builder().qspiders(weightage.getQspiders()).jspiders(weightage.getJspiders())
-						.pyspiders(weightage.getPyspiders()).prospiders(weightage.getProspiders()).build();
+				return weightageDtoMapper(weightage);
 			} else
 				return null;
 		} else {
@@ -43,12 +42,16 @@ public class WeightageMapper {
 					.findFirst();
 			if (opt.isPresent()) {
 				weightage = opt.get();
-				return WeightageDto.builder().qspiders(weightage.getQspiders()).jspiders(weightage.getJspiders())
-						.pyspiders(weightage.getPyspiders()).prospiders(weightage.getProspiders()).build();
+				return weightageDtoMapper(weightage);
 			} else
 				return null;
 		}
 
+	}
+
+	public WeightageDto weightageDtoMapper(Weightage weightage) {
+		return WeightageDto.builder().qspiders(weightage.getQspiders()).jspiders(weightage.getJspiders())
+				.pyspiders(weightage.getPyspiders()).prospiders(weightage.getProspiders()).build();
 	}
 
 }
