@@ -96,7 +96,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 	@Override
 	@Transactional
-	public ResponseEntity<ApiResponse<SubCategory>> assignCoursesToSubCategory(long subCategoryId,
+	public ResponseEntity<ApiResponse<String>> assignCoursesToSubCategory(long subCategoryId,
 			List<Long> courseIds) {
 		log.info("Entering assignCoursesToSubCategory with subCategoryId: {} and courseIds: {}", subCategoryId,
 				courseIds);
@@ -122,9 +122,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 				}
 			});
 
-			SubCategory subCategory = subCategoryDao.fetchSubCategoryById(subCategoryId).get();
 			log.info("Successfully assigned courses to subCategoryId: {}", subCategoryId);
-			return ResponseUtil.getOk(subCategory);
+			return ResponseUtil.getOk("Courses mapped to sub-category successfully!!");
 		} else {
 			log.error("SubCategory with id: {} not found", subCategoryId);
 			throw new IdNotFoundException("SubCategory With the Given Id Not Found");
