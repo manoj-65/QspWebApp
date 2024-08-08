@@ -637,4 +637,24 @@ public class WeightageServiceImpl implements WeightageService {
 
 	}
 
+	@Override
+	public ResponseEntity<ApiResponse<String>> updateCourseWeightageForAdminForm(long categoryId, Long subCategoryId,
+			long courseId, Long weightage, Organization organisation) {
+		
+		if (!courseDao.isCourseExist(courseId))
+			throw new IdNotFoundException("No course found with the id :" + courseId);
+		
+		List<Weightage> weightages = weightageDao.getWeightagesByCourseId(courseId);
+		Weightage obj = null;
+		if(subCategoryId!=null) {
+			obj = weightages.stream().filter(w->w.getCourse_SubCategoryId()==subCategoryId.longValue()).findFirst().get();
+		}
+		else {
+			obj = weightages.stream().filter(w->w.getCourse_categoryId()==categoryId).findFirst().get();
+		}
+	    WeightageDto dto = weightageMapper.weightageDtoMapper(obj);
+	    dto = weightageUtil.setWeightageInDto(dto,organisation,weightage);
+		return updateCourseWeightage(categoryId, subCategoryId, courseId, dto);
+	}
+
 }

@@ -38,5 +38,8 @@ public interface WeightageRepository extends JpaRepository<Weightage, Long> {
 	List<Weightage> findByCityIsNotNull();
 
 	List<Weightage> findByCountryIsNotNull();
+	
+	@Query(value = "SELECT * FROM weightage WHERE course_id = :courseId", nativeQuery = true)
+	List<Weightage> findByCourseId(long courseId);
 
 }

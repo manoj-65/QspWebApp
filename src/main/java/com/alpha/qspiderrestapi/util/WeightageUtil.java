@@ -12,6 +12,7 @@ import com.alpha.qspiderrestapi.dao.WeightageDao;
 import com.alpha.qspiderrestapi.dto.CityDto;
 import com.alpha.qspiderrestapi.dto.CountryDto;
 import com.alpha.qspiderrestapi.dto.CourseDto;
+import com.alpha.qspiderrestapi.dto.WeightageDto;
 import com.alpha.qspiderrestapi.entity.Category;
 import com.alpha.qspiderrestapi.entity.Course;
 import com.alpha.qspiderrestapi.entity.SubCategory;
@@ -388,5 +389,23 @@ public class WeightageUtil {
 			organization = Organization.PROSP;
 
 		return organization;
+	}
+
+	public WeightageDto setWeightageInDto(WeightageDto dto, Organization organisation,Long weightage) {
+		switch (organisation) {
+		case QSP:
+			dto.setQspiders(weightage);
+			break;
+		case JSP:
+			dto.setJspiders(weightage);
+			break;
+		case PYSP:
+			dto.setPyspiders(weightage);
+			break;
+		case PROSP:
+			dto.setProspiders(weightage);
+			break;
+		}
+		return dto;
 	}
 }

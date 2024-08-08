@@ -32,4 +32,6 @@ public interface WeightageDao {
 
 	List<Weightage> findAllCountryWeightage();
 
+	List<Weightage> getWeightagesByCourseId(long courseId);
+
 }

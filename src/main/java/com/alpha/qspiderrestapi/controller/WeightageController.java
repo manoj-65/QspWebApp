@@ -32,7 +32,7 @@ public class WeightageController {
 			return weightageService.saveCategoryWeightage(categoryId, dto);
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
-	} 
+	}
 
 	@PostMapping("/subCategories")
 	public ResponseEntity<ApiResponse<Weightage>> saveSubCategoryWeightage(@PathVariable String version,
@@ -123,6 +123,17 @@ public class WeightageController {
 			@RequestParam String countryName, @RequestBody WeightageDto dto) {
 		if (version.equalsIgnoreCase("V1"))
 			return weightageService.saveCountryWeightage(countryName, dto);
+
+		throw new UnauthorizedVersionException("Unauthorized Version");
+	}
+
+	@PatchMapping("/courses/form")
+	public ResponseEntity<ApiResponse<String>> updateCourseWeightageForAdminForm(@PathVariable String version,
+			@RequestParam long categoryId, @RequestParam(required = false) Long subCategoryId,
+			@RequestParam long courseId, @RequestParam Long weightage, Organization organisation) {
+		if (version.equalsIgnoreCase("V1"))
+			return weightageService.updateCourseWeightageForAdminForm(categoryId, subCategoryId, courseId, weightage,
+					organisation);
 
 		throw new UnauthorizedVersionException("Unauthorized Version");
 	}
