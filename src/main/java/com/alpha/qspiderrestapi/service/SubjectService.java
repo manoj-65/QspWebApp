@@ -19,4 +19,6 @@ public interface SubjectService {
 
 	ResponseEntity<ApiResponse<String>> deleteById(long subjectId);
 
+//	ResponseEntity<ApiResponse<Subject>> updateSubject(Subject subject, long subjectId);
+
 }

@@ -15,6 +15,7 @@ import com.alpha.qspiderrestapi.exception.IdNotFoundException;
 import com.alpha.qspiderrestapi.service.SubjectService;
 import com.alpha.qspiderrestapi.util.ChapterUtil;
 import com.alpha.qspiderrestapi.util.ResponseUtil;
+import com.alpha.qspiderrestapi.util.SubjectUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,6 +37,9 @@ public class SubjectServiceImpl implements SubjectService {
 
 	@Autowired
 	private CourseDao courseDao;
+
+	@Autowired
+	private SubjectUtil subjectUtil;
 
 	/**
 	 * Saves a new Subject and also the chapters, topics, and subTopics if present.
@@ -102,5 +106,15 @@ public class SubjectServiceImpl implements SubjectService {
 			throw new IdNotFoundException("Given Subject Id: " + subjectId + " not found");
 		return ResponseUtil.getNoContent("Subject deleted");
 	}
+
+//	@Override
+//	public ResponseEntity<ApiResponse<Subject>> updateSubject(Subject subjectRequest, long subjectId) {
+//
+//		Subject subject = subjectDao.fetchSubjectById(subjectId)
+//				.orElseThrow(() -> new IdNotFoundException("Given Subject ID: " + subjectId + " not found!"));
+//
+//		subject.setSubjectTitle(subjectRequest.getSubjectTitle());
+//		subject.setChapters(subjectUtil.));
+//	}
 
 }
