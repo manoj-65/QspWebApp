@@ -152,7 +152,7 @@ public class CategoryController {
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "404"),
 			@io.swagger.v3.oas.annotations.responses.ApiResponse(content = @Content(), responseCode = "400") })
 	@PatchMapping(value = "/assigncourses")
-	public ResponseEntity<ApiResponse<Category>> assignCoursesToCategory(@PathVariable String version,
+	public ResponseEntity<ApiResponse<String>> assignCoursesToCategory(@PathVariable String version,
 			@RequestParam long categoryId, @RequestBody List<Long> courseIds) {
 		if (version.equals("v1"))
 			return categoryService.assignCoursesToCategory(categoryId, courseIds);
