@@ -44,7 +44,7 @@ public class CustomAuthenticationManager {
 
 	private static final String[] ADMIN_URLS = { "/api/{version}/users/saveUser", "/api/{version}/categories",
 			"/api/{version}/subcategories", "/api/{version}/categories/uploadIcon",
-			"/api/{version}/subcategories/uploadIcon", "/api/{version}/batches","/api/{version}/categories/files" };
+			"/api/{version}/subcategories/uploadIcon", "/api/{version}/batches", "/api/{version}/categories/files" };
 
 	private static final String[] COURSEADDER_URLS = { "/api/{version}/courses", "/api/{version}/subjects/getall",
 			"/api/{version}/subjects", "/api/{version}/categories/getCategory", "/api/{version}/branches",
@@ -57,7 +57,10 @@ public class CustomAuthenticationManager {
 			"/api/{version}/courses/updateCourseContent", "/api/{version}/categories/removeCourseFromCategory",
 			"/api/{version}/cities", "/api/{version}/subCategories/removeCourseFromSubCategory",
 			"/api/{version}/courses/updateCourse", "api/{version}/weightage/country",
-			"/api/{version}/branches/getAllBranches/formfilter","api/{version}/users/courseadders/getall","api/{version}/users/trainers/getall" };
+			"/api/{version}/branches/getAllBranches/formfilter", "api/{version}/users/courseadders/getall",
+			"api/{version}/users/trainers/getall" };
+
+	private static final String[] ADMIN_COURSEADDER_URLS = COURSEADDER_URLS;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -67,8 +70,9 @@ public class CustomAuthenticationManager {
 						sessionManagment -> sessionManagment.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.requestMatchers(PUBLIC_URLS)
 						.permitAll().requestMatchers(ADMIN_URLS).hasRole(Role.ADMIN.name())
-						.requestMatchers(COURSEADDER_URLS).hasRole(Role.COURSEADDER.name()).anyRequest()
-						.authenticated())
+//						.requestMatchers(COURSEADDER_URLS).hasRole(Role.COURSEADDER.name())
+						.requestMatchers(ADMIN_COURSEADDER_URLS).hasAnyRole(Role.ADMIN.name(),Role.COURSEADDER.name())
+						.anyRequest().authenticated())
 				.authenticationProvider(authenticationProvider())
 				.addFilterBefore(authenticationFiler, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
