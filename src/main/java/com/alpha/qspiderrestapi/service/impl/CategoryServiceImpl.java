@@ -132,8 +132,8 @@ public class CategoryServiceImpl implements CategoryService {
 		if (!Objects.isNull(organization)) {
 			String domainNameKey = getDomainName(organization);
 			categories = weightageUtil.getSortedCategory(categories, domainNameKey);
-			categories.forEach(
-					category -> categoryResponse.add(categoryMapper.mapToCategoryDto(category, domainNameKey, isOnline)));
+			categories.forEach(category -> categoryResponse
+					.add(categoryMapper.mapToCategoryDto(category, domainNameKey, isOnline)));
 		} else {
 			categories = weightageUtil.getSortedCategory(categories, domainName);
 			categories.forEach(
@@ -209,9 +209,13 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	@Transactional
-	public ResponseEntity<ApiResponse<Category>> assignCoursesToCategory(long categoryId, List<Long> courseIds) {
+	public ResponseEntity<ApiResponse<String>> assignCoursesToCategory(long categoryId, List<Long> courseIds) {
 		log.info("Assigning courses to category ID: {}", categoryId);
 		if (categoryDao.isCategoryPresent(categoryId)) {
+			Category category = categoryDao.fetchCategoryById(categoryId).get();
+			if (!category.getSubCategories().isEmpty())
+				throw new InvalidInfoException("Sub Category present for given category: " + categoryId);
+
 			courseIds.stream().forEach(id -> {
 				if (courseDao.isCoursePresent(id)) {
 					if (categoryDao.isCourseIdPresent(categoryId, id)) {
@@ -222,9 +226,9 @@ public class CategoryServiceImpl implements CategoryService {
 					log.error("Course not found with ID: {}", id);
 					throw new IdNotFoundException("Course With the Given Id: " + id + " Not Found");
 				}
-				categoryDao.assignCourseToCategory(categoryId, id);
+				categoryDao.assignCourseToCategory(category.getCategoryId(), id);
 			});
-			return ResponseUtil.getOk(categoryDao.fetchCategoryById(categoryId).get());
+			return ResponseUtil.getOk("Category unmapped");
 		} else
 			log.error("Category not found with ID: {}", categoryId);
 		throw new IdNotFoundException("Category With the Given Id Not Found");
